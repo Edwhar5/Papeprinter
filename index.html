@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PapePrinter - Herramienta de Imposición</title>
+    
+    <!-- Favicon Profesional SVG Incrustado -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z'/%3E%3Cpath d='M9 7h6'/%3E%3Cpath d='M9 11h6'/%3E%3Cpath d='M9 15h4'/%3E%3C/svg%3E">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -36,7 +40,7 @@
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
     <!--
-      PAPEPRINTER - STABLE VERSION 1.0 (TECHNICAL REVISIONS)
+      PAPEPRINTER - STABLE VERSION 1.3 (TECHNICAL REVISIONS & AUDITING TOOLKIT)
       HISTORIAL DE CAMBIOS:
       1. Documentación inicial de cambios al principio del archivo de manera formal.
       2. Separación de botones de acción superior: "Generar PDF" e "Imprimir" ahora son independientes.
@@ -45,9 +49,21 @@
       5. Implementación de orientación de ID (Áreas de IDs Horizontales de 90x55mm y Verticales de 55x90mm) dentro del panel ID con forzado de lienzo vertical.
       6. Incorporación de notificaciones de tipo Toast reemplazando el alert() nativo del navegador.
       7. Mantenimiento estricto del resto de algoritmos financieros, marcas de corte y persistencia.
+      8. Favicon dinámico SVG incrustado en el HEAD del documento.
+      9. Ajuste del Preset de división '2' en dos variantes: '2 Vert' (vertical) y '2 Horiz' (horizontal) para el aprovechamiento de papel según la orientación de la imagen.
+      10. Cambio de botón de acción principal a "Imprimir y Cobrar".
+      11. Creación de cajón de registro de ventas diario en el pie de página con persistencia contra fallos eléctricos (guardado automático en localStorage).
+      12. Implementación de un botón interactivo para generar cortes de caja con utilidades netas, evitando los alert() nativos.
+      13. Se asocia la clase 'no-print' a las notificaciones dinámicas (toast-container) para asegurar que no se impriman en el lienzo físico o PDF.
+      14. Ajuste de coherencia lingüística: cambio de "Cover" a "Rellenar" y de "Contain" a "Encajar".
+      15. Se optimiza el contraste de todos los campos del catálogo (inputs en A3) en modo nocturno con tipografía naranja para perfecta legibilidad.
+      16. Integración de un botón interactivo para desplegar un "Tutorial / Guía de Uso" completo en la sección A-1.
+      17. Rediseño de los botones de donación de mayor tamaño y visibilidad.
+      18. Modificación de la configuración de redondeo de un booleano simple a una triple opción: Sin Redondeo, Redondear al $.50c o Redondear al Entero más cercano.
+      19. El Corte de Caja genera un archivo de reporte gráfico PNG para descargas y auditorías administrativas.
     -->
 
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
 
     <div class="h-screen w-screen flex flex-col md:flex-row no-print">
         
@@ -61,16 +77,20 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
                         <span>PapePrinter</span>
                     </div>
-                    <div class="flex gap-2">
-                        <a href="https://www.mercadopago.com.mx/payment-link/v1/redirect?link-id=9717741c-070d-46ca-be5f-effc258d2c55&source=link" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50" title="Donar via Mercado Pago">
-                            <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" fill="#009EE3"/><path d="M30 18L18 30M18 18L30 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <div class="flex gap-2 items-center">
+                        <button id="btn-tutorial" class="p-2 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 hover:scale-105 transition rounded-xl font-bold text-xs flex items-center gap-1.5" title="Ver Tutorial de Uso">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Guía
+                        </button>
+                        <a href="https://www.mercadopago.com.mx/payment-link/v1/redirect?link-id=9717741c-070d-46ca-be5f-effc258d2c55&source=link" target="_blank" class="p-2 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Donar via Mercado Pago">
+                            <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" fill="#009EE3"/><path d="M30 18L18 30M18 18L30 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
-                        <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50" title="Donar via PayPal">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+                        <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-2 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Donar via PayPal">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
                         </a>
                     </div>
                 </div>
-                <div class="text-[14px] text-gray-400 font-mono tracking-widest uppercase">Edwhar & Gemini</div>
+                <div class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">Edgar & Gemini</div>
             </div>
 
             <!-- Scrollable Controls -->
@@ -102,7 +122,7 @@
                         <button data-val="id" class="flex-1 py-1.5 text-xs font-medium rounded-md transition-all text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">ID</button>
                     </div>
                     
-                    <div id="ui-grid-content-preset" class="grid grid-cols-5 gap-2">
+                    <div id="ui-grid-content-preset" class="grid grid-cols-4 gap-2">
                         <!-- Presets generated via JS -->
                     </div>
                     
@@ -171,8 +191,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         <span class="hidden sm:inline">Generar PDF</span>
                     </button>
-                    <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <span class="hidden sm:inline">Imprimir</span>
+                    <button id="btn-print-sales" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <span class="hidden sm:inline">Imprimir y Cobrar</span>
                     </button>
                 </div>
             </div>
@@ -185,8 +205,8 @@
                         <div class="flex items-center gap-3">
                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ajuste</span>
                             <div class="flex bg-gray-200/50 dark:bg-gray-800 rounded-md p-1 border border-gray-200 dark:border-gray-700" id="ui-fit">
-                                <button data-val="cover" class="px-4 py-1 text-xs font-semibold rounded bg-white shadow-sm dark:bg-gray-600 text-gray-900 dark:text-white">Cover</button>
-                                <button data-val="contain" class="px-4 py-1 text-xs font-semibold rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Contain</button>
+                                <button data-val="cover" class="px-4 py-1 text-xs font-semibold rounded bg-white shadow-sm dark:bg-gray-600 text-gray-900 dark:text-white">Rellenar</button>
+                                <button data-val="contain" class="px-4 py-1 text-xs font-semibold rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Encajar</button>
                             </div>
                         </div>
                         <div class="w-px h-5 bg-gray-300 dark:bg-gray-700"></div>
@@ -198,7 +218,7 @@
                     </div>
                     <div class="flex items-center gap-5">
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vista Global</span>
                             <input type="range" id="ui-zoom-work" min="30" max="150" value="100" class="w-20 accent-gray-400" />
                         </div>
                         <div class="w-px h-5 bg-gray-300 dark:bg-gray-700"></div>
@@ -216,36 +236,95 @@
                 </div>
             </div>
 
-            <!-- Panel Inferior Costos -->
-            <div class="h-auto md:h-28 shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-8 py-4 flex flex-col md:flex-row items-center justify-between z-20 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)]">
-                <div class="flex items-center gap-8 md:gap-12">
-                    <div class="flex flex-col gap-1">
-                        <div class="flex items-center gap-2 text-[10px] uppercase font-black text-gray-400 tracking-widest">
-                            Material+Tinta <span id="fin-hojas" class="bg-gray-100 dark:bg-gray-800 text-gray-500 px-1.5 py-0.5 rounded text-[9px]">x0 Hoja(s)</span>
+            <!-- Panel Inferior Costos y Ventas Expandible -->
+            <div class="shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-20 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)] flex flex-col">
+                <!-- Fila Financiera Principal -->
+                <div class="h-auto md:h-28 px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-8 md:gap-12 flex-wrap md:flex-nowrap">
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-center gap-2 text-[10px] uppercase font-black text-gray-400 tracking-widest">
+                                Material+Tinta <span id="fin-hojas" class="bg-gray-100 dark:bg-gray-800 text-gray-500 px-1.5 py-0.5 rounded text-[9px]">x0 Hoja(s)</span>
+                            </div>
+                            <div class="text-sm font-mono font-medium text-gray-600 dark:text-gray-400">
+                                <span id="fin-costSheet" class="text-gray-800 dark:text-gray-200">$0.00</span> + <span id="fin-inkCost" class="text-indigo-600 dark:text-indigo-400">$0.00</span> 
+                                <span id="fin-density" class="text-[10px] text-gray-400 ml-1">(0% cov)</span>
+                            </div>
                         </div>
-                        <div class="text-sm font-mono font-medium text-gray-600 dark:text-gray-400">
-                            <span id="fin-costSheet" class="text-gray-800 dark:text-gray-200">$0.00</span> + <span id="fin-inkCost" class="text-indigo-600 dark:text-indigo-400">$0.00</span> 
-                            <span id="fin-density" class="text-[10px] text-gray-400 ml-1">(0% cov)</span>
+                        <div class="flex flex-col gap-1">
+                            <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Depreciación</div>
+                            <div id="fin-equipCost" class="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">$0.00</div>
+                        </div>
+                        <div class="border-l-2 border-red-100 dark:border-red-900/30 pl-6">
+                            <div class="text-[10px] uppercase font-black text-red-400 tracking-widest mb-1">Costo Operativo</div>
+                            <div id="fin-totalOp" class="text-2xl font-black font-mono text-red-600 dark:text-red-400">$0.00</div>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Depreciación</div>
-                        <div id="fin-equipCost" class="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">$0.00</div>
-                    </div>
-                    <div class="border-l-2 border-red-100 dark:border-red-900/30 pl-8">
-                        <div class="text-[10px] uppercase font-black text-red-400 tracking-widest mb-1">Costo Operativo</div>
-                        <div id="fin-totalOp" class="text-2xl font-black font-mono text-red-600 dark:text-red-400">$0.00</div>
+                    
+                    <div class="flex items-center gap-4 mt-4 md:mt-0 w-full md:w-auto justify-end">
+                        <!-- Botón para Desplegar Registro de Ventas -->
+                        <button id="btn-toggle-sales" class="flex items-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl text-xs font-bold transition text-gray-700 dark:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                            <span>Ventas (<span id="sales-count">0</span>)</span>
+                        </button>
+
+                        <div class="flex items-center gap-8 bg-gray-50 dark:bg-gray-800 py-3 px-8 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden shrink-0">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+                            <div class="text-right">
+                                <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mb-1">Precio Sugerido</div>
+                                <div id="fin-suggested" class="text-3xl font-black text-green-600 dark:text-green-400 font-mono">$0.00</div>
+                            </div>
+                            <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-8 text-right">
+                                <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">Margen Bruto</div>
+                                <div id="fin-profit" class="text-xl font-black font-mono text-emerald-500">$0.00</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-8 bg-gray-50 dark:bg-gray-800 py-3 px-8 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden mt-4 md:mt-0">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-                    <div class="text-right">
-                        <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mb-1">Precio Sugerido</div>
-                        <div id="fin-suggested" class="text-3xl font-black text-green-600 dark:text-green-400 font-mono">$0.00</div>
-                    </div>
-                    <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-8 text-right">
-                        <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">Margen Bruto</div>
-                        <div id="fin-profit" class="text-xl font-black font-mono text-emerald-500">$0.00</div>
+
+                <!-- Cajón Desplegable de Registro de Ventas -->
+                <div id="sales-drawer" class="hidden border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 p-6 max-h-72 overflow-y-auto custom-scrollbar">
+                    <div class="max-w-7xl mx-auto flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Ventas y Registro del Día</h4>
+                            <button id="btn-corte" class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                                Corte de Caja
+                            </button>
+                        </div>
+                        
+                        <div class="border border-gray-200 dark:border-gray-800 rounded-xl overflow-x-auto bg-white dark:bg-gray-900">
+                            <table class="w-full text-xs text-left min-w-[600px]">
+                                <thead class="bg-gray-100 dark:bg-gray-800 text-gray-500 uppercase tracking-wider text-[10px]">
+                                    <tr>
+                                        <th class="px-4 py-2">Hora</th>
+                                        <th class="px-4 py-2">Material</th>
+                                        <th class="px-4 py-2">Lienzos</th>
+                                        <th class="px-4 py-2 text-right">Costo Operativo</th>
+                                        <th class="px-4 py-2 text-right">Cobrado (Sugerido)</th>
+                                        <th class="px-4 py-2 text-right">Utilidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-table-body" class="divide-y divide-gray-100 dark:divide-gray-800 font-mono text-gray-700 dark:text-gray-300">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Totales de Caja -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 rounded-xl">
+                            <div>
+                                <div class="text-[9px] uppercase font-black text-gray-400 tracking-wider">Total de Lienzos del Día</div>
+                                <div id="sales-tot-sheets" class="text-base font-black text-gray-800 dark:text-gray-200">0</div>
+                            </div>
+                            <div>
+                                <div class="text-[9px] uppercase font-black text-red-400 tracking-wider">Costo Operativo Acumulado</div>
+                                <div id="sales-tot-op" class="text-base font-black text-red-600 dark:text-red-400">$0.00</div>
+                            </div>
+                            <div>
+                                <div class="text-[9px] uppercase font-black text-green-400 tracking-wider">Caja Total (Ingresos Reales)</div>
+                                <div id="sales-tot-sug" class="text-base font-black text-green-600 dark:text-green-400">$0.00</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -253,7 +332,7 @@
     </div>
 
     <!-- MODAL CONFIGURACIÓN A3 -->
-    <div id="modal-settings" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
+    <div id="modal-settings" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
         <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
             <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
                 <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Catálogo de Insumos y Costos</h2>
@@ -266,19 +345,19 @@
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Precio Equipo ($)</label>
-                        <input type="number" id="cfg-equip" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-equip" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Vida Útil (Pag)</label>
-                        <input type="number" id="cfg-life" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-life" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Kit Tintas ($)</label>
-                        <input type="number" id="cfg-ink" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-ink" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Rendimiento ISO</label>
-                        <input type="number" id="cfg-yield" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-yield" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
                     </div>
                 </div>
                 <!-- Papeles -->
@@ -307,9 +386,14 @@
                 </div>
             </div>
             <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
-                <label class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 cursor-pointer">
-                    <input type="checkbox" id="cfg-round" class="w-4 h-4 rounded text-indigo-600" /> Redondear Sugerido
-                </label>
+                <div class="flex flex-col gap-1 shrink-0">
+                    <label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Redondeo del Sugerido</label>
+                    <select id="cfg-round-mode" class="p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded-lg outline-none text-xs">
+                        <option value="none">Sin redondeo (Decimal exacto)</option>
+                        <option value="half">Al 0.50 más cercano (Media unidad)</option>
+                        <option value="whole">Al entero más cercano (Sin centavos)</option>
+                    </select>
+                </div>
                 <div class="flex gap-3">
                     <label class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 cursor-pointer transition">
                         Importar JSON <input type="file" id="btn-import" accept=".json" class="hidden" />
@@ -317,6 +401,65 @@
                     <button id="btn-export" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 transition">Exportar JSON</button>
                     <button id="btn-save" class="flex items-center gap-2 px-6 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">Guardar</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TUTORIAL / GUÍA DE USO -->
+    <div id="modal-tutorial" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
+                <h2 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Guía de Uso Rápido
+                </h2>
+                <button id="btn-close-tutorial" class="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
+                <div class="space-y-4">
+                    <div class="flex gap-3">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">1</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Subir tus Imágenes</h4>
+                            <p>Arrastra tus imágenes JPG o PNG en la mesa de trabajo o haz clic en "Explorar Ordenador". Se rotarán y adaptarán de manera inteligente.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">2</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Elegir Papel y Formato</h4>
+                            <p>Elige el tipo de papel en el catálogo lateral. El sistema cargará automáticamente el tamaño físico de la hoja real (Carta, Oficio, A3).</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">3</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Definir Retícula (Presets u Óptimos)</h4>
+                            <p>Selecciona divisiones predefinidas. Ahora dispones de los presets mejorados "2 Vert" u "2 Horiz" para el máximo aprovechamiento del papel.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">4</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Modo ID (Cédulas)</h4>
+                            <p>El modo ID genera 2 espacios paralelos de 90x55mm (Horizontal o Vertical) centrados en el tercio superior bajo la regla de la pulgada.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">5</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Cobro y Resiliencia Eléctrica</h4>
+                            <p>Haz clic en "Imprimir y Cobrar". Se registrarán las ventas del día de manera automática y persistente contra fallas de luz en el cajón de ventas inferior.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-end">
+                <button id="btn-close-tutorial-bottom" class="px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow-md">
+                    ¡Entendido!
+                </button>
             </div>
         </div>
     </div>
@@ -357,7 +500,7 @@
             imageZoom: 100,
             workspaceZoom: 100,
             density: 0,
-            costs: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, suggestedRounding: true },
+            costs: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, suggestedRounding: 'half' },
             papers: [
                 { id: 'p1', name: 'Carta Bond', size: 'Letter', price: 650, count: 5000, maxSalePrice: 8 },
                 { id: 'p2', name: 'Oficio Bond', size: 'Oficio', price: 800, count: 5000, maxSalePrice: 10 },
@@ -366,7 +509,8 @@
                 { id: 'p5', name: 'Doblecarta', size: 'Tabloid', price: 300, count: 500, maxSalePrice: 16 },
                 { id: 'p6', name: 'Couche', size: 'Letter', price: 200, count: 100, maxSalePrice: 18 },
                 { id: 'p7', name: 'Fotográfico', size: 'Letter', price: 240, count: 100, maxSalePrice: 25 }
-            ]
+            ],
+            salesLog: [] // Registro de ventas diarias con persistencia
         };
 
         let derived = { currentPaper: null, physicalSize: null, gridInfo: null, pages: [] };
@@ -377,12 +521,28 @@
             if(saved) {
                 try {
                     const p = JSON.parse(saved);
-                    if(p.costs) state.costs = p.costs;
+                    if(p.costs) {
+                        state.costs = p.costs;
+                        // Compatibilidad hacia atrás del redondeo
+                        if (state.costs.suggestedRounding === true) state.costs.suggestedRounding = 'half';
+                        if (state.costs.suggestedRounding === false) state.costs.suggestedRounding = 'none';
+                        if (!state.costs.suggestedRounding) state.costs.suggestedRounding = 'half';
+                    }
                     if(p.papers) state.papers = p.papers;
                 } catch(e){}
             }
+            
+            // Cargar registro de ventas del localStorage contra fallas eléctricas
+            const savedSales = localStorage.getItem('papePrinterSalesLog');
+            if(savedSales) {
+                try {
+                    state.salesLog = JSON.parse(savedSales);
+                } catch(e){}
+            }
+
             setupEventListeners();
             updateAll();
+            updateSalesUI();
         }
 
         // Lógica Retícula
@@ -395,7 +555,6 @@
             let cols = 1, rows = 1;
 
             if (isIDMode) {
-                // Forzar orientación del lienzo a Vertical por regla del negocio
                 state.isPortrait = true;
                 paperW = paper.w;
                 paperH = paper.h;
@@ -403,11 +562,9 @@
                 workH = paperH - (margin * 2);
 
                 cols = 2; rows = 1;
-                // ID Horizontal: 90 largo x 55mm alto. ID Vertical: 55 largo x 90mm alto.
                 const idW = state.idOrientation === 'horiz' ? 90 : 55;
                 const idH = state.idOrientation === 'horiz' ? 55 : 90;
 
-                // Ubicar en el tercio superior respetando un margen de 1 pulgada (25.4 mm)
                 const startY = 25.4; 
                 const startX = margin + (workW - (idW * 2)) / 2;
                 
@@ -416,8 +573,21 @@
                 return { cols, rows, cells, cellW: idW, cellH: idH };
             }
 
+            const presets = { 
+                1: {c:1, r:1}, 
+                '2V': {c:2, r:1}, 
+                '2H': {c:1, r:2}, 
+                4: {c:2, r:2}, 
+                6: {c:2, r:3}, 
+                8: {c:2, r:4}, 
+                9: {c:3, r:3}, 
+                12: {c:3, r:4}, 
+                16: {c:4, r:4}, 
+                24: {c:4, r:6}, 
+                32: {c:4, r:8} 
+            };
+
             if (mode === 'preset') {
-                const presets = { 1:{c:1,r:1}, 2:{c:2,r:1}, 4:{c:2,r:2}, 6:{c:2,r:3}, 8:{c:2,r:4}, 9:{c:3,r:3}, 12:{c:3,r:4}, 16:{c:4,r:4}, 24:{c:4,r:6}, 32:{c:4,r:8} };
                 const p = presets[preset] || {c:1, r:1};
                 cols = isPortrait ? p.c : p.r;
                 rows = isPortrait ? p.r : p.c;
@@ -470,7 +640,7 @@
             renderUI();
             renderCanvases();
             renderPrintOverlay();
-            updateFinancials(); // Initial text
+            updateFinancials(); 
         }
 
         function renderUI() {
@@ -509,16 +679,17 @@
             // Presets
             const presetContainer = document.getElementById('ui-grid-content-preset');
             if(presetContainer.children.length === 0) {
-                [1,2,4,6,8,9,12,16,24,32].forEach(n => {
+                ['1', '2V', '2H', '4', '6', '8', '9', '12', '16', '24', '32'].forEach(n => {
                     const b = document.createElement('button');
-                    b.innerText = n;
+                    b.innerText = n === '2V' ? '2 Vert' : (n === '2H' ? '2 Horiz' : n);
+                    b.setAttribute('data-val', n);
                     b.onclick = () => { state.gridPreset = n; updateAll(); };
                     presetContainer.appendChild(b);
                 });
             }
             Array.from(presetContainer.children).forEach(b => {
-                const act = parseInt(b.innerText) === state.gridPreset;
-                b.className = `py-2 text-sm font-semibold rounded-lg border transition-all ${act ? 'bg-indigo-50 border-indigo-400 text-indigo-700 dark:bg-indigo-900/40 dark:border-indigo-500 dark:text-indigo-300' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'}`;
+                const act = b.getAttribute('data-val') === String(state.gridPreset);
+                b.className = `py-2 text-[10px] font-semibold rounded-lg border transition-all ${act ? 'bg-indigo-50 border-indigo-400 text-indigo-700 dark:bg-indigo-900/40 dark:border-indigo-500 dark:text-indigo-300' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'}`;
             });
 
             document.querySelectorAll('#ui-id-orientation button').forEach(b => {
@@ -578,7 +749,7 @@
             setTimeout(() => {
                 toast.classList.add('translate-y-2', 'opacity-0');
                 toast.addEventListener('transitionend', () => toast.remove());
-            }, 3000);
+            }, 3500);
         }
 
         function renderCanvases() {
@@ -736,7 +907,18 @@
             });
 
             if(state.isMonochrome) totSug *= 0.25;
-            if(c.suggestedRounding) totSug = Math.round(totSug * 2) / 2;
+            
+            // Regla de Redondeo Ajustable
+            let rMode = c.suggestedRounding;
+            if (rMode === true) rMode = 'half';
+            if (rMode === false) rMode = 'none';
+            if (!rMode) rMode = 'half';
+
+            if (rMode === 'half') {
+                totSug = Math.round(totSug * 2) / 2;
+            } else if (rMode === 'whole') {
+                totSug = Math.round(totSug);
+            }
 
             document.getElementById('fin-costSheet').innerText = `$${costPerSheet.toFixed(2)}`;
             document.getElementById('fin-inkCost').innerText = `$${ink.toFixed(2)}`;
@@ -809,22 +991,317 @@
             state.papers.forEach((p, i) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="px-4 py-2"><input type="text" value="${p.name}" onchange="updatePaper(${i}, 'name', this.value)" class="w-full p-1 border rounded" /></td>
+                    <td class="px-4 py-2"><input type="text" value="${p.name}" onchange="updatePaper(${i}, 'name', this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none" /></td>
                     <td class="px-4 py-2">
-                        <select onchange="updatePaper(${i}, 'size', this.value)" class="w-full p-1 border rounded">
+                        <select onchange="updatePaper(${i}, 'size', this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none">
                             ${Object.keys(PAPER_SIZES).map(k => `<option value="${k}" ${p.size===k?'selected':''}>${PAPER_SIZES[k].name}</option>`).join('')}
                         </select>
                     </td>
-                    <td class="px-4 py-2"><input type="number" value="${p.price}" onchange="updatePaper(${i}, 'price', +this.value)" class="w-full p-1 border rounded font-mono" /></td>
-                    <td class="px-4 py-2"><input type="number" value="${p.count}" onchange="updatePaper(${i}, 'count', +this.value)" class="w-full p-1 border rounded font-mono" /></td>
-                    <td class="px-4 py-2"><input type="number" value="${p.maxSalePrice}" onchange="updatePaper(${i}, 'maxSalePrice', +this.value)" class="w-full p-1 border rounded font-mono text-indigo-600" /></td>
-                    <td class="px-4 py-2 text-center"><button onclick="removePaper('${p.id}')" class="text-red-500 hover:bg-red-50 p-1 rounded">X</button></td>
+                    <td class="px-4 py-2"><input type="number" value="${p.price}" onchange="updatePaper(${i}, 'price', +this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none font-mono" /></td>
+                    <td class="px-4 py-2"><input type="number" value="${p.count}" onchange="updatePaper(${i}, 'count', +this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none font-mono" /></td>
+                    <td class="px-4 py-2"><input type="number" value="${p.maxSalePrice}" onchange="updatePaper(${i}, 'maxSalePrice', +this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-orange-600 dark:text-orange-400 rounded outline-none font-mono font-bold" /></td>
+                    <td class="px-4 py-2 text-center"><button onclick="removePaper('${p.id}')" class="text-red-500 hover:bg-red-50 p-1.5 rounded">X</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
         window.updatePaper = (idx, field, val) => { state.papers[idx][field] = val; }
         window.removePaper = (id) => { if(state.papers.length>1){ state.papers = state.papers.filter(p=>p.id!==id); if(state.paperId===id) state.paperId=state.papers[0].id; renderSettingsTable(); }}
+
+        // Gestión del POS y Caja Diario
+        function updateSalesUI() {
+            const tableBody = document.getElementById('sales-table-body');
+            const salesCount = document.getElementById('sales-count');
+            const totSheets = document.getElementById('sales-tot-sheets');
+            const totOp = document.getElementById('sales-tot-op');
+            const totSug = document.getElementById('sales-tot-sug');
+
+            const log = state.salesLog || [];
+            salesCount.innerText = log.length;
+
+            tableBody.innerHTML = '';
+            
+            if (log.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400 dark:text-gray-600">No hay registros el día de hoy</td></tr>`;
+                totSheets.innerText = '0';
+                totOp.innerText = '$0.00';
+                totSug.innerText = '$0.00';
+                return;
+            }
+
+            let sheetsAccum = 0;
+            let opAccum = 0;
+            let sugAccum = 0;
+
+            log.forEach(sale => {
+                sheetsAccum += sale.pages;
+                opAccum += sale.totalOp;
+                sugAccum += sale.totalSug;
+
+                const date = new Date(sale.timestamp);
+                const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-2">${timeStr}</td>
+                    <td class="px-4 py-2 font-semibold text-gray-800 dark:text-gray-100">${sale.paper}</td>
+                    <td class="px-4 py-2">${sale.pages} Hoja(s)</td>
+                    <td class="px-4 py-2 text-right text-red-500 font-mono">$${sale.totalOp.toFixed(2)}</td>
+                    <td class="px-4 py-2 text-right text-green-500 font-bold font-mono">$${sale.totalSug.toFixed(2)}</td>
+                    <td class="px-4 py-2 text-right text-emerald-500 font-semibold font-mono">$${(sale.totalSug - sale.totalOp).toFixed(2)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            totSheets.innerText = sheetsAccum;
+            totOp.innerText = `$${opAccum.toFixed(2)}`;
+            totSug.innerText = `$${sugAccum.toFixed(2)}`;
+        }
+
+        function registerSaleAndPrint() {
+            if (state.images.length === 0) {
+                showToast('Carga imágenes antes de registrar e imprimir.', 'error');
+                return;
+            }
+
+            // Calcular valores financieros activos
+            const c = state.costs;
+            const p = derived.currentPaper;
+            const costPerSheet = p.price / p.count;
+            const ink = (state.density/100) * (c.inkPrice/c.inkYield) * 1.1;
+            const eq = c.printerPrice / (c.printerLife * 2);
+            const opUnit = costPerSheet + ink + eq;
+
+            let totSug = 0;
+            let totOp = 0;
+            const totCells = derived.gridInfo.cells.length;
+
+            derived.pages.forEach(pg => {
+                totOp += opUnit;
+                const base = (p.maxSalePrice / totCells) * pg.length;
+                totSug += Math.max(base, opUnit * 2);
+            });
+
+            if(state.isMonochrome) totSug *= 0.25;
+            
+            // Regla de Redondeo Ajustable
+            let rMode = c.suggestedRounding;
+            if (rMode === true) rMode = 'half';
+            if (rMode === false) rMode = 'none';
+            if (!rMode) rMode = 'half';
+
+            if (rMode === 'half') {
+                totSug = Math.round(totSug * 2) / 2;
+            } else if (rMode === 'whole') {
+                totSug = Math.round(totSug);
+            }
+
+            // Registrar venta
+            const newSale = {
+                id: Math.random().toString(36).substr(2, 9),
+                timestamp: new Date().toISOString(),
+                paper: p.name,
+                pages: derived.pages.length,
+                totalOp: totOp,
+                totalSug: totSug
+            };
+
+            state.salesLog.push(newSale);
+            localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
+            updateSalesUI();
+
+            showToast(`Venta registrada: $${totSug.toFixed(2)}. Abriendo impresora...`, 'success');
+
+            setTimeout(() => {
+                window.print();
+            }, 600);
+        }
+
+        function openCorteModal() {
+            if (state.salesLog.length === 0) {
+                showToast('No hay ventas registradas el día de hoy para realizar el corte.', 'error');
+                return;
+            }
+
+            let sheetsAccum = 0;
+            let opAccum = 0;
+            let sugAccum = 0;
+
+            state.salesLog.forEach(sale => {
+                sheetsAccum += sale.pages;
+                opAccum += sale.totalOp;
+                sugAccum += sale.totalSug;
+            });
+
+            const profit = sugAccum - opAccum;
+
+            const modalHtml = `
+            <div id="corte-modal" class="fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
+                <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 p-6 flex flex-col gap-6">
+                    <div class="flex items-center gap-3 text-red-600 dark:text-red-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        <h3 class="text-lg font-black uppercase tracking-wider">Corte de Caja Diario</h3>
+                    </div>
+                    
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Estás por realizar el corte diario. Esto resumirá la actividad del día, **generará un reporte gráfico (PNG)** y reiniciará el registro de caja.
+                    </p>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-950 rounded-xl p-4 border border-gray-100 dark:border-gray-800 space-y-3 font-mono text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Ventas Realizadas:</span>
+                            <span class="font-bold text-gray-800 dark:text-gray-100">${state.salesLog.length}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Hojas Impresas:</span>
+                            <span class="font-bold text-gray-800 dark:text-gray-100">${sheetsAccum}</span>
+                        </div>
+                        <div class="h-px bg-gray-200 dark:bg-gray-800"></div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400 font-bold">Ingresos Totales (Caja):</span>
+                            <span class="font-black text-green-600 dark:text-green-400">$${sugAccum.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Costo Operativo Neto:</span>
+                            <span class="font-black text-red-500">$${opAccum.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between text-base">
+                            <span class="text-gray-500 dark:text-gray-400 font-bold">Utilidad Real:</span>
+                            <span class="font-black text-emerald-500">$${profit.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-2">
+                        <button onclick="closeCorteModal()" class="flex-1 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 dark:bg-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-750 transition">
+                            Cancelar
+                        </button>
+                        <button onclick="confirmCorte()" class="flex-1 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-md">
+                            Efectuar Corte
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+            
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'corte-modal-wrapper';
+            modalDiv.innerHTML = modalHtml;
+            document.body.appendChild(modalDiv);
+        }
+        
+        window.closeCorteModal = function() {
+            const el = document.getElementById('corte-modal-wrapper');
+            if (el) el.remove();
+        }
+        
+        window.confirmCorte = function() {
+            let sheetsAccum = 0;
+            let opAccum = 0;
+            let sugAccum = 0;
+
+            state.salesLog.forEach(sale => {
+                sheetsAccum += sale.pages;
+                opAccum += sale.totalOp;
+                sugAccum += sale.totalSug;
+            });
+
+            const profit = sugAccum - opAccum;
+
+            // Generar Reporte Visual PNG mediante Canvas
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 600;
+                canvas.height = 700;
+                const ctx = canvas.getContext('2d');
+
+                // Fondos
+                ctx.fillStyle = '#0f172a'; // slate-900
+                ctx.fillRect(0, 0, 600, 700);
+
+                ctx.fillStyle = '#1e293b'; // slate-800
+                ctx.fillRect(15, 15, 570, 670);
+                ctx.fillStyle = '#0f172a'; // slate-900
+                ctx.fillRect(20, 20, 560, 660);
+
+                // Franja decorativa roja de corte
+                ctx.fillStyle = '#ef4444'; 
+                ctx.fillRect(20, 20, 560, 10);
+
+                // Cabecera
+                ctx.fillStyle = '#f1f5f9';
+                ctx.font = 'bold 24px sans-serif';
+                ctx.fillText('PAPEPRINTER - REPORTE DE CORTE', 50, 80);
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px monospace';
+                const dateStr = new Date().toLocaleString('es-MX');
+                ctx.fillText('Fecha de Cierre: ' + dateStr, 50, 120);
+                ctx.fillText('----------------------------------------------------', 50, 150);
+
+                // Métricas
+                ctx.font = '18px sans-serif';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText('Órdenes de Venta:', 50, 200);
+                ctx.font = 'bold 20px monospace';
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillText(state.salesLog.length + ' ventas', 350, 200);
+
+                ctx.font = '18px sans-serif';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText('Total Hojas Impresas:', 50, 260);
+                ctx.font = 'bold 20px monospace';
+                ctx.fillStyle = '#f1f5f9';
+                ctx.fillText(sheetsAccum + ' unidad(es)', 350, 260);
+
+                ctx.font = '18px sans-serif';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText('Costo Operativo:', 50, 320);
+                ctx.font = 'bold 20px monospace';
+                ctx.fillStyle = '#ef4444';
+                ctx.fillText('$' + opAccum.toFixed(2), 350, 320);
+
+                ctx.font = '18px sans-serif';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText('Ingresos Recibidos:', 50, 380);
+                ctx.font = 'bold 22px monospace';
+                ctx.fillStyle = '#4ade80';
+                ctx.fillText('$' + sugAccum.toFixed(2), 350, 380);
+
+                ctx.font = '18px sans-serif';
+                ctx.fillStyle = '#cbd5e1';
+                ctx.fillText('Utilidad Neta:', 50, 440);
+                ctx.font = 'bold 26px monospace';
+                ctx.fillStyle = '#10b981';
+                ctx.fillText('$' + profit.toFixed(2), 350, 440);
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '14px monospace';
+                ctx.fillText('----------------------------------------------------', 50, 500);
+
+                // Firmas y cierre
+                ctx.fillStyle = '#6366f1';
+                ctx.font = 'italic bold 16px sans-serif';
+                ctx.fillText('PapePrinter by Edgar & Gemini', 50, 545);
+
+                ctx.fillStyle = '#64748b';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('Este reporte fue firmado digitalmente al efectuar el corte.', 50, 580);
+                ctx.fillText('Asegúrese de conservar este comprobante de caja.', 50, 600);
+
+                // Disparar descarga automática de la imagen
+                const link = document.createElement('a');
+                link.download = `corte_caja_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch(e) {
+                console.error("No se pudo generar el reporte visual de corte:", e);
+            }
+
+            state.salesLog = [];
+            localStorage.removeItem('papePrinterSalesLog');
+            updateSalesUI();
+            closeCorteModal();
+            showToast('Corte realizado con éxito. Reporte PNG descargado y caja reiniciada a $0.00', 'success');
+        }
 
         // Eventos
         function setupEventListeners() {
@@ -876,7 +1353,7 @@
                         l.download = `papeprinter_hoja_${idx + 1}.png`; 
                         l.href = c.toDataURL('image/png'); 
                         l.click();
-                    }, idx * 350); // Delay de protección para descarga masiva en el navegador
+                    }, idx * 350); 
                 });
                 showToast(`Iniciando descarga de ${derived.pages.length} imagen(es).`);
             };
@@ -887,9 +1364,15 @@
                     showToast('Carga imágenes antes de generar tu PDF.', 'error');
                     return;
                 }
-                                setTimeout(() => {
+                showToast('Asegúrate de seleccionar "Guardar como PDF" en el destino de impresión.', 'indigo');
+                setTimeout(() => {
                     window.print();
                 }, 100);
+            };
+
+            // Registrar venta y mandar a impresión
+            document.getElementById('btn-print-sales').onclick = () => {
+                registerSaleAndPrint();
             };
 
             document.querySelectorAll('#ui-fit button').forEach(b => b.onclick = (e) => { state.imageFit = e.target.dataset.val; updateAll(); });
@@ -903,6 +1386,25 @@
                 showToast('Mesa de trabajo restaurada.');
             };
 
+            // Toggle Cajón de Ventas
+            document.getElementById('btn-toggle-sales').onclick = () => {
+                const drawer = document.getElementById('sales-drawer');
+                drawer.classList.toggle('hidden');
+            };
+
+            // Corte de caja diario
+            document.getElementById('btn-corte').onclick = () => {
+                openCorteModal();
+            };
+
+            // Modal Tutorial
+            const tModal = document.getElementById('modal-tutorial');
+            document.getElementById('btn-tutorial').onclick = () => {
+                tModal.classList.remove('hidden');
+            };
+            document.getElementById('btn-close-tutorial').onclick = () => tModal.classList.add('hidden');
+            document.getElementById('btn-close-tutorial-bottom').onclick = () => tModal.classList.add('hidden');
+
             // Modal Settings
             const modal = document.getElementById('modal-settings');
             document.getElementById('btn-open-settings').onclick = () => {
@@ -910,7 +1412,13 @@
                 document.getElementById('cfg-life').value = state.costs.printerLife;
                 document.getElementById('cfg-ink').value = state.costs.inkPrice;
                 document.getElementById('cfg-yield').value = state.costs.inkYield;
-                document.getElementById('cfg-round').checked = state.costs.suggestedRounding;
+                
+                let rMode = state.costs.suggestedRounding;
+                if (rMode === true) rMode = 'half';
+                if (rMode === false) rMode = 'none';
+                if (!rMode) rMode = 'half';
+                document.getElementById('cfg-round-mode').value = rMode;
+
                 renderSettingsTable();
                 modal.classList.remove('hidden');
             };
@@ -922,7 +1430,7 @@
                 state.costs.printerLife = +document.getElementById('cfg-life').value;
                 state.costs.inkPrice = +document.getElementById('cfg-ink').value;
                 state.costs.inkYield = +document.getElementById('cfg-yield').value;
-                state.costs.suggestedRounding = document.getElementById('cfg-round').checked;
+                state.costs.suggestedRounding = document.getElementById('cfg-round-mode').value;
                 localStorage.setItem('papePrinterVanilla', JSON.stringify({costs: state.costs, papers: state.papers}));
                 updateAll();
                 modal.classList.add('hidden');
