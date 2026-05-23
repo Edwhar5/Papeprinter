@@ -39,30 +39,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-    <!--
-      PAPEPRINTER - STABLE VERSION 1.3 (TECHNICAL REVISIONS & AUDITING TOOLKIT)
-      HISTORIAL DE CAMBIOS:
-      1. Documentación inicial de cambios al principio del archivo de manera formal.
-      2. Separación de botones de acción superior: "Generar PDF" e "Imprimir" ahora son independientes.
-      3. Optimización de descarga PNG: ahora exporta secuencialmente TODOS los lienzos generados en cola de manera automatizada.
-      4. Cambio de nomenclatura de "Cédula" a "ID".
-      5. Implementación de orientación de ID (Áreas de IDs Horizontales de 90x55mm y Verticales de 55x90mm) dentro del panel ID con forzado de lienzo vertical.
-      6. Incorporación de notificaciones de tipo Toast reemplazando el alert() nativo del navegador.
-      7. Mantenimiento estricto del resto de algoritmos financieros, marcas de corte y persistencia.
-      8. Favicon dinámico SVG incrustado en el HEAD del documento.
-      9. Ajuste del Preset de división '2' en dos variantes: '2 Vert' (vertical) y '2 Horiz' (horizontal) para el aprovechamiento de papel según la orientación de la imagen.
-      10. Cambio de botón de acción principal a "Imprimir y Cobrar".
-      11. Creación de cajón de registro de ventas diario en el pie de página con persistencia contra fallos eléctricos (guardado automático en localStorage).
-      12. Implementación de un botón interactivo para generar cortes de caja con utilidades netas, evitando los alert() nativos.
-      13. Se asocia la clase 'no-print' a las notificaciones dinámicas (toast-container) para asegurar que no se impriman en el lienzo físico o PDF.
-      14. Ajuste de coherencia lingüística: cambio de "Cover" a "Rellenar" y de "Contain" a "Encajar".
-      15. Se optimiza el contraste de todos los campos del catálogo (inputs en A3) en modo nocturno con tipografía naranja para perfecta legibilidad.
-      16. Integración de un botón interactivo para desplegar un "Tutorial / Guía de Uso" completo en la sección A-1.
-      17. Rediseño de los botones de donación de mayor tamaño y visibilidad.
-      18. Modificación de la configuración de redondeo de un booleano simple a una triple opción: Sin Redondeo, Redondear al $.50c o Redondear al Entero más cercano.
-      19. El Corte de Caja genera un archivo de reporte gráfico PNG para descargas y auditorías administrativas.
-    -->
-
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
 
     <div class="h-screen w-screen flex flex-col md:flex-row no-print">
@@ -70,7 +46,6 @@
         <!-- SIDEBAR IZQUIERDA -->
         <div class="w-full md:w-[380px] h-full flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 shrink-0 shadow-[2px_0_15px_-3px_rgba(0,0,0,0.1)] z-10">
             
-            <!-- A-1: Header / Logo y Donaciones -->
             <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col shrink-0 bg-white dark:bg-gray-900 gap-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-xl tracking-tight">
@@ -93,7 +68,6 @@
                 <div class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">Edgar & Gemini</div>
             </div>
 
-            <!-- Scrollable Controls -->
             <div class="flex-1 overflow-y-auto custom-scrollbar p-5 flex flex-col gap-6">
                 <!-- A-2: Material -->
                 <section>
@@ -110,7 +84,6 @@
                     </div>
                 </section>
 
-                <!-- Retícula -->
                 <section>
                     <div class="flex items-center justify-between mb-3">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Composición</h3>
@@ -143,7 +116,6 @@
                     </div>
                 </section>
 
-                <!-- Efectos Globales -->
                 <section>
                     <h3 class="text-xs font-bold mb-3 uppercase tracking-wider text-gray-400 dark:text-gray-500">Efectos Globales</h3>
                     <div class="space-y-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
@@ -176,7 +148,6 @@
         <!-- AREA PRINCIPAL (B1, B2, B3) -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-100/50 dark:bg-gray-950 relative">
             
-            <!-- Top Actions -->
             <div class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 z-10">
                 <div class="text-sm font-bold text-gray-500 dark:text-gray-400" id="ui-status">Lienzo de Trabajo</div>
                 <div class="flex items-center gap-4">
@@ -197,7 +168,6 @@
                 </div>
             </div>
 
-            <!-- Toolbar Interna y Workspace -->
             <div class="flex-1 flex flex-col overflow-hidden relative">
                 <!-- Toolbar -->
                 <div class="h-14 bg-white/60 dark:bg-gray-900/60 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0 z-10">
@@ -222,7 +192,6 @@
                             <input type="range" id="ui-zoom-work" min="30" max="150" value="100" class="w-20 accent-gray-400" />
                         </div>
                         <div class="w-px h-5 bg-gray-300 dark:bg-gray-700"></div>
-                        <!-- Botón Limpiar Mesa SIEMPRE RENDERIZADO -->
                         <button id="btn-clear" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-bold transition text-gray-400 cursor-not-allowed" disabled>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> 
                             Limpiar Mesa
@@ -236,7 +205,6 @@
                 </div>
             </div>
 
-            <!-- Panel Inferior Costos y Ventas Expandible -->
             <div class="shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-20 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)] flex flex-col">
                 <!-- Fila Financiera Principal -->
                 <div class="h-auto md:h-28 px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -261,7 +229,6 @@
                     </div>
                     
                     <div class="flex items-center gap-4 mt-4 md:mt-0 w-full md:w-auto justify-end">
-                        <!-- Botón para Desplegar Registro de Ventas -->
                         <button id="btn-toggle-sales" class="flex items-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl text-xs font-bold transition text-gray-700 dark:text-gray-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
                             <span>Ventas (<span id="sales-count">0</span>)</span>
@@ -270,8 +237,11 @@
                         <div class="flex items-center gap-8 bg-gray-50 dark:bg-gray-800 py-3 px-8 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden shrink-0">
                             <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
                             <div class="text-right">
-                                <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mb-1">Precio Sugerido</div>
-                                <div id="fin-suggested" class="text-3xl font-black text-green-600 dark:text-green-400 font-mono">$0.00</div>
+                                <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mb-1">Precio Sugerido (Editable)</div>
+                                <div class="flex items-center justify-end text-3xl font-black text-green-600 dark:text-green-400 font-mono">
+                                    <span class="mr-1">$</span>
+                                    <input type="number" id="fin-suggested" step="0.5" class="bg-transparent border-b border-dashed border-green-300 dark:border-green-700 hover:border-green-500 focus:border-green-500 outline-none w-24 text-right font-black" value="0.00" />
+                                </div>
                             </div>
                             <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-8 text-right">
                                 <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">Margen Bruto</div>
@@ -331,7 +301,6 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIGURACIÓN A3 -->
     <div id="modal-settings" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
         <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
             <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
@@ -345,19 +314,19 @@
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Precio Equipo ($)</label>
-                        <input type="number" id="cfg-equip" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-equip" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-950 text-orange-600 dark:text-orange-400 border border-gray-300 dark:border-gray-700 rounded-lg outline-none" />
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Vida Útil (Pag)</label>
-                        <input type="number" id="cfg-life" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-life" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-950 text-orange-600 dark:text-orange-400 border border-gray-300 dark:border-gray-700 rounded-lg outline-none" />
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Kit Tintas ($)</label>
-                        <input type="number" id="cfg-ink" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-ink" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-950 text-orange-600 dark:text-orange-400 border border-gray-300 dark:border-gray-700 rounded-lg outline-none" />
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
                         <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2">Rendimiento ISO</label>
-                        <input type="number" id="cfg-yield" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-orange-400 border border-gray-300 dark:border-gray-600 rounded-lg outline-none" />
+                        <input type="number" id="cfg-yield" class="w-full text-lg font-mono p-2 bg-white dark:bg-gray-950 text-orange-600 dark:text-orange-400 border border-gray-300 dark:border-gray-700 rounded-lg outline-none" />
                     </div>
                 </div>
                 <!-- Papeles -->
@@ -405,7 +374,6 @@
         </div>
     </div>
 
-    <!-- MODAL TUTORIAL / GUÍA DE USO -->
     <div id="modal-tutorial" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
         <div class="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
             <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
@@ -443,7 +411,7 @@
                     <div class="flex gap-3">
                         <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">4</span>
                         <div>
-                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Modo ID (Cédulas)</h4>
+                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Modo ID</h4>
                             <p>El modo ID genera 2 espacios paralelos de 90x55mm (Horizontal o Vertical) centrados en el tercio superior bajo la regla de la pulgada.</p>
                         </div>
                     </div>
@@ -451,7 +419,7 @@
                         <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">5</span>
                         <div>
                             <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Cobro y Resiliencia Eléctrica</h4>
-                            <p>Haz clic en "Imprimir y Cobrar". Se registrarán las ventas del día de manera automática y persistente contra fallas de luz en el cajón de ventas inferior.</p>
+                            <p>Haz clic en "Imprimir y Cobrar". Se registrarán las ventas del día de manera automática y puedes negociar el precio sugerido modificando su campo.</p>
                         </div>
                     </div>
                 </div>
@@ -467,9 +435,8 @@
     <!-- AREA DE IMPRESIÓN (OCULTA) -->
     <div id="printOverlay" class="print-only hidden"></div>
 
-    <!-- LOGICA JAVASCRIPT -->
     <script>
-        // Constantes
+        // Constantes de Formatos
         const PAPER_SIZES = {
             A4: { name: 'A4', w: 210, h: 297 },
             Letter: { name: 'Carta', w: 215.9, h: 279.4 },
@@ -483,7 +450,7 @@
         const MM_TO_INCH = 25.4;
         const mmToPx = (mm, dpi) => (mm / MM_TO_INCH) * dpi;
 
-        // Estado App
+        // Estado Global
         let state = {
             images: [],
             paperId: 'p1',
@@ -491,7 +458,7 @@
             gridMode: 'preset',
             gridPreset: 4,
             gridCm: 5,
-            idOrientation: 'horiz', // 'horiz' o 'vert'
+            idOrientation: 'horiz', 
             isDarkMode: false,
             showCropMarks: true,
             isStickerMode: false,
@@ -500,6 +467,8 @@
             imageZoom: 100,
             workspaceZoom: 100,
             density: 0,
+            pageDensities: [], // Densidades por cada lienzo
+            customSuggestedPrice: null, // Sobrescribir precio sugerido
             costs: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, suggestedRounding: 'half' },
             papers: [
                 { id: 'p1', name: 'Carta Bond', size: 'Letter', price: 650, count: 5000, maxSalePrice: 8 },
@@ -510,12 +479,12 @@
                 { id: 'p6', name: 'Couche', size: 'Letter', price: 200, count: 100, maxSalePrice: 18 },
                 { id: 'p7', name: 'Fotográfico', size: 'Letter', price: 240, count: 100, maxSalePrice: 25 }
             ],
-            salesLog: [] // Registro de ventas diarias con persistencia
+            salesLog: []
         };
 
         let derived = { currentPaper: null, physicalSize: null, gridInfo: null, pages: [] };
 
-        // Inicialización
+        // Inicialización de la Aplicación
         function init() {
             const saved = localStorage.getItem('papePrinterVanilla');
             if(saved) {
@@ -523,7 +492,6 @@
                     const p = JSON.parse(saved);
                     if(p.costs) {
                         state.costs = p.costs;
-                        // Compatibilidad hacia atrás del redondeo
                         if (state.costs.suggestedRounding === true) state.costs.suggestedRounding = 'half';
                         if (state.costs.suggestedRounding === false) state.costs.suggestedRounding = 'none';
                         if (!state.costs.suggestedRounding) state.costs.suggestedRounding = 'half';
@@ -532,7 +500,6 @@
                 } catch(e){}
             }
             
-            // Cargar registro de ventas del localStorage contra fallas eléctricas
             const savedSales = localStorage.getItem('papePrinterSalesLog');
             if(savedSales) {
                 try {
@@ -545,7 +512,7 @@
             updateSalesUI();
         }
 
-        // Lógica Retícula
+        // Algoritmo de Composición de Retícula
         function calculateGrid(paper, isPortrait, margin, mode, preset, cmSize, isIDMode) {
             let paperW = isPortrait ? paper.w : paper.h;
             let paperH = isPortrait ? paper.h : paper.w;
@@ -565,7 +532,7 @@
                 const idW = state.idOrientation === 'horiz' ? 90 : 55;
                 const idH = state.idOrientation === 'horiz' ? 55 : 90;
 
-                const startY = 25.4; 
+                const startY = 25.4; // 1 Pulgada de margen superior reglamentario
                 const startX = margin + (workW - (idW * 2)) / 2;
                 
                 cells.push({ x: startX, y: startY, w: idW, h: idH });
@@ -607,7 +574,7 @@
             return { cols, rows, cells, cellW, cellH };
         }
 
-        // Carga Archivos
+        // Carga y Preparación de Imágenes
         const loadImg = (file) => new Promise((resolve, reject) => {
             const url = URL.createObjectURL(file);
             const img = new Image();
@@ -616,9 +583,7 @@
             img.src = url;
         });
 
-        // Actualizador Principal
         function updateAll() {
-            // Recalcular Derivados
             derived.currentPaper = state.papers.find(p => p.id === state.paperId) || state.papers[0];
             derived.physicalSize = PAPER_SIZES[derived.currentPaper.size] || PAPER_SIZES['Letter'];
             derived.gridInfo = calculateGrid(derived.physicalSize, state.isPortrait, SAFE_MARGIN_MM, state.gridMode, state.gridPreset, state.gridCm, state.gridMode === 'id');
@@ -644,46 +609,39 @@
         }
 
         function renderUI() {
-            // Theme
             if(state.isDarkMode) document.documentElement.classList.add('dark');
             else document.documentElement.classList.remove('dark');
 
-            // Select Papel
             const paperSelect = document.getElementById('ui-paper');
             if(paperSelect.children.length === 0 || paperSelect.options.length !== state.papers.length) {
                 paperSelect.innerHTML = state.papers.map(p => `<option value="${p.id}">${p.name} - (Fmt: ${PAPER_SIZES[p.size]?.name || p.size})</option>`).join('');
             }
             paperSelect.value = state.paperId;
 
-            // Botones Orientación
             const isP = state.isPortrait;
             const btnP = document.querySelector('#ui-orientation button[data-val="true"]');
             const btnL = document.querySelector('#ui-orientation button[data-val="false"]');
             btnP.className = `px-4 py-1.5 text-xs font-medium rounded-md transition-shadow ${isP ? 'bg-white shadow-sm text-indigo-700 dark:bg-gray-700 dark:text-indigo-300' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-800'}`;
             btnL.className = `px-4 py-1.5 text-xs font-medium rounded-md transition-shadow ${!isP ? 'bg-white shadow-sm text-indigo-700 dark:bg-gray-700 dark:text-indigo-300' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-800'}`;
 
-            // Modo Grid
             document.querySelectorAll('#ui-grid-mode button').forEach(b => {
                 const act = b.getAttribute('data-val') === state.gridMode;
                 b.className = `flex-1 py-1.5 text-xs font-medium rounded-md transition-all ${act ? 'bg-white shadow-sm text-gray-800 dark:bg-gray-700 dark:text-gray-100' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`;
             });
 
-            // Paneles Grid
             document.getElementById('ui-grid-content-preset').style.display = state.gridMode === 'preset' ? 'grid' : 'none';
             document.getElementById('ui-grid-content-slider').style.display = state.gridMode === 'slider' ? 'block' : 'none';
             document.getElementById('ui-grid-content-id').style.display = state.gridMode === 'id' ? 'block' : 'none';
 
-            // Badge
             document.getElementById('ui-grid-badge').innerText = state.gridMode === 'preset' ? `${derived.gridInfo.cells.length} ESP` : (state.gridMode==='slider' ? `${state.gridCm}cm` : 'ID');
 
-            // Presets
             const presetContainer = document.getElementById('ui-grid-content-preset');
             if(presetContainer.children.length === 0) {
                 ['1', '2V', '2H', '4', '6', '8', '9', '12', '16', '24', '32'].forEach(n => {
                     const b = document.createElement('button');
                     b.innerText = n === '2V' ? '2 Vert' : (n === '2H' ? '2 Horiz' : n);
                     b.setAttribute('data-val', n);
-                    b.onclick = () => { state.gridPreset = n; updateAll(); };
+                    b.onclick = () => { state.gridPreset = n; state.customSuggestedPrice = null; updateAll(); };
                     presetContainer.appendChild(b);
                 });
             }
@@ -697,25 +655,20 @@
                 b.className = `px-3 py-1 text-[10px] font-bold rounded transition-all ${act ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-900'}`;
             });
 
-            // Toggles Globales
             document.getElementById('ui-opt-sticker').checked = state.isStickerMode;
             document.getElementById('ui-opt-crop').checked = state.showCropMarks;
             document.getElementById('ui-opt-mono').checked = state.isMonochrome;
 
-            // Botones Ajuste
             document.querySelectorAll('#ui-fit button').forEach(b => {
                 const act = b.getAttribute('data-val') === state.imageFit;
                 b.className = `px-4 py-1 text-xs font-semibold rounded ${act ? 'bg-white shadow-sm dark:bg-gray-600 text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`;
             });
 
-            // Sliders Numéricos
             document.getElementById('ui-zoom-img').value = state.imageZoom;
             document.getElementById('ui-zoom-work').value = state.workspaceZoom;
 
-            // Status
             document.getElementById('ui-status').innerHTML = state.images.length > 0 ? `<span class="text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">${derived.pages.length} Hoja(s) en cola</span>` : 'Lienzo de Trabajo';
 
-            // Limpiar Mesa Lógica
             const btnClear = document.getElementById('btn-clear');
             if (state.images.length > 0) {
                 btnClear.removeAttribute('disabled');
@@ -740,12 +693,10 @@
             `;
             container.appendChild(toast);
             
-            // Animation In
             requestAnimationFrame(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             });
 
-            // Auto Remove
             setTimeout(() => {
                 toast.classList.add('translate-y-2', 'opacity-0');
                 toast.addEventListener('transitionend', () => toast.remove());
@@ -768,6 +719,7 @@
                     </label>
                 </div>`;
                 document.getElementById('file-upload').addEventListener('change', async (e) => {
+                    state.customSuggestedPrice = null;
                     const newImgs = await Promise.all(Array.from(e.target.files).map(loadImg));
                     state.images.push(...newImgs);
                     updateAll();
@@ -796,12 +748,11 @@
 
                 container.appendChild(wrap);
 
-                // Dibujar
-                drawToCanvas(canvas, pageImgs, false, idx === 0);
+                drawToCanvas(canvas, pageImgs, false, idx);
             });
         }
 
-        function drawToCanvas(canvas, pageImgs, isExport = false, isFirstPage = false) {
+        function drawToCanvas(canvas, pageImgs, isExport = false, pageIdx = 0) {
             const ctx = canvas.getContext('2d', { willReadFrequently: true });
             const dpi = isExport ? DPI_EXPORT : DPI_DISPLAY;
             const wMm = state.isPortrait ? derived.physicalSize.w : derived.physicalSize.h;
@@ -858,8 +809,8 @@
                 }
             });
 
-            // Density
-            if(isFirstPage && !isExport && pageImgs.length > 0) {
+            // Medir Cobertura/Densidad Independiente de Tinta por Cada Lienzo
+            if(!isExport && pageImgs.length > 0) {
                 setTimeout(() => {
                     const tmp = document.createElement('canvas');
                     tmp.width = canvas.width * 0.1; tmp.height = canvas.height * 0.1;
@@ -870,7 +821,11 @@
                     for(let i=0; i<p.length; i+=4) if(p[i]<240 || p[i+1]<240 || p[i+2]<240) c++;
                     let raw = (c / (tmp.width*tmp.height)) * 100;
                     const areaR = (derived.gridInfo.cells[0].w * derived.gridInfo.cols * derived.gridInfo.cells[0].h * derived.gridInfo.rows) / (wMm*hMm);
-                    state.density = Math.min(100, Math.max(0, raw / areaR));
+                    state.pageDensities[pageIdx] = Math.min(100, Math.max(0, raw / areaR));
+                    
+                    if (pageIdx === 0) {
+                        state.density = state.pageDensities[0];
+                    }
                     updateFinancials();
                 }, 100);
             }
@@ -882,7 +837,7 @@
                 document.getElementById('fin-inkCost').innerText = '$0.00';
                 document.getElementById('fin-equipCost').innerText = '$0.00';
                 document.getElementById('fin-totalOp').innerText = '$0.00';
-                document.getElementById('fin-suggested').innerText = '$0.00';
+                document.getElementById('fin-suggested').value = '0.00';
                 document.getElementById('fin-profit').innerText = '$0.00';
                 document.getElementById('fin-hojas').innerText = 'x0 Hoja(s)';
                 document.getElementById('fin-density').innerText = '(0% cov)';
@@ -892,23 +847,31 @@
             const c = state.costs;
             const p = derived.currentPaper;
             const costPerSheet = p.price / p.count;
-            const ink = (state.density/100) * (c.inkPrice/c.inkYield) * 1.1;
             const eq = c.printerPrice / (c.printerLife * 2);
-            const opUnit = costPerSheet + ink + eq;
 
             let totSug = 0;
             let totOp = 0;
             const totCells = derived.gridInfo.cells.length;
 
-            derived.pages.forEach(pg => {
+            derived.pages.forEach((pg, idx) => {
+                const density = state.pageDensities[idx] || 0;
+                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
+                const opUnit = costPerSheet + ink + eq;
                 totOp += opUnit;
-                const base = (p.maxSalePrice / totCells) * pg.length;
-                totSug += Math.max(base, opUnit * 2);
+
+                let pageSug = 0;
+                if (totCells === 1) {
+                    // Algoritmo Especial: Costo operativo (material + depreciación + tinta de este lienzo) + (precio máximo de venta x porcetaje cobertura)
+                    pageSug = opUnit + (p.maxSalePrice * (density / 100));
+                } else {
+                    const base = (p.maxSalePrice / totCells) * pg.length;
+                    pageSug = Math.max(base, opUnit * 2);
+                }
+                totSug += pageSug;
             });
 
             if(state.isMonochrome) totSug *= 0.25;
             
-            // Regla de Redondeo Ajustable
             let rMode = c.suggestedRounding;
             if (rMode === true) rMode = 'half';
             if (rMode === false) rMode = 'none';
@@ -920,19 +883,29 @@
                 totSug = Math.round(totSug);
             }
 
+            // Actualización de Textos
+            const firstDensity = state.pageDensities[0] || 0;
+            const firstInk = (firstDensity/100) * (c.inkPrice/c.inkYield) * 1.1;
             document.getElementById('fin-costSheet').innerText = `$${costPerSheet.toFixed(2)}`;
-            document.getElementById('fin-inkCost').innerText = `$${ink.toFixed(2)}`;
+            document.getElementById('fin-inkCost').innerText = `$${firstInk.toFixed(2)}`;
             document.getElementById('fin-equipCost').innerText = `$${eq.toFixed(2)}`;
             document.getElementById('fin-totalOp').innerText = `$${totOp.toFixed(2)}`;
-            document.getElementById('fin-suggested').innerText = `$${totSug.toFixed(2)}`;
             
+            // Comprobación de Precio de Venta Sugerido Editable
+            const sugInput = document.getElementById('fin-suggested');
+            if (state.customSuggestedPrice === null || state.customSuggestedPrice === undefined) {
+                sugInput.value = totSug.toFixed(2);
+            } else {
+                totSug = state.customSuggestedPrice;
+            }
+
             const profit = totSug - totOp;
             const pEl = document.getElementById('fin-profit');
             pEl.innerText = `$${profit.toFixed(2)}`;
             pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
             
             document.getElementById('fin-hojas').innerText = `x${derived.pages.length} Hoja(s)`;
-            document.getElementById('fin-density').innerText = `(${state.density.toFixed(0)}% cov)`;
+            document.getElementById('fin-density').innerText = `(${firstDensity.toFixed(0)}% cov)`;
         }
 
         function renderPrintOverlay() {
@@ -984,7 +957,7 @@
             });
         }
 
-        // Render Tabla Ajustes
+        // Renderizado Catálogo Modal A3
         function renderSettingsTable() {
             const tbody = document.getElementById('cfg-papers-body');
             tbody.innerHTML = '';
@@ -1005,10 +978,9 @@
                 tbody.appendChild(tr);
             });
         }
-        window.updatePaper = (idx, field, val) => { state.papers[idx][field] = val; }
+        window.updatePaper = (idx, field, val) => { state.papers[idx][field] = val; state.customSuggestedPrice = null; }
         window.removePaper = (id) => { if(state.papers.length>1){ state.papers = state.papers.filter(p=>p.id!==id); if(state.paperId===id) state.paperId=state.papers[0].id; renderSettingsTable(); }}
 
-        // Gestión del POS y Caja Diario
         function updateSalesUI() {
             const tableBody = document.getElementById('sales-table-body');
             const salesCount = document.getElementById('sales-count');
@@ -1064,53 +1036,35 @@
                 return;
             }
 
-            // Calcular valores financieros activos
             const c = state.costs;
             const p = derived.currentPaper;
             const costPerSheet = p.price / p.count;
-            const ink = (state.density/100) * (c.inkPrice/c.inkYield) * 1.1;
             const eq = c.printerPrice / (c.printerLife * 2);
-            const opUnit = costPerSheet + ink + eq;
 
-            let totSug = 0;
             let totOp = 0;
-            const totCells = derived.gridInfo.cells.length;
-
-            derived.pages.forEach(pg => {
-                totOp += opUnit;
-                const base = (p.maxSalePrice / totCells) * pg.length;
-                totSug += Math.max(base, opUnit * 2);
+            derived.pages.forEach((pg, idx) => {
+                const density = state.pageDensities[idx] || 0;
+                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
+                totOp += (costPerSheet + ink + eq);
             });
 
-            if(state.isMonochrome) totSug *= 0.25;
-            
-            // Regla de Redondeo Ajustable
-            let rMode = c.suggestedRounding;
-            if (rMode === true) rMode = 'half';
-            if (rMode === false) rMode = 'none';
-            if (!rMode) rMode = 'half';
+            // Respetar la personalización negociada por el usuario
+            const finalSug = parseFloat(document.getElementById('fin-suggested').value) || 0;
 
-            if (rMode === 'half') {
-                totSug = Math.round(totSug * 2) / 2;
-            } else if (rMode === 'whole') {
-                totSug = Math.round(totSug);
-            }
-
-            // Registrar venta
             const newSale = {
                 id: Math.random().toString(36).substr(2, 9),
                 timestamp: new Date().toISOString(),
                 paper: p.name,
                 pages: derived.pages.length,
                 totalOp: totOp,
-                totalSug: totSug
+                totalSug: finalSug
             };
 
             state.salesLog.push(newSale);
             localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
             updateSalesUI();
 
-            showToast(`Venta registrada: $${totSug.toFixed(2)}. Abriendo impresora...`, 'success');
+            showToast(`Venta registrada: $${finalSug.toFixed(2)}. Abriendo impresora...`, 'success');
 
             setTimeout(() => {
                 window.print();
@@ -1206,27 +1160,23 @@
 
             const profit = sugAccum - opAccum;
 
-            // Generar Reporte Visual PNG mediante Canvas
             try {
                 const canvas = document.createElement('canvas');
                 canvas.width = 600;
                 canvas.height = 700;
                 const ctx = canvas.getContext('2d');
 
-                // Fondos
-                ctx.fillStyle = '#0f172a'; // slate-900
+                ctx.fillStyle = '#0f172a'; 
                 ctx.fillRect(0, 0, 600, 700);
 
-                ctx.fillStyle = '#1e293b'; // slate-800
+                ctx.fillStyle = '#1e293b'; 
                 ctx.fillRect(15, 15, 570, 670);
-                ctx.fillStyle = '#0f172a'; // slate-900
+                ctx.fillStyle = '#0f172a'; 
                 ctx.fillRect(20, 20, 560, 660);
 
-                // Franja decorativa roja de corte
                 ctx.fillStyle = '#ef4444'; 
                 ctx.fillRect(20, 20, 560, 10);
 
-                // Cabecera
                 ctx.fillStyle = '#f1f5f9';
                 ctx.font = 'bold 24px sans-serif';
                 ctx.fillText('PAPEPRINTER - REPORTE DE CORTE', 50, 80);
@@ -1237,7 +1187,6 @@
                 ctx.fillText('Fecha de Cierre: ' + dateStr, 50, 120);
                 ctx.fillText('----------------------------------------------------', 50, 150);
 
-                // Métricas
                 ctx.font = '18px sans-serif';
                 ctx.fillStyle = '#cbd5e1';
                 ctx.fillText('Órdenes de Venta:', 50, 200);
@@ -1277,7 +1226,6 @@
                 ctx.font = '14px monospace';
                 ctx.fillText('----------------------------------------------------', 50, 500);
 
-                // Firmas y cierre
                 ctx.fillStyle = '#6366f1';
                 ctx.font = 'italic bold 16px sans-serif';
                 ctx.fillText('PapePrinter by Edgar & Gemini', 50, 545);
@@ -1287,7 +1235,6 @@
                 ctx.fillText('Este reporte fue firmado digitalmente al efectuar el corte.', 50, 580);
                 ctx.fillText('Asegúrese de conservar este comprobante de caja.', 50, 600);
 
-                // Disparar descarga automática de la imagen
                 const link = document.createElement('a');
                 link.download = `corte_caja_${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png');
@@ -1303,31 +1250,46 @@
             showToast('Corte realizado con éxito. Reporte PNG descargado y caja reiniciada a $0.00', 'success');
         }
 
-        // Eventos
         function setupEventListeners() {
-            // Drag Drop
             const w = document.getElementById('canvas-container');
             w.addEventListener('dragover', e=>e.preventDefault());
             w.addEventListener('drop', async e=>{
                 e.preventDefault();
                 const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
                 if(files.length){
+                    state.customSuggestedPrice = null;
                     const imgs = await Promise.all(files.map(loadImg));
                     state.images.push(...imgs);
                     updateAll();
                 }
             });
 
-            // UI Left
-            document.getElementById('ui-paper').onchange = e => { state.paperId = e.target.value; updateAll(); };
-            document.querySelectorAll('#ui-orientation button').forEach(b => b.onclick = (e) => { state.isPortrait = e.target.dataset.val === 'true'; updateAll(); });
-            document.querySelectorAll('#ui-grid-mode button').forEach(b => b.onclick = (e) => { state.gridMode = e.target.dataset.val; updateAll(); });
-            document.getElementById('ui-slider').oninput = e => { state.gridCm = parseFloat(e.target.value); document.getElementById('ui-slider-val').innerText = `${state.gridCm} cm`; updateAll(); };
+            document.getElementById('ui-paper').onchange = e => { 
+                state.paperId = e.target.value; 
+                state.customSuggestedPrice = null; 
+                updateAll(); 
+            };
+            document.querySelectorAll('#ui-orientation button').forEach(b => b.onclick = (e) => { 
+                state.isPortrait = e.target.dataset.val === 'true'; 
+                state.customSuggestedPrice = null; 
+                updateAll(); 
+            });
+            document.querySelectorAll('#ui-grid-mode button').forEach(b => b.onclick = (e) => { 
+                state.gridMode = e.target.dataset.val; 
+                state.customSuggestedPrice = null; 
+                updateAll(); 
+            });
+            document.getElementById('ui-slider').oninput = e => { 
+                state.gridCm = parseFloat(e.target.value); 
+                document.getElementById('ui-slider-val').innerText = `${state.gridCm} cm`; 
+                state.customSuggestedPrice = null; 
+                updateAll(); 
+            };
             
-            // Orientación de ID Evento
             document.querySelectorAll('#ui-id-orientation button').forEach(b => {
                 b.onclick = (e) => {
                     state.idOrientation = e.currentTarget.getAttribute('data-val');
+                    state.customSuggestedPrice = null;
                     updateAll();
                 };
             });
@@ -1336,10 +1298,8 @@
             document.getElementById('ui-opt-crop').onchange = e => { state.showCropMarks = e.target.checked; updateAll(); };
             document.getElementById('ui-opt-mono').onchange = e => { state.isMonochrome = e.target.checked; updateAll(); };
 
-            // UI Top / Right
             document.getElementById('btn-theme').onclick = () => { state.isDarkMode = !state.isDarkMode; renderUI(); };
             
-            // Exportar TODOS los lienzos de forma secuencial en PNG
             document.getElementById('btn-png').onclick = () => {
                 if(state.images.length === 0) {
                     showToast('Carga imágenes antes de exportar.', 'error');
@@ -1348,7 +1308,7 @@
                 derived.pages.forEach((page, idx) => {
                     setTimeout(() => {
                         const c = document.createElement('canvas');
-                        drawToCanvas(c, page, true, false);
+                        drawToCanvas(c, page, true, idx);
                         const l = document.createElement('a'); 
                         l.download = `papeprinter_hoja_${idx + 1}.png`; 
                         l.href = c.toDataURL('image/png'); 
@@ -1358,7 +1318,6 @@
                 showToast(`Iniciando descarga de ${derived.pages.length} imagen(es).`);
             };
 
-            // Botón PDF Exclusivo
             document.getElementById('btn-pdf').onclick = () => {
                 if(state.images.length === 0) {
                     showToast('Carga imágenes antes de generar tu PDF.', 'error');
@@ -1370,7 +1329,6 @@
                 }, 100);
             };
 
-            // Registrar venta y mandar a impresión
             document.getElementById('btn-print-sales').onclick = () => {
                 registerSaleAndPrint();
             };
@@ -1379,25 +1337,45 @@
             document.getElementById('ui-zoom-img').oninput = e => { state.imageZoom = parseInt(e.target.value); updateAll(); };
             document.getElementById('ui-zoom-work').oninput = e => { state.workspaceZoom = parseInt(e.target.value); renderCanvases(); };
             
-            // Botón Limpiar
             document.getElementById('btn-clear').onclick = () => {
                 state.images = [];
+                state.customSuggestedPrice = null;
                 updateAll();
                 showToast('Mesa de trabajo restaurada.');
             };
 
-            // Toggle Cajón de Ventas
+            // Escuchador para Modificación Manual de Precio de Venta Sugerido (Cobro Flexible)
+            document.getElementById('fin-suggested').oninput = e => {
+                state.customSuggestedPrice = parseFloat(e.target.value) || 0;
+                
+                // Recalcular la ganancia basada en el nuevo valor de la negociación
+                const c = state.costs;
+                const p = derived.currentPaper;
+                const costPerSheet = p.price / p.count;
+                const eq = c.printerPrice / (c.printerLife * 2);
+
+                let totOp = 0;
+                derived.pages.forEach((pg, idx) => {
+                    const density = state.pageDensities[idx] || 0;
+                    const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
+                    totOp += (costPerSheet + ink + eq);
+                });
+
+                const profit = state.customSuggestedPrice - totOp;
+                const pEl = document.getElementById('fin-profit');
+                pEl.innerText = `$${profit.toFixed(2)}`;
+                pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
+            };
+
             document.getElementById('btn-toggle-sales').onclick = () => {
                 const drawer = document.getElementById('sales-drawer');
                 drawer.classList.toggle('hidden');
             };
 
-            // Corte de caja diario
             document.getElementById('btn-corte').onclick = () => {
                 openCorteModal();
             };
 
-            // Modal Tutorial
             const tModal = document.getElementById('modal-tutorial');
             document.getElementById('btn-tutorial').onclick = () => {
                 tModal.classList.remove('hidden');
@@ -1405,7 +1383,6 @@
             document.getElementById('btn-close-tutorial').onclick = () => tModal.classList.add('hidden');
             document.getElementById('btn-close-tutorial-bottom').onclick = () => tModal.classList.add('hidden');
 
-            // Modal Settings
             const modal = document.getElementById('modal-settings');
             document.getElementById('btn-open-settings').onclick = () => {
                 document.getElementById('cfg-equip').value = state.costs.printerPrice;
@@ -1432,12 +1409,12 @@
                 state.costs.inkYield = +document.getElementById('cfg-yield').value;
                 state.costs.suggestedRounding = document.getElementById('cfg-round-mode').value;
                 localStorage.setItem('papePrinterVanilla', JSON.stringify({costs: state.costs, papers: state.papers}));
+                state.customSuggestedPrice = null;
                 updateAll();
                 modal.classList.add('hidden');
                 showToast('Configuraciones guardadas localmente.');
             };
 
-            // Import/Export
             document.getElementById('btn-export').onclick = () => {
                 const b = new Blob([JSON.stringify({costs: state.costs, papers: state.papers}, null, 2)], {type:'application/json'});
                 const l = document.createElement('a'); l.href = URL.createObjectURL(b); l.download='pape_config.json'; l.click();
@@ -1458,7 +1435,6 @@
             }
         }
 
-        // Boot
         window.onload = init;
     </script>
 </body>
