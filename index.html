@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PapePrinter - Herramienta de Impresion</title>
+    <title>PapePrinter - Herramienta de Imposición</title>
     
     <!-- Favicon Profesional SVG Incrustado -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z'/%3E%3Cpath d='M9 7h6'/%3E%3Cpath d='M9 11h6'/%3E%3Cpath d='M9 15h4'/%3E%3C/svg%3E">
@@ -41,10 +41,18 @@
 
     <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
 
+    <!-- Overlay traslúcido para menú móvil -->
+    <div id="sidebar-overlay" class="hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-20 md:hidden no-print"></div>
+
+    <!-- Botón flotante para menú de parámetros en móviles -->
+    <button id="btn-toggle-sidebar" class="md:hidden fixed bottom-6 right-6 z-40 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all transform hover:scale-105 active:scale-95 no-print" title="Configurar Impresión">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+    </button>
+
     <div class="h-screen w-screen flex flex-col md:flex-row no-print">
         
         <!-- SIDEBAR IZQUIERDA -->
-        <div class="w-full md:w-[380px] h-full flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 shrink-0 shadow-[2px_0_15px_-3px_rgba(0,0,0,0.1)] z-10">
+        <div id="sidebar" class="w-72 sm:w-[380px] h-full flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 shrink-0 shadow-[2px_0_15px_-3px_rgba(0,0,0,0.1)] z-30 transition-transform duration-300 fixed md:static inset-y-0 left-0 transform -translate-x-full md:translate-x-0">
             
             <div class="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col shrink-0 bg-white dark:bg-gray-900 gap-3">
                 <div class="flex items-center justify-between">
@@ -63,6 +71,9 @@
                         <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-2 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Donar via PayPal">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
                         </a>
+                        <button id="btn-close-sidebar-mobile" class="md:hidden p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition ml-1" title="Cerrar Ajustes">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
                     </div>
                 </div>
                 <div class="text-[10px] text-gray-400 font-mono tracking-widest uppercase">Edgar & Gemini</div>
@@ -135,6 +146,38 @@
                     </div>
                 </section>
 
+                <!-- SECCIÓN DE AFILIADOS / PUBLICIDAD -->
+                <section class="mt-2">
+                    <h3 class="text-xs font-bold mb-3 uppercase tracking-wider text-gray-400 dark:text-gray-500 flex items-center justify-between">
+                        <span>Insumos Recomendados</span>
+                        <span class="text-[9px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded font-mono font-bold">OFERTAS</span>
+                    </h3>
+                    <div class="grid grid-cols-1 gap-2.5">
+                        <!-- Impresora -->
+                        <a href="https://www.amazon.com.mx/s?k=impresora+epson+ecotank&linkCode=ll2&tag=papeprinter-20" target="_blank" class="flex gap-3 bg-gray-50 hover:bg-indigo-50/40 dark:bg-gray-900 dark:hover:bg-indigo-950/20 border border-gray-100 dark:border-gray-800 rounded-xl p-2.5 transition group">
+                            <div class="w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex items-center justify-center shrink-0 text-indigo-500 group-hover:scale-105 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">Epson EcoTank L8050</h4>
+                                <p class="text-[9px] text-gray-400 truncate">Calidad fotográfica continua e insuperable</p>
+                                <span class="text-[9px] text-indigo-600 dark:text-indigo-400 font-bold mt-1 inline-flex items-center gap-0.5">Ver en Amazon →</span>
+                            </div>
+                        </a>
+                        <!-- Papel Opalina -->
+                        <a href="https://www.amazon.com.mx/s?k=papel+opalina+carta+220g&linkCode=ll2&tag=papeprinter-20" target="_blank" class="flex gap-3 bg-gray-50 hover:bg-indigo-50/40 dark:bg-gray-900 dark:hover:bg-indigo-950/20 border border-gray-100 dark:border-gray-800 rounded-xl p-2.5 transition group">
+                            <div class="w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg flex items-center justify-center shrink-0 text-indigo-500 group-hover:scale-105 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0 flex flex-col justify-center">
+                                <h4 class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">Opalina Gruesa 220g - 250 Hojas</h4>
+                                <p class="text-[9px] text-gray-400 truncate">Rigidez ideal para tarjetas y diplomas</p>
+                                <span class="text-[9px] text-indigo-600 dark:text-indigo-400 font-bold mt-1 inline-flex items-center gap-0.5">Ver en Amazon →</span>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+
                 <!-- Botón Settings -->
                 <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700">
                     <button id="btn-open-settings" class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-200 dark:text-gray-900 text-white font-semibold rounded-xl transition shadow-lg text-sm">
@@ -148,21 +191,21 @@
         <!-- AREA PRINCIPAL (B1, B2, B3) -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-gray-100/50 dark:bg-gray-950 relative">
             
-            <div class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 z-10">
+            <div class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 sm:px-6 z-10">
                 <div class="text-sm font-bold text-gray-500 dark:text-gray-400" id="ui-status">Lienzo de Trabajo</div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 sm:gap-4">
                     <button id="btn-theme" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition" title="Cambiar Tema">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                     </button>
-                    <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1"></div>
-                    <button id="btn-png" class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                    <div class="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block"></div>
+                    <button id="btn-png" class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span class="hidden sm:inline">Descargar PNG</span>
                     </button>
-                    <button id="btn-pdf" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
+                    <button id="btn-pdf" class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         <span class="hidden sm:inline">Generar PDF</span>
                     </button>
-                    <button id="btn-print-sales" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
+                    <button id="btn-print-sales" class="flex items-center gap-2 px-3 sm:px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition shadow-md">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <span class="hidden sm:inline">Imprimir y Cobrar</span>
                     </button>
                 </div>
@@ -170,94 +213,94 @@
 
             <div class="flex-1 flex flex-col overflow-hidden relative">
                 <!-- Toolbar -->
-                <div class="h-14 bg-white/60 dark:bg-gray-900/60 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shrink-0 z-10">
-                    <div class="flex items-center gap-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ajuste</span>
-                            <div class="flex bg-gray-200/50 dark:bg-gray-800 rounded-md p-1 border border-gray-200 dark:border-gray-700" id="ui-fit">
-                                <button data-val="cover" class="px-4 py-1 text-xs font-semibold rounded bg-white shadow-sm dark:bg-gray-600 text-gray-900 dark:text-white">Rellenar</button>
-                                <button data-val="contain" class="px-4 py-1 text-xs font-semibold rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Encajar</button>
+                <div class="h-14 bg-white/60 dark:bg-gray-900/60 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex flex-wrap items-center justify-between px-4 sm:px-6 shrink-0 z-10 gap-2">
+                    <div class="flex items-center gap-3 sm:gap-6">
+                        <div class="flex items-center gap-2 sm:gap-3">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest hidden sm:inline">Ajuste</span>
+                            <div class="flex bg-gray-200/50 dark:bg-gray-800 rounded-md p-0.5 sm:p-1 border border-gray-200 dark:border-gray-700" id="ui-fit">
+                                <button data-val="cover" class="px-2 sm:px-4 py-1 text-[11px] sm:text-xs font-semibold rounded bg-white shadow-sm dark:bg-gray-600 text-gray-900 dark:text-white">Rellenar</button>
+                                <button data-val="contain" class="px-2 sm:px-4 py-1 text-[11px] sm:text-xs font-semibold rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Encajar</button>
                             </div>
                         </div>
                         <div class="w-px h-5 bg-gray-300 dark:bg-gray-700"></div>
-                        <div class="flex items-center gap-2 group">
+                        <div class="flex items-center gap-1.5 sm:gap-2 group">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-                            <input type="range" id="ui-zoom-img" min="50" max="250" value="100" class="w-24 accent-indigo-500" />
+                            <input type="range" id="ui-zoom-img" min="50" max="250" value="100" class="w-16 sm:w-24 accent-indigo-500" />
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
                         </div>
                     </div>
-                    <div class="flex items-center gap-5">
+                    <div class="flex items-center gap-3 sm:gap-5">
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vista Global</span>
-                            <input type="range" id="ui-zoom-work" min="30" max="150" value="100" class="w-20 accent-gray-400" />
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest hidden sm:inline">Vista Global</span>
+                            <input type="range" id="ui-zoom-work" min="30" max="150" value="100" class="w-16 sm:w-20 accent-gray-400" />
                         </div>
                         <div class="w-px h-5 bg-gray-300 dark:bg-gray-700"></div>
-                        <button id="btn-clear" class="px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-bold transition text-gray-400 cursor-not-allowed" disabled>
+                        <button id="btn-clear" class="px-2 sm:px-3 py-1.5 rounded-lg flex items-center gap-1 sm:gap-1.5 text-xs font-bold transition text-gray-400 cursor-not-allowed" disabled>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> 
-                            Limpiar Mesa
+                            Limpiar
                         </button>
                     </div>
                 </div>
 
                 <!-- Contenedor Lienzos -->
-                <div id="canvas-container" class="flex-1 overflow-auto custom-scrollbar p-10 flex flex-col items-center gap-12">
+                <div id="canvas-container" class="flex-1 overflow-auto custom-scrollbar p-4 sm:p-10 flex flex-col items-center gap-8 sm:gap-12">
                     <!-- Se llena con JS -->
                 </div>
             </div>
 
             <div class="shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-20 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)] flex flex-col">
                 <!-- Fila Financiera Principal -->
-                <div class="h-auto md:h-28 px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-8 md:gap-12 flex-wrap md:flex-nowrap">
-                        <div class="flex flex-col gap-1">
-                            <div class="flex items-center gap-2 text-[10px] uppercase font-black text-gray-400 tracking-widest">
+                <div class="h-auto px-4 sm:px-8 py-3.5 sm:py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-4 sm:gap-8 md:gap-12 w-full md:w-auto">
+                        <div class="flex flex-col gap-0.5">
+                            <div class="flex items-center gap-1.5 text-[10px] uppercase font-black text-gray-400 tracking-widest">
                                 Material+Tinta <span id="fin-hojas" class="bg-gray-100 dark:bg-gray-800 text-gray-500 px-1.5 py-0.5 rounded text-[9px]">x0 Hoja(s)</span>
                             </div>
-                            <div class="text-sm font-mono font-medium text-gray-600 dark:text-gray-400">
+                            <div class="text-xs sm:text-sm font-mono font-medium text-gray-600 dark:text-gray-400">
                                 <span id="fin-costSheet" class="text-gray-800 dark:text-gray-200">$0.00</span> + <span id="fin-inkCost" class="text-indigo-600 dark:text-indigo-400">$0.00</span> 
                                 <span id="fin-density" class="text-[10px] text-gray-400 ml-1">(0% cov)</span>
                             </div>
                         </div>
-                        <div class="flex flex-col gap-1">
+                        <div class="flex flex-col gap-0.5">
                             <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest">Depreciación</div>
-                            <div id="fin-equipCost" class="text-sm font-mono font-medium text-gray-800 dark:text-gray-200">$0.00</div>
+                            <div id="fin-equipCost" class="text-xs sm:text-sm font-mono font-medium text-gray-800 dark:text-gray-200">$0.00</div>
                         </div>
-                        <div class="border-l-2 border-red-100 dark:border-red-900/30 pl-6">
-                            <div class="text-[10px] uppercase font-black text-red-400 tracking-widest mb-1">Costo Operativo</div>
-                            <div id="fin-totalOp" class="text-2xl font-black font-mono text-red-600 dark:text-red-400">$0.00</div>
+                        <div class="border-l-2 border-red-100 dark:border-red-900/30 pl-4 sm:pl-6">
+                            <div class="text-[10px] uppercase font-black text-red-400 tracking-widest mb-0.5">Costo Operativo</div>
+                            <div id="fin-totalOp" class="text-xl sm:text-2xl font-black font-mono text-red-600 dark:text-red-400">$0.00</div>
                         </div>
                     </div>
                     
-                    <div class="flex items-center gap-4 mt-4 md:mt-0 w-full md:w-auto justify-end">
-                        <button id="btn-toggle-sales" class="flex items-center gap-2 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl text-xs font-bold transition text-gray-700 dark:text-gray-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2 md:mt-0 w-full md:w-auto justify-end">
+                        <button id="btn-toggle-sales" class="flex items-center justify-center gap-2 px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-xl text-xs font-bold transition text-gray-700 dark:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
                             <span>Ventas (<span id="sales-count">0</span>)</span>
                         </button>
 
-                        <div class="flex items-center gap-8 bg-gray-50 dark:bg-gray-800 py-3 px-8 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden shrink-0">
+                        <div class="flex items-center justify-between sm:justify-end gap-6 bg-gray-50 dark:bg-gray-800 py-2 sm:py-3 px-4 sm:px-8 rounded-2xl border border-gray-200 dark:border-gray-700 relative overflow-hidden shrink-0">
                             <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
                             <div class="text-right">
-                                <div class="text-[10px] uppercase font-black text-gray-500 tracking-widest mb-1">Precio Sugerido (Editable)</div>
-                                <div class="flex items-center justify-end text-3xl font-black text-green-600 dark:text-green-400 font-mono">
-                                    <span class="mr-1">$</span>
-                                    <input type="number" id="fin-suggested" step="0.5" class="bg-transparent border-b border-dashed border-green-300 dark:border-green-700 hover:border-green-500 focus:border-green-500 outline-none w-24 text-right font-black" value="0.00" />
+                                <div class="text-[9px] sm:text-[10px] uppercase font-black text-gray-500 tracking-widest mb-0.5">Precio Sugerido (Editable)</div>
+                                <div class="flex items-center justify-end text-xl sm:text-3xl font-black text-green-600 dark:text-green-400 font-mono">
+                                    <span class="mr-0.5">$</span>
+                                    <input type="number" id="fin-suggested" step="0.5" class="bg-transparent border-b border-dashed border-green-300 dark:border-green-700 hover:border-green-500 focus:border-green-500 outline-none w-16 sm:w-24 text-right font-black" value="0.00" />
                                 </div>
                             </div>
-                            <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-8 text-right">
-                                <div class="text-[10px] uppercase font-black text-gray-400 tracking-widest mb-1">Margen Bruto</div>
-                                <div id="fin-profit" class="text-xl font-black font-mono text-emerald-500">$0.00</div>
+                            <div class="border-l-2 border-gray-200 dark:border-gray-700 pl-4 sm:pl-8 text-right">
+                                <div class="text-[9px] sm:text-[10px] uppercase font-black text-gray-400 tracking-widest mb-0.5">Margen Bruto</div>
+                                <div id="fin-profit" class="text-lg sm:text-xl font-black font-mono text-emerald-500">$0.00</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Cajón Desplegable de Registro de Ventas -->
-                <div id="sales-drawer" class="hidden border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 p-6 max-h-72 overflow-y-auto custom-scrollbar">
+                <div id="sales-drawer" class="hidden border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 p-4 sm:p-6 max-h-72 overflow-y-auto custom-scrollbar">
                     <div class="max-w-7xl mx-auto flex flex-col gap-4">
                         <div class="flex justify-between items-center">
-                            <h4 class="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Ventas y Registro del Día</h4>
-                            <button id="btn-corte" class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                            <h4 class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Ventas y Registro del Día</h4>
+                            <button id="btn-corte" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                                 Corte de Caja
                             </button>
                         </div>
@@ -301,6 +344,7 @@
         </div>
     </div>
 
+    <!-- MODAL CONFIGURACIÓN A3 -->
     <div id="modal-settings" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
         <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
             <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
@@ -374,6 +418,7 @@
         </div>
     </div>
 
+    <!-- MODAL TUTORIAL -->
     <div id="modal-tutorial" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
         <div class="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
             <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
@@ -861,7 +906,7 @@
 
                 let pageSug = 0;
                 if (totCells === 1) {
-                    // Algoritmo Especial: Costo operativo (material + depreciación + tinta de este lienzo) + (precio máximo de venta x porcetaje cobertura)
+                    // Algoritmo Especial para un solo lienzo
                     pageSug = opUnit + (p.maxSalePrice * (density / 100));
                 } else {
                     const base = (p.maxSalePrice / totCells) * pg.length;
@@ -902,7 +947,7 @@
             const profit = totSug - totOp;
             const pEl = document.getElementById('fin-profit');
             pEl.innerText = `$${profit.toFixed(2)}`;
-            pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
+            pEl.className = `text-lg sm:text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
             
             document.getElementById('fin-hojas').innerText = `x${derived.pages.length} Hoja(s)`;
             document.getElementById('fin-density').innerText = `(${firstDensity.toFixed(0)}% cov)`;
@@ -1251,6 +1296,21 @@
         }
 
         function setupEventListeners() {
+            // Manejador del menú de parámetros desplegable en móviles
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+            const btnCloseSidebarMobile = document.getElementById('btn-close-sidebar-mobile');
+
+            function toggleMobileSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+
+            if (btnToggleSidebar) btnToggleSidebar.onclick = toggleMobileSidebar;
+            if (overlay) overlay.onclick = toggleMobileSidebar;
+            if (btnCloseSidebarMobile) btnCloseSidebarMobile.onclick = toggleMobileSidebar;
+
             const w = document.getElementById('canvas-container');
             w.addEventListener('dragover', e=>e.preventDefault());
             w.addEventListener('drop', async e=>{
@@ -1364,7 +1424,7 @@
                 const profit = state.customSuggestedPrice - totOp;
                 const pEl = document.getElementById('fin-profit');
                 pEl.innerText = `$${profit.toFixed(2)}`;
-                pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
+                pEl.className = `text-lg sm:text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
             };
 
             document.getElementById('btn-toggle-sales').onclick = () => {
@@ -1379,6 +1439,10 @@
             const tModal = document.getElementById('modal-tutorial');
             document.getElementById('btn-tutorial').onclick = () => {
                 tModal.classList.remove('hidden');
+                // Cerrar sidebar móvil al abrir tutorial
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileSidebar();
+                }
             };
             document.getElementById('btn-close-tutorial').onclick = () => tModal.classList.add('hidden');
             document.getElementById('btn-close-tutorial-bottom').onclick = () => tModal.classList.add('hidden');
@@ -1398,6 +1462,10 @@
 
                 renderSettingsTable();
                 modal.classList.remove('hidden');
+                // Cerrar sidebar móvil al abrir configuración
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleMobileSidebar();
+                }
             };
             document.getElementById('btn-close-settings').onclick = () => modal.classList.add('hidden');
             document.getElementById('btn-add-paper').onclick = () => { state.papers.push({id:'p'+Date.now(), name:'Nuevo', size:'Letter', price:100, count:100, maxSalePrice:10}); renderSettingsTable(); };
