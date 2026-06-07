@@ -899,34 +899,28 @@
             const totCells = derived.gridInfo.cells.length;
 
             derived.pages.forEach((pg, idx) => {
-                const density = state.pageDensities[idx] || 0;
-                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
-                const opUnit = costPerSheet + ink + eq;
-                totOp += opUnit;
+    const density = state.pageDensities[idx] || 0;
+    const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
+    const opUnit = costPerSheet + ink + eq;
+    totOp += opUnit;
 
-                let pageSug = 0;
-                if (totCells === 1) {
-                    // Algoritmo Especial para un solo lienzo
-                    pageSug = opUnit + (p.maxSalePrice * (density / 100));
-                } else {
-                    const base = (p.maxSalePrice / totCells) * pg.length;
-                    pageSug = Math.max(base, opUnit * 2);
-                }
-                totSug += pageSug;
-            });
+    let pageSug = 0;
+    if (totCells === 1) {
+        // Algoritmo Especial para un solo lienzo
+        pageSug = opUnit + (p.maxSalePrice * (density / 100));
+    } else {
+        const base = (p.maxSalePrice / totCells) * pg.length;
+        pageSug = Math.max(base, opUnit * 2);
+    }
 
-            if(state.isMonochrome) totSug *= 0.25;
-            
-            let rMode = c.suggestedRounding;
-            if (rMode === true) rMode = 'half';
-            if (rMode === false) rMode = 'none';
-            if (!rMode) rMode = 'half';
+    // 🔒 Reglas de validación
+    const minPrice = opUnit * 3;
+    if (pageSug < minPrice) pageSug = minPrice;
 
-            if (rMode === 'half') {
-                totSug = Math.round(totSug * 2) / 2;
-            } else if (rMode === 'whole') {
-                totSug = Math.round(totSug);
-            }
+    if (pageSug > p.maxSalePrice) pageSug = p.maxSalePrice;
+
+    totSug += pageSug;
+});
 
             // Actualización de Textos
             const firstDensity = state.pageDensities[0] || 0;
