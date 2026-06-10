@@ -921,6 +921,21 @@
 
     totSug += pageSug;
 });
+            // 🎯 Aplicar redondeo según configuración
+switch (document.getElementById("cfg-round-mode").value) {
+    case "whole":
+        pageSug = Math.round(pageSug); // entero más cercano
+        break;
+    case "half":
+        pageSug = Math.round(pageSug * 2) / 2; // múltiplos de 0.50
+        break;
+    case "none":
+    default:
+        // deja el valor tal cual
+        break;
+}
+
+totSug += 
 
             // Actualización de Textos
             const firstDensity = state.pageDensities[0] || 0;
