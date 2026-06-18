@@ -13,6 +13,16 @@
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
+    // CONSTANTES CLARAS Y DOCUMENTADAS
+const ID_TOP_MARGIN_MM = 25.4; // 1 pulgada (margen superior para modo ID)
+const ID_WIDTH_HORIZ = 90;     // ancho ID horizontal en mm
+const ID_HEIGHT_HORIZ = 55;    // alto ID horizontal en mm
+
+const IMONOCHROME_FACTOR = 1.1; // 10% adicional para desperdicio/mantenimiento
+const MONOCHROME_FACTOR = 0.25;    // factor aplicado al sugerido en monocromo
+
+// Panel lateral por canvas (en px)
+const CANVAS_SIDE_PANEL_PX = 160;
     <style>
         /* Estilos Base y Scrollbars */
         body { font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
@@ -522,23 +532,23 @@
             let cols = 1, rows = 1;
 
             if (isIDMode) {
-                state.isPortrait = true;
-                paperW = paper.w;
-                paperH = paper.h;
-                workW = paperW - (margin * 2);
-                workH = paperH - (margin * 2);
+    state.isPortrait = true;
+    paperW = paper.w;
+    paperH = paper.h;
+    workW = paperW - (margin * 2);
+    workH = paperH - (margin * 2);
 
-                cols = 2; rows = 1;
-                const idW = state.idOrientation === 'horiz' ? 90 : 55;
-                const idH = state.idOrientation === 'horiz' ? 55 : 90;
+    cols = 2; rows = 1;
+    const idW = state.idOrientation === 'horiz' ? ID_WIDTH_HORIZ : ID_HEIGHT_HORIZ;
+    const idH = state.idOrientation === 'horiz' ? ID_HEIGHT_HORIZ : ID_WIDTH_HORIZ;
 
-                const startY = 25.4; // 1 Pulgada de margen superior reglamentario
-                const startX = margin + (workW - (idW * 2)) / 2;
-                
-                cells.push({ x: startX, y: startY, w: idW, h: idH });
-                cells.push({ x: startX + idW, y: startY, w: idW, h: idH });
-                return { cols, rows, cells, cellW: idW, cellH: idH };
-            }
+    const startY = ID_TOP_MARGIN_MM; // usar constante
+    const startX = margin + (workW - (idW * 2)) / 2;
+    
+    cells.push({ x: startX, y: startY, w: idW, h: idH });
+    cells.push({ x: startX + idW, y: startY, w: idW, h: idH });
+    return { cols, rows, cells, cellW: idW, cellH: idH };
+}
 
             const presets = { 
                 1: {c:1, r:1}, 
@@ -574,30 +584,32 @@
             return { cols, rows, cells, cellW, cellH };
         }
 
-        // Carga y Preparación de Imágenes
-        const loadImg = (file) => new Promise((resolve, reject) => {
-            const url = URL.createObjectURL(file);
-            const img = new Image();
-            img.onload = () => resolve({ img, url, w: img.width, h: img.height, id: Math.random().toString(36).substr(2, 9) });
-            img.onerror = reject;
-            img.src = url;
-        });
+// FUNCIÓN MEJORADA: carga y validación de imágenes
+const loadImg = (file) => new Promise((resolve, reject) => {
+    if (!file.type || !file.type.startsWith('image/')) {
+        reject(new Error(`Archivo inválido: ${file.name} no es una imagen`));
+        return;
+    }
+    if (file.size && file.size > 50 * 1024 * 1024) { // 50MB límite
+        reject(new Error(`Imagen demasiado grande: ${(file.size/1024/1024).toFixed(1)}MB`));
+        return;
+    }
 
-        function updateAll() {
-            derived.currentPaper = state.papers.find(p => p.id === state.paperId) || state.papers[0];
-            derived.physicalSize = PAPER_SIZES[derived.currentPaper.size] || PAPER_SIZES['Letter'];
-            derived.gridInfo = calculateGrid(derived.physicalSize, state.isPortrait, SAFE_MARGIN_MM, state.gridMode, state.gridPreset, state.gridCm, state.gridMode === 'id');
-            
-            derived.pages = [];
-            if (state.images.length === 0) {
-                derived.pages = [[]];
-            } else {
-                const cellsPerPage = derived.gridInfo.cells.length;
-                if (state.isStickerMode) {
-                    derived.pages.push(Array(cellsPerPage).fill(state.images[0]));
-                } else {
-                    for (let i = 0; i < state.images.length; i += cellsPerPage) {
-                        derived.pages.push(state.images.slice(i, i + cellsPerPage));
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => resolve({
+        img,
+        url,
+        w: img.width,
+        h: img.height,
+        id: `img_${Date.now()}_${Math.random().toString(36).slice(2,9)}`
+    });
+    img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error(`No se pudo cargar la imagen: ${file.name}`));
+    };
+    img.src = url;
+});
                     }
                 }
             }
@@ -730,26 +742,52 @@
             const aspect = state.isPortrait ? `${derived.physicalSize.w}/${derived.physicalSize.h}` : `${derived.physicalSize.h}/${derived.physicalSize.w}`;
             
             derived.pages.forEach((pageImgs, idx) => {
-                const wrap = document.createElement('div');
-                wrap.className = "relative shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] bg-white ring-1 ring-gray-200 transition-transform select-none";
-                wrap.style.aspectRatio = aspect;
-                wrap.style.width = `${state.workspaceZoom}%`;
-                wrap.style.maxWidth = '1200px';
-                
-                const canvas = document.createElement('canvas');
-                canvas.className = "w-full h-full block";
-                wrap.appendChild(canvas);
+    const wrap = document.createElement('div');
+    wrap.className = "relative shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] bg-white ring-1 ring-gray-200 transition-transform select-none";
+    wrap.style.aspectRatio = aspect;
+    wrap.style.width = `${state.workspaceZoom}%`;
+    wrap.style.maxWidth = '1200px';
+    wrap.style.paddingRight = `${CANVAS_SIDE_PANEL_PX}px`; // dejar espacio para panel
 
-                const label = document.createElement('div');
-                label.className = "absolute -left-10 top-0 text-[10px] text-gray-400 font-mono rotate-180 font-bold uppercase tracking-widest";
-                label.style.writingMode = 'vertical-rl';
-                label.innerText = `Hoja ${idx+1}`;
-                wrap.appendChild(label);
+    const canvas = document.createElement('canvas');
+    canvas.className = "block";
+    canvas.style.width = `calc(100% - ${CANVAS_SIDE_PANEL_PX}px)`;
+    canvas.style.height = '100%';
+    // quitar "w-full h-full" que conflictuaba con panel
+    wrap.appendChild(canvas);
 
-                container.appendChild(wrap);
+    // Panel derecho (información de costos por lienzo)
+    const panel = document.createElement('div');
+    panel.className = "absolute top-0 right-0 h-full bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 p-3 text-xs flex flex-col justify-between";
+    panel.style.width = `${CANVAS_SIDE_PANEL_PX}px`;
+    panel.innerHTML = `
+        <div>
+            <div class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-2">Costo Operativo</div>
+            <div class="font-mono text-sm text-gray-800 dark:text-gray-100" id="canvas-cost-${idx}">$0.00</div>
+            <div class="text-[11px] text-gray-500 mt-2">Densidad: <span id="canvas-density-${idx}">0%</span></div>
+            <div class="text-[11px] text-gray-500 mt-1">Material: <span id="canvas-material-${idx}">$0.00</span></div>
+            <div class="text-[11px] text-gray-500 mt-1">Tinta aprox.: <span id="canvas-ink-${idx}">$0.00</span></div>
+        </div>
+        <div class="text-[10px] text-gray-400">Estimación operativa por hoja</div>
+    `;
+    wrap.appendChild(panel);
 
-                drawToCanvas(canvas, pageImgs, false, idx);
-            });
+    // Mensaje fuera del lienzo, esquina inferior derecha (pero dentro del wrap)
+    const outsideMsg = document.createElement('div');
+    outsideMsg.className = "absolute text-[11px] text-gray-500 right-2 bottom-2 bg-white/60 dark:bg-gray-900/60 px-2 py-1 rounded";
+    outsideMsg.innerText = "Costos estimados: consultar panel";
+    wrap.appendChild(outsideMsg);
+
+    const label = document.createElement('div');
+    label.className = "absolute -left-10 top-0 text-[10px] text-gray-400 font-mono rotate-180 font-bold uppercase tracking-widest";
+    label.style.writingMode = 'vertical-rl';
+    label.innerText = `Hoja ${idx+1}`;
+    wrap.appendChild(label);
+
+    container.appendChild(wrap);
+
+    drawToCanvas(canvas, pageImgs, false, idx);
+});
         }
 
         function drawToCanvas(canvas, pageImgs, isExport = false, pageIdx = 0) {
@@ -765,12 +803,34 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.filter = state.isMonochrome ? 'grayscale(100%) contrast(1.2)' : 'none';
 
-            derived.gridInfo.cells.forEach((cell, i) => {
-                const cx = mmToPx(cell.x, dpi);
-                const cy = mmToPx(cell.y, dpi);
-                const cw = mmToPx(cell.w, dpi);
-                const ch = mmToPx(cell.h, dpi);
+// Actualizar panel lateral del lienzo si existe
+const panelCostEl = document.getElementById(`canvas-cost-${pageIdx}`);
+const panelDensityEl = document.getElementById(`canvas-density-${pageIdx}`);
+const panelMaterialEl = document.getElementById(`canvas-material-${pageIdx}`);
+const panelInkEl = document.getElementById(`canvas-ink-${pageIdx}`);
 
+try {
+    const c = state.costs;
+    const p = derived.currentPaper;
+    const costPerSheet = p.price / p.count;
+    const density = state.pageDensities[pageIdx] || 0;
+    const inkCost = (density/100) * (c.inkPrice/c.inkYield) * INK_EFFICIENCY_FACTOR;
+    const eq = c.printerPrice / (c.printerLife * 2);
+    const opUnit = costPerSheet + inkCost + eq;
+
+    if(panelDensityEl) panelDensityEl.innerText = `${density.toFixed(0)}%`;
+    if(panelMaterialEl) panelMaterialEl.innerText = `$${costPerSheet.toFixed(2)}`;
+    if(panelInkEl) panelInkEl.innerText = `$${inkCost.toFixed(2)}`;
+    if(panelCostEl) panelCostEl.innerText = `$${opUnit.toFixed(2)}`;
+} catch(e) {
+    // noop
+}
+// CÁLCULO DE DENSIDAD MÁS ROBUSTO (usar área total de celdas)
+const totalCellArea = derived.gridInfo.cells.reduce((s, c) => s + (c.w * c.h), 0);
+const totalPaperArea = wMm * hMm;
+const areaRatio = totalCellArea / totalPaperArea; // proporción de área útil vs total
+state.pageDensities[pageIdx] = Math.min(100, Math.max(0, raw / (areaRatio || 1)));
+            
                 if (state.showCropMarks && !isExport) {
                     ctx.strokeStyle = '#cbd5e1';
                     ctx.lineWidth = 1;
@@ -809,28 +869,27 @@
                 }
             });
 
-            // Medir Cobertura/Densidad Independiente de Tinta por Cada Lienzo
-            if(!isExport && pageImgs.length > 0) {
-                setTimeout(() => {
-                    const tmp = document.createElement('canvas');
-                    tmp.width = canvas.width * 0.1; tmp.height = canvas.height * 0.1;
-                    const tCtx = tmp.getContext('2d', {willReadFrequently: true});
-                    tCtx.drawImage(canvas, 0,0, tmp.width, tmp.height);
-                    const p = tCtx.getImageData(0,0,tmp.width,tmp.height).data;
-                    let c=0;
-                    for(let i=0; i<p.length; i+=4) if(p[i]<240 || p[i+1]<240 || p[i+2]<240) c++;
-                    let raw = (c / (tmp.width*tmp.height)) * 100;
-                    const areaR = (derived.gridInfo.cells[0].w * derived.gridInfo.cols * derived.gridInfo.cells[0].h * derived.gridInfo.rows) / (wMm*hMm);
-                    state.pageDensities[pageIdx] = Math.min(100, Math.max(0, raw / areaR));
-                    
-                    if (pageIdx === 0) {
-                        state.density = state.pageDensities[0];
-                    }
-                    updateFinancials();
-                }, 100);
-            }
-        }
+// medir densidad usando requestAnimationFrame para asegurar renderizado
+requestAnimationFrame(() => {
+    const tmp = document.createElement('canvas');
+    tmp.width = Math.max(2, Math.round(canvas.width * 0.1));
+    tmp.height = Math.max(2, Math.round(canvas.height * 0.1));
+    const tCtx = tmp.getContext('2d', {willReadFrequently: true});
+    tCtx.drawImage(canvas, 0,0, tmp.width, tmp.height);
+    const p = tCtx.getImageData(0,0,tmp.width,tmp.height).data;
+    let c=0;
+    for(let i=0; i<p.length; i+=4) if(p[i]<240 || p[i+1]<240 || p[i+2]<240) c++;
+    let raw = (c / (tmp.width*tmp.height)) * 100;
 
+    // cálculo usando áreaRatio (ver cambio anterior)
+    const totalCellArea = derived.gridInfo.cells.reduce((s, c) => s + (c.w * c.h), 0);
+    const totalPaperArea = wMm * hMm;
+    const areaRatio = totalCellArea / totalPaperArea;
+    state.pageDensities[pageIdx] = Math.min(100, Math.max(0, raw / (areaRatio || 1)));
+
+    if (pageIdx === 0) state.density = state.pageDensities[0];
+    updateFinancials();
+});
         function updateFinancials() {
             if(state.images.length === 0) {
                 document.getElementById('fin-costSheet').innerText = '$0.00';
