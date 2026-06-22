@@ -24,19 +24,32 @@
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Encabezado de Navegación -->
-    <header class="h-16 shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 shadow-sm no-print">
+    <header class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shadow-sm no-print z-10">
         <div class="flex items-center gap-4">
-            <a href="index.html" class="flex items-center gap-2 text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 font-medium transition">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                Volver al Lienzo
+            <!-- Botón Volver -->
+            <a href="index.html" class="flex items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-500 hover:text-indigo-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:text-indigo-400 dark:hover:bg-gray-700 transition" title="Volver al Lienzo Principal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             </a>
+            
             <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
-            <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-lg tracking-tight">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13v6"/><path d="M13 16h-6"/></svg>
-                <span>Módulo PDF</span>
+
+            <!-- Logo y Título como en index.html -->
+            <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-xl tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
+                <span>PapePrinter <span class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 hidden sm:inline">Módulo PDF</span></span>
+            </div>
+
+            <!-- Botones de Donación -->
+            <div class="hidden md:flex gap-2 ml-2">
+                <a href="https://www.mercadopago.com.mx/payment-link/v1/redirect?link-id=9717741c-070d-46ca-be5f-effc258d2c55&source=link" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50" title="Donar via Mercado Pago">
+                    <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" fill="#009EE3"/><path d="M30 18L18 30M18 18L30 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50" title="Donar via PayPal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+                </a>
             </div>
         </div>
-        <button id="btn-theme" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 transition">
+        <button id="btn-theme" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
     </header>
@@ -235,6 +248,7 @@
                 const numPages = pdf.numPages;
                 
                 let totalDensitySum = 0;
+                let validPayablePages = 0; // NUEVO: Contador de hojas no blancas
                 const canvas = document.getElementById('hidden-pdf-canvas');
                 const ctx = canvas.getContext('2d', { willReadFrequently: true });
                 
@@ -266,16 +280,22 @@
                     }
                     const totalPixels = canvas.width * canvas.height;
                     const pageDensity = (coloredPixels / totalPixels) * 100;
-                    totalDensitySum += pageDensity;
+                    
+                    // Filtrar hojas en blanco (omitir si tienen menos de 0.05% de cobertura)
+                    if (pageDensity > 0.05) {
+                        totalDensitySum += pageDensity;
+                        validPayablePages++;
+                    }
                 }
 
                 state.pdfJob = {
                     file: file,
                     numPages: numPages,
-                    avgDensity: totalDensitySum / numPages
+                    payablePages: validPayablePages, // Guardamos solo las hojas que sí se van a cobrar
+                    avgDensity: validPayablePages > 0 ? (totalDensitySum / validPayablePages) : 0
                 };
 
-                showToast(`Análisis completado: ${numPages} páginas.`, 'success');
+                showToast(`Análisis completado: ${validPayablePages} páginas válidas para cobro (de ${numPages} totales).`, 'success');
                 updateFinancials();
 
             } catch (err) {
@@ -296,10 +316,11 @@
             document.getElementById('empty-state').classList.add('hidden');
             document.getElementById('results-panel').classList.remove('hidden');
 
-            const pages = state.pdfJob.numPages;
+            const pages = state.pdfJob.payablePages;
+            const totalOriginalPages = state.pdfJob.numPages;
             const avgDensity = state.pdfJob.avgDensity;
             
-            document.getElementById('res-pages').innerText = pages;
+            document.getElementById('res-pages').innerHTML = `${pages} <span class="text-xs text-gray-400 font-normal">de ${totalOriginalPages}</span>`;
             document.getElementById('res-density').innerText = `${avgDensity.toFixed(1)}%`;
 
             const p = state.papers.find(x => x.id === state.paperId);
@@ -394,16 +415,17 @@
                 state.salesLog.push(newSale);
                 localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
                 
-                showToast('Venta registrada exitosamente. Lanzando PDF nativo...', 'success');
+                showToast('Venta registrada exitosamente. Abriendo PDF en nueva pestaña...', 'success');
 
-                // Lanzar impresión usando un iframe para evitar que el navegador bloquee el popup
+                // Abrir PDF de inmediato (síncrono) para evitar bloqueador de popups del navegador
+                if (originalFileUrl) {
+                    window.open(originalFileUrl, '_blank');
+                }
+
+                // Dirigimos la pestaña actual de vuelta a la app madre después de lanzar la impresión
                 setTimeout(() => {
-                    if (originalFileUrl) {
-                        // Dirigimos la pestaña principal de vuelta a la app madre después de lanzar la impresión
-                        window.location.href = 'index.html';
-                        window.open(originalFileUrl, '_blank');
-                    }
-                }, 1500);
+                    window.location.href = 'index.html';
+                }, 800);
             };
         }
 
