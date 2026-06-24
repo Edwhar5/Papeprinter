@@ -490,29 +490,80 @@
         const DPI_EXPORT = 300;
         const MM_TO_INCH = 25.4;
         const mmToPx = (mm, dpi) => (mm / MM_TO_INCH) * dpi;
-
-        // Estado Global
+    <script>
+        // --- 1. ESTADO GLOBAL ---
         let state = {
             images: [],
             imageCopies: 1,
-            canvasCopies: 1, // Nuevo multiplicador de hojas
+            canvasCopies: 1,
             paperId: 'p1',
             isPortrait: true,
             gridMode: 'preset',
             gridPreset: 4,
             gridCm: 5,
-            idOrientation: 'horiz', 
             isDarkMode: false,
             showCropMarks: true,
             isStickerMode: false,
             isMonochrome: false,
-            imageFit: 'cover',
-            imageZoom: 100,
-            workspaceZoom: 100,
-            density: 0,
-            pageDensities: [], // Densidades por cada lienzo
-            customSuggestedPrice: null, // Sobrescribir precio sugerido
+            customSuggestedPrice: null,
+            costs: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, multiplierMin: 2, suggestedRounding: 'half' },
+            papers: [ { id: 'p1', name: 'Carta Bond', size: 'Letter', price: 650, count: 5000, maxSalePrice: 8 } ],
+            salesLog: []
+        };
+
+        // --- 2. INICIALIZACIÓN SEGURA ---
+        function init() {
+            console.log("Iniciando PapePrinter...");
             
+            // Cargar configuración guardada
+            const saved = localStorage.getItem('papePrinterVanilla');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    state = { ...state, ...parsed };
+                    if (state.isDarkMode) document.documentElement.classList.add('dark');
+                } catch(e) { console.error("Error cargando estado", e); }
+            }
+
+            const savedLog = localStorage.getItem('papePrinterSalesLog');
+            if (savedLog) {
+                try { state.salesLog = JSON.parse(savedLog); } catch(e) {}
+            }
+
+            // Inicializar UI inicial
+            setupEventListeners();
+            updateAll();
+        }
+
+        // --- 3. EVENTOS Y LÓGICA ---
+        function setupEventListeners() {
+            // A. Carga de Imágenes (Drag & Drop)
+            const dropzone = document.getElementById('dropzone');
+            if (dropzone) {
+                dropzone.ondragover = e => { e.preventDefault(); dropzone.classList.add('border-indigo-500'); };
+                dropzone.ondragleave = e => { e.preventDefault(); dropzone.classList.remove('border-indigo-500'); };
+                dropzone.ondrop = e => {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-indigo-500');
+                    if (e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
+                };
+            }
+
+            // B. Tabla de Costos (Abrir/Cerrar Modal)
+            const btnOpenConfig = document.getElementById('btn-open-config');
+            if (btnOpenConfig) btnOpenConfig.onclick = () => document.getElementById('modal-config').classList.remove('hidden');
+            
+            const btnCloseConfig = document.getElementById('btn-close-config');
+            if (btnCloseConfig) btnCloseConfig.onclick = () => document.getElementById('modal-config').classList.add('hidden');
+
+            // C. Controles Básicos
+            if (document.getElementById('btn-theme')) {
+                document.getElementById('btn-theme').onclick = () => { 
+                    state.isDarkMode = !state.isDarkMode; 
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('papePrinterVanilla', JSON.stringify(state));
+                };
+            }
             // =========================================================
             // ⚙️ SECCIÓN: CONFIGURACIÓN BASE Y COSTOS GLOBALES
             // =========================================================
