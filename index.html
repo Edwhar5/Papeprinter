@@ -142,6 +142,16 @@
                             <span class="w-full">Copias por Imagen:</span>
                             <input type="number" id="ui-opt-copies" min="1" value="1" class="w-16 p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-center outline-none" />
                         </label>
+                        <label class="flex items-center gap-3 text-sm font-medium p-1 -mx-2 rounded text-gray-700 dark:text-gray-300">
+                            <span class="w-full">Copias por Imagen:</span>
+                            <input type="number" id="ui-opt-copies" min="1" value="1" class="w-16 p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-center outline-none" />
+                        </label>
+                        <!-- NUEVO: COPIAS DEL LIENZO -->
+                        <label class="flex items-center gap-3 text-sm font-medium p-1 -mx-2 rounded text-gray-700 dark:text-gray-300">
+                            <span class="w-full">Copias del Lienzo (Hojas):</span>
+                            <input type="number" id="ui-opt-canvas-copies" min="1" value="1" class="w-16 p-1 border border-indigo-300 dark:border-indigo-600 rounded bg-indigo-50 dark:bg-indigo-900/30 text-center outline-none text-indigo-700 dark:text-indigo-300 font-bold" />
+                        </label>
+                        <div class="h-px bg-gray-100 dark:bg-gray-700 w-full"></div>
                         <div class="h-px bg-gray-100 dark:bg-gray-700 w-full"></div>
                         <label class="flex items-center gap-3 text-sm font-medium cursor-pointer bg-amber-50 dark:bg-amber-900/10 p-2 -mx-2 rounded text-amber-700 dark:text-amber-400">
                             <input type="checkbox" id="ui-opt-mono" class="w-4 h-4 rounded text-amber-600" /> 
@@ -400,65 +410,69 @@
         </div>
     </div>
 
-    <!-- MODAL TUTORIAL -->
-    <div id="modal-tutorial" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
-        <div class="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800 max-h-full">
+    <!-- MODAL VENTAS (RESUMEN TOP 5) -->
+    <div id="modal-corte" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800">
             <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
-                <h2 class="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Guía de Uso Rápido
-                </h2>
-                <button id="btn-close-tutorial" class="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Resumen de Ventas (Últimos 5 Trabajos)</h2>
+                <button id="btn-close-corte" class="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
-                <div class="space-y-4">
-                    <div class="flex gap-3">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">1</span>
-                        <div>
-                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Subir tus Imágenes</h4>
-                            <p>Arrastra tus imágenes JPG o PNG en la mesa de trabajo o haz clic en "Explorar Ordenador". Se rotarán y adaptarán de manera inteligente.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">2</span>
-                        <div>
-                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Elegir Papel y Formato</h4>
-                            <p>Elige el tipo de papel en el catálogo lateral. El sistema cargará automáticamente el tamaño físico de la hoja real (Carta, Oficio, A3).</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">3</span>
-                        <div>
-                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Definir Retícula (Presets u Óptimos)</h4>
-                            <p>Selecciona divisiones predefinidas. Ahora dispones de los presets mejorados "2 Vert" u "2 Horiz" para el máximo aprovechamiento del papel.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">4</span>
-                        <div>
-                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Modo ID</h4>
-                            <p>El modo ID genera 2 espacios paralelos de 90x55mm (Horizontal o Vertical) centrados en el tercio superior bajo la regla de la pulgada.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-3">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 font-bold shrink-0 text-[10px]">5</span>
-                        <div>
-                            <h4 class="font-bold text-gray-800 dark:text-gray-100 mb-0.5">Cobro y Resiliencia Eléctrica</h4>
-                            <p>Haz clic en "Imprimir y Cobrar". Se registrarán las ventas del día de manera automática y puedes negociar el precio sugerido modificando su campo.</p>
-                        </div>
-                    </div>
-                </div>
+            
+            <div class="p-6 overflow-x-auto custom-scrollbar">
+                <table class="w-full text-xs text-left min-w-[600px]">
+                    <thead class="bg-gray-100 dark:bg-gray-800 text-gray-500 uppercase tracking-wider text-[10px]">
+                        <tr>
+                            <th class="px-4 py-2">Ticket ID</th>
+                            <th class="px-4 py-2">Material</th>
+                            <th class="px-4 py-2">Lienzos</th>
+                            <th class="px-4 py-2 text-right">Cobrado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body" class="divide-y divide-gray-100 dark:divide-gray-800 font-mono text-gray-700 dark:text-gray-300">
+                        <!-- Llenado via JS (Top 5) -->
+                    </tbody>
+                </table>
             </div>
-            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-end">
-                <button id="btn-close-tutorial-bottom" class="px-5 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow-md">
-                    ¡Entendido!
-                </button>
+
+            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+                <div class="text-xs text-gray-500">Muestra los 5 registros más recientes.</div>
+                <a href="registro-ventas.html" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-md transition flex items-center gap-2">
+                    Módulo de Finanzas Completo <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+        <!-- MODAL VENTAS (RESUMEN TOP 5) -->
+    <div id="modal-corte" class="hidden fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
+                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Resumen de Ventas (Últimos 5 Trabajos)</h2>
+                <button id="btn-close-corte" class="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-full transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            </div>
+            
+            <div class="p-6 overflow-x-auto custom-scrollbar">
+                <table class="w-full text-xs text-left min-w-[600px]">
+                    <thead class="bg-gray-100 dark:bg-gray-800 text-gray-500 uppercase tracking-wider text-[10px]">
+                        <tr>
+                            <th class="px-4 py-2">Ticket ID</th>
+                            <th class="px-4 py-2">Material</th>
+                            <th class="px-4 py-2">Lienzos</th>
+                            <th class="px-4 py-2 text-right">Cobrado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body" class="divide-y divide-gray-100 dark:divide-gray-800 font-mono text-gray-700 dark:text-gray-300">
+                        <!-- Llenado via JS (Top 5) -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-between items-center">
+                <div class="text-xs text-gray-500">Muestra los 5 registros más recientes.</div>
+                <a href="registro-ventas.html" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-md transition flex items-center gap-2">
+                    Módulo de Finanzas Completo <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
             </div>
         </div>
     </div>
-
     <!-- AREA DE IMPRESIÓN (OCULTA) -->
     <div id="printOverlay" class="print-only hidden"></div>
 
@@ -481,6 +495,7 @@
         let state = {
             images: [],
             imageCopies: 1,
+            canvasCopies: 1, // Nuevo multiplicador de hojas
             paperId: 'p1',
             isPortrait: true,
             gridMode: 'preset',
@@ -877,34 +892,98 @@
         }
 
         function updateFinancials() {
+        function updateFinancials() {
             if(state.images.length === 0) {
                 document.getElementById('fin-costSheet').innerText = '$0.00';
                 document.getElementById('fin-inkCost').innerText = '$0.00';
                 document.getElementById('fin-equipCost').innerText = '$0.00';
                 document.getElementById('fin-totalOp').innerText = '$0.00';
-                document.getElementById('fin-suggested').value = '0.00';
+                document.getElementById('fin-suggested').value = '0.00'; // Cambio a .value
                 document.getElementById('fin-profit').innerText = '$0.00';
                 document.getElementById('fin-hojas').innerText = 'x0 Hoja(s)';
                 document.getElementById('fin-density').innerText = '(0% cov)';
                 return;
             }
 
-            // =========================================================
-            // 📊 MÓDULO FINANCIERO: REGLAS DE COBRO Y DESCUENTO
-            // Procesamiento algorítmico independiente por lienzo
-            // =========================================================
             const c = state.costs;
             const p = derived.currentPaper;
-            
-            // 1. Costos fijos garantizados por hoja impresa
             const costPerSheet = p.price / p.count;
             const eq = c.printerPrice / (c.printerLife * 2);
-
+            
             let totSug = 0;
             let totOp = 0;
             const totCells = derived.gridInfo.cells.length;
 
             derived.pages.forEach((pg, idx) => {
+                const density = state.pageDensities[idx] || 0;
+                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
+                const opUnit = costPerSheet + ink + eq;
+                
+                totOp += opUnit;
+                
+                let pageSug = 0;
+                if (state.gridMode === 'id') {
+                    // PRECIO FIJO PARA ID: Ignora tinta, cobra el precio máximo de venta del material
+                    pageSug = p.maxSalePrice;
+                } else {
+                    const cellsUsed = pg.length;
+                    const base = (p.maxSalePrice / totCells) * cellsUsed;
+                    pageSug = Math.max(base, opUnit * c.multiplierMin);
+                }
+
+                if (state.gridPreset === 1 && state.gridMode === 'preset') {
+                    pageSug = opUnit + (p.maxSalePrice * (density / 100));
+                    pageSug = Math.max(pageSug, opUnit * c.multiplierMin);
+                }
+
+                totSug += pageSug;
+            });
+
+            // MULTIPLICAR POR COPIAS DEL LIENZO
+            totOp *= state.canvasCopies;
+            totSug *= state.canvasCopies;
+            const totalPhysicalPages = derived.pages.length * state.canvasCopies;
+
+            if(state.isMonochrome) {
+                const rawProfit = totSug - totOp;
+                totSug = totOp + (rawProfit * 0.25);
+            }
+
+            if (state.customSuggestedPrice !== null) {
+                totSug = state.customSuggestedPrice;
+            } else {
+                if(c.suggestedRounding === 'half') totSug = Math.round(totSug * 2) / 2;
+                else if(c.suggestedRounding === 'integer') totSug = Math.round(totSug);
+            }
+
+            // Cálculos visuales para la primera hoja (referencia)
+            const firstInk = (state.pageDensities[0] || 0)/100 * (c.inkPrice/c.inkYield) * 1.1;
+
+            document.getElementById('fin-costSheet').innerText = `$${costPerSheet.toFixed(2)}`;
+            document.getElementById('fin-inkCost').innerText = `$${firstInk.toFixed(2)}`;
+            document.getElementById('fin-equipCost').innerText = `$${eq.toFixed(2)}`;
+            document.getElementById('fin-totalOp').innerText = `$${totOp.toFixed(2)}`;
+            document.getElementById('fin-suggested').value = totSug.toFixed(2);
+            
+            const profit = totSug - totOp;
+            const pEl = document.getElementById('fin-profit');
+            pEl.innerText = `$${profit.toFixed(2)}`;
+            pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
+            
+            document.getElementById('fin-hojas').innerText = `x${totalPhysicalPages} Hoja(s)`;
+            document.getElementById('fin-density').innerText = `(${(state.pageDensities[0] || 0).toFixed(0)}% cov)`;
+        }
+
+        function renderPrintOverlay() {
+            const over = document.getElementById('printOverlay');
+            over.innerHTML = '';
+            const wMm = state.isPortrait ? derived.physicalSize.w : derived.physicalSize.h;
+            const hMm = state.isPortrait ? derived.physicalSize.h : derived.physicalSize.w;
+
+            // Repetir el renderizado de páginas en base a las copias del lienzo
+            for (let copy = 0; copy < state.canvasCopies; copy++) {
+                derived.pages.forEach((pg, idx) => {
+                    const pDiv = document.createElement('div');
                 // 2. Costo variable independiente por lienzo (Consumo real de tinta)
                 const density = state.pageDensities[idx] || 0;
                 const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1; // +10% de margen de seguridad técnico
@@ -1066,44 +1145,30 @@
         window.removePaper = (id) => { if(state.papers.length>1){ state.papers = state.papers.filter(p=>p.id!==id); if(state.paperId===id) state.paperId=state.papers[0].id; renderSettingsTable(); }}
 
         function updateSalesUI() {
+         function updateSalesUI() {
+            const log = state.salesLog;
             const tableBody = document.getElementById('sales-table-body');
-            const salesCount = document.getElementById('sales-count');
-            const totSheets = document.getElementById('sales-tot-sheets');
-            const totOp = document.getElementById('sales-tot-op');
-            const totSug = document.getElementById('sales-tot-sug');
-
-            const log = state.salesLog || [];
-            salesCount.innerText = log.length;
-
             tableBody.innerHTML = '';
             
-            if (log.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-400 dark:text-gray-600">No hay registros el día de hoy</td></tr>`;
-                totSheets.innerText = '0';
-                totOp.innerText = '$0.00';
-                totSug.innerText = '$0.00';
+            if(log.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">No hay ventas registradas hoy.</td></tr>';
                 return;
             }
 
-            let sheetsAccum = 0;
-            let opAccum = 0;
-            let sugAccum = 0;
+            // Mostrar solo los últimos 5 invertidos (más reciente primero)
+            const top5 = log.slice(-5).reverse();
 
-            log.forEach(sale => {
-                sheetsAccum += sale.pages;
-                opAccum += sale.totalOp;
-                sugAccum += sale.totalSug;
-
+            top5.forEach(sale => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="px-4 py-2 font-bold text-indigo-600 dark:text-indigo-400">${sale.id}</td>
                     <td class="px-4 py-2 font-semibold text-gray-800 dark:text-gray-100">${sale.paper}</td>
                     <td class="px-4 py-2">${sale.pages} Hoja(s)</td>
-                    <td class="px-4 py-2 text-right text-red-500 font-mono">$${sale.totalOp.toFixed(2)}</td>
                     <td class="px-4 py-2 text-right text-green-500 font-bold font-mono">$${sale.totalSug.toFixed(2)}</td>
-                    <td class="px-4 py-2 text-right text-emerald-500 font-semibold font-mono">$${(sale.totalSug - sale.totalOp).toFixed(2)}</td>
                 `;
                 tableBody.appendChild(tr);
+            });
+        }
             });
 
             totSheets.innerText = sheetsAccum;
@@ -1131,8 +1196,9 @@
 
             // Respetar la personalización negociada por el usuario
             const finalSug = parseFloat(document.getElementById('fin-suggested').value) || 0;
+            const totalPhysicalPages = derived.pages.length * state.canvasCopies;
 
-            const d = new Date();
+            const d = new Date();            const d = new Date();
             const dd = String(d.getDate()).padStart(2, '0');
             const mm = String(d.getMonth() + 1).padStart(2, '0');
             const yy = String(d.getFullYear()).slice(-2);
@@ -1144,11 +1210,10 @@
                 id: ticketId,
                 timestamp: d.toISOString(),
                 paper: p.name,
-                pages: derived.pages.length,
+                pages: totalPhysicalPages,
                 totalOp: totOp,
                 totalSug: finalSug
             };
-
             state.salesLog.push(newSale);
             localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
             updateSalesUI();
@@ -1158,13 +1223,26 @@
             const onAfterPrint = () => {
                 state.images = [];
                 state.imageCopies = 1;
+                state.canvasCopies = 1;
                 state.imageZoom = 100;
                 state.workspaceZoom = 100;
                 state.customSuggestedPrice = null;
                 document.getElementById('ui-opt-copies').value = 1;
+                document.getElementById('ui-opt-canvas-copies').value = 1;
                 document.getElementById('ui-zoom-img').value = 100;
                 document.getElementById('ui-zoom-work').value = 100;
+                document.getElementById('btn-clear').onclick = () => {
+                state.images = [];
+                state.imageCopies = 1;
+                state.canvasCopies = 1;
+                document.getElementById('ui-opt-copies').value = 1;
+                document.getElementById('ui-opt-canvas-copies').value = 1;
+                state.customSuggestedPrice = null;
                 updateAll();
+                updateAll();
+                showToast('Mesa de trabajo reestablecida tras impresión.', 'success');
+                window.removeEventListener('afterprint', onAfterPrint);
+            };
                 showToast('Mesa de trabajo reestablecida tras impresión.', 'success');
                 window.removeEventListener('afterprint', onAfterPrint);
             };
