@@ -890,40 +890,37 @@
                 }, 100);
             }
         }
-
         function updateFinancials() {
-        function updateFinancials() {
-            if(state.images.length === 0) {
-                document.getElementById('fin-costSheet').innerText = '$0.00';
-                document.getElementById('fin-inkCost').innerText = '$0.00';
-                document.getElementById('fin-equipCost').innerText = '$0.00';
-                document.getElementById('fin-totalOp').innerText = '$0.00';
-                document.getElementById('fin-suggested').value = '0.00'; // Cambio a .value
-                document.getElementById('fin-profit').innerText = '$0.00';
-                document.getElementById('fin-hojas').innerText = 'x0 Hoja(s)';
-                document.getElementById('fin-density').innerText = '(0% cov)';
+            if (state.images.length === 0) {
+                document.getElementById('fin-costSheet').innerText = "$0.00";
+                document.getElementById('fin-inkCost').innerText = "$0.00";
+                document.getElementById('fin-equipCost').innerText = "$0.00";
+                document.getElementById('fin-totalOp').innerText = "$0.00";
+                document.getElementById('fin-suggested').value = "0.00";
+                if(document.getElementById('fin-profit')) document.getElementById('fin-profit').innerText = "$0.00";
                 return;
             }
 
-            const c = state.costs;
             const p = derived.currentPaper;
+            const c = state.costs;
+            const totCells = derived.gridInfo.cells.length;
+            
             const costPerSheet = p.price / p.count;
             const eq = c.printerPrice / (c.printerLife * 2);
-            
-            let totSug = 0;
+
             let totOp = 0;
-            const totCells = derived.gridInfo.cells.length;
+            let totSug = 0;
 
             derived.pages.forEach((pg, idx) => {
                 const density = state.pageDensities[idx] || 0;
-                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
+                const ink = (density / 100) * (c.inkPrice / c.inkYield) * 1.1;
                 const opUnit = costPerSheet + ink + eq;
                 
                 totOp += opUnit;
                 
                 let pageSug = 0;
                 if (state.gridMode === 'id') {
-                    // PRECIO FIJO PARA ID: Ignora tinta, cobra el precio máximo de venta del material
+                    // PRECIO FIJO PARA ID: Ignora tinta, cobra el precio máximo de venta
                     pageSug = p.maxSalePrice;
                 } else {
                     const cellsUsed = pg.length;
@@ -944,19 +941,20 @@
             totSug *= state.canvasCopies;
             const totalPhysicalPages = derived.pages.length * state.canvasCopies;
 
-            if(state.isMonochrome) {
+            // Descuento Monocromo
+            if (state.isMonochrome) {
                 const rawProfit = totSug - totOp;
                 totSug = totOp + (rawProfit * 0.25);
             }
 
+            // Precio negociado personalizado
             if (state.customSuggestedPrice !== null) {
                 totSug = state.customSuggestedPrice;
             } else {
-                if(c.suggestedRounding === 'half') totSug = Math.round(totSug * 2) / 2;
-                else if(c.suggestedRounding === 'integer') totSug = Math.round(totSug);
+                if (c.suggestedRounding === 'half') totSug = Math.round(totSug * 2) / 2;
+                else if (c.suggestedRounding === 'integer') totSug = Math.round(totSug);
             }
 
-            // Cálculos visuales para la primera hoja (referencia)
             const firstInk = (state.pageDensities[0] || 0)/100 * (c.inkPrice/c.inkYield) * 1.1;
 
             document.getElementById('fin-costSheet').innerText = `$${costPerSheet.toFixed(2)}`;
@@ -965,199 +963,28 @@
             document.getElementById('fin-totalOp').innerText = `$${totOp.toFixed(2)}`;
             document.getElementById('fin-suggested').value = totSug.toFixed(2);
             
-            const profit = totSug - totOp;
             const pEl = document.getElementById('fin-profit');
-            pEl.innerText = `$${profit.toFixed(2)}`;
-            pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
-            
-            document.getElementById('fin-hojas').innerText = `x${totalPhysicalPages} Hoja(s)`;
-            document.getElementById('fin-density').innerText = `(${(state.pageDensities[0] || 0).toFixed(0)}% cov)`;
-        }
-
-        function renderPrintOverlay() {
-            const over = document.getElementById('printOverlay');
-            over.innerHTML = '';
-            const wMm = state.isPortrait ? derived.physicalSize.w : derived.physicalSize.h;
-            const hMm = state.isPortrait ? derived.physicalSize.h : derived.physicalSize.w;
-
-            // Repetir el renderizado de páginas en base a las copias del lienzo
-            for (let copy = 0; copy < state.canvasCopies; copy++) {
-                derived.pages.forEach((pg, idx) => {
-                    const pDiv = document.createElement('div');
-                // 2. Costo variable independiente por lienzo (Consumo real de tinta)
-                const density = state.pageDensities[idx] || 0;
-                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1; // +10% de margen de seguridad técnico
-                const opUnit = costPerSheet + ink + eq;
-                totOp += opUnit;
-
-                // 3. Establecer el Precio Sugerido Base
-                let pageSug = 0;
-                if (totCells === 1) {
-                    // REGLA: Si es 1 División (Lienzo completo) -> Proporcional a la cobertura de tinta
-                    pageSug = opUnit + (p.maxSalePrice * (density / 100));
-                } else {
-                    // REGLA: Si son múltiples divisiones -> Proporcional a los espacios utilizados
-                    const base = (p.maxSalePrice / totCells) * pg.length;
-                    pageSug = base; 
-                }
-
-                // 4. Aplicar Límites de Reglas de Cobro (Mínimo vs Máximo)
-                const minAllowedPrice = opUnit * c.minMarginMultiplier; 
-                // REGLA ABSOLUTA: El precio sugerido no debe exceder el "Precio Máximo" configurado, 
-                // PERO jamás debe ser menor al "Multiplicador de Utilidad Mínima".
-                pageSug = Math.max(minAllowedPrice, Math.min(pageSug, p.maxSalePrice));
-
-                // 5. Aplicar Regla de Descuento Monocromo (Protección de Costo Operativo)
-                if (state.isMonochrome) {
-                    let margin = pageSug - opUnit;
-                    if (margin > 0) {
-                        // REGLA: El descuento del 75% SOLO se aplica sobre la utilidad bruta.
-                        // El costo operativo (material, tinta y equipo) SIEMPRE se cobra íntegro.
-                        margin = margin * 0.25; 
-                    }
-                    pageSug = opUnit + margin;
-                }
-                
-                totSug += pageSug;
-
-                // 6. Actualizar Etiqueta Visual Flotante de Desglose en el Lienzo correspondiente
-                const badge = document.getElementById(`canvas-cost-badge-${idx}`);
-                if (badge && density > 0) {
-                    badge.innerHTML = `
-                        <div class="text-[9px] text-gray-400 font-bold uppercase tracking-wider border-b border-gray-700 pb-1 mb-0.5">Desglose de Costo</div>
-                        <div class="flex justify-between items-center text-[10px] font-mono"><span class="text-gray-400">Papel+Eq:</span> <span>$${(costPerSheet + eq).toFixed(2)}</span></div>
-                        <div class="flex justify-between items-center text-[10px] font-mono"><span class="text-indigo-400">Tinta (${density.toFixed(0)}%):</span> <span>$${ink.toFixed(2)}</span></div>
-                        <div class="flex justify-between items-center text-xs font-mono font-bold mt-1 pt-1 border-t border-gray-700"><span class="text-red-400">Total Op:</span> <span class="text-red-400">$${opUnit.toFixed(2)}</span></div>
-                        <div class="flex justify-between items-center text-xs font-mono font-black mt-0.5"><span class="text-green-400">Sugerido:</span> <span class="text-green-400">$${pageSug.toFixed(2)}</span></div>
-                    `;
-                    badge.style.opacity = 1;
-                }
-            });
-
-            // 7. Configuración de Personalización Negociada
-            let rMode = c.suggestedRounding;
-            if (rMode === true) rMode = 'half';
-            if (rMode === false) rMode = 'none';
-            if (!rMode) rMode = 'half';
-
-            if (rMode === 'half') {
-                totSug = Math.round(totSug * 2) / 2;
-            } else if (rMode === 'whole') {
-                totSug = Math.round(totSug);
+            if(pEl) {
+                const profit = totSug - totOp;
+                pEl.innerText = `$${profit.toFixed(2)}`;
+                pEl.className = `text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
             }
-
-            // Actualización de Textos
-            const firstDensity = state.pageDensities[0] || 0;
-            const firstInk = (firstDensity/100) * (c.inkPrice/c.inkYield) * 1.1;
-            document.getElementById('fin-costSheet').innerText = `$${costPerSheet.toFixed(2)}`;
-            document.getElementById('fin-inkCost').innerText = `$${firstInk.toFixed(2)}`;
-            document.getElementById('fin-equipCost').innerText = `$${eq.toFixed(2)}`;
-            document.getElementById('fin-totalOp').innerText = `$${totOp.toFixed(2)}`;
-            
-            // Comprobación de Precio de Venta Sugerido Editable
-            const sugInput = document.getElementById('fin-suggested');
-            if (state.customSuggestedPrice === null || state.customSuggestedPrice === undefined) {
-                sugInput.value = totSug.toFixed(2);
-            } else {
-                totSug = state.customSuggestedPrice;
-            }
-
-            const profit = totSug - totOp;
-            const pEl = document.getElementById('fin-profit');
-            pEl.innerText = `$${profit.toFixed(2)}`;
-            pEl.className = `text-lg sm:text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
-            
-            document.getElementById('fin-hojas').innerText = `x${derived.pages.length} Hoja(s)`;
-            document.getElementById('fin-density').innerText = `(${firstDensity.toFixed(0)}% cov)`;
         }
-
-        function renderPrintOverlay() {
-            const over = document.getElementById('printOverlay');
-            over.innerHTML = '';
-            const wMm = state.isPortrait ? derived.physicalSize.w : derived.physicalSize.h;
-            const hMm = state.isPortrait ? derived.physicalSize.h : derived.physicalSize.w;
-
-            derived.pages.forEach((pg, idx) => {
-                const pDiv = document.createElement('div');
-                pDiv.className = 'print-page';
-                pDiv.style.width = `${wMm}mm`; pDiv.style.height = `${hMm}mm`;
-
-                derived.gridInfo.cells.forEach((cell, ci) => {
-                    const imgD = pg[ci];
-                    if(!imgD) return;
-
-                    const cL = cell.w > cell.h;
-                    const iL = imgD.w > imgD.h;
-                    const nRot = cL !== iL;
-
-                    const cDiv = document.createElement('div');
-                    cDiv.style.position = 'absolute';
-                    cDiv.style.overflow = 'hidden';
-                    cDiv.style.display = 'flex';
-                    cDiv.style.alignItems = 'center';
-                    cDiv.style.justifyContent = 'center';
-                    cDiv.style.left = `${cell.x}mm`; cDiv.style.top = `${cell.y}mm`;
-                    cDiv.style.width = `${cell.w}mm`; cDiv.style.height = `${cell.h}mm`;
-                    if(state.showCropMarks) cDiv.style.border = '0.25mm solid #cbd5e1';
-
-                    const img = document.createElement('img');
-                    img.src = imgD.url;
-                    if(state.isMonochrome) { img.style.filter = 'grayscale(100%) contrast(1.25)'; }
-                    img.style.width = nRot ? `${cell.h}mm` : `${cell.w}mm`;
-                    img.style.height = nRot ? `${cell.w}mm` : `${cell.h}mm`;
-                    img.style.objectFit = state.imageFit;
-                    
-                    let tf = [];
-                    if(nRot) tf.push('rotate(90deg)');
-                    if(state.imageZoom !== 100) tf.push(`scale(${state.imageZoom/100})`);
-                    img.style.transform = tf.join(' ');
-                    img.style.transformOrigin = 'center';
-
-                    cDiv.appendChild(img);
-                    pDiv.appendChild(cDiv);
-                });
-                over.appendChild(pDiv);
-            });
-        }
-
-        // Renderizado Catálogo Modal A3
-        function renderSettingsTable() {
-            const tbody = document.getElementById('cfg-papers-body');
-            tbody.innerHTML = '';
-            state.papers.forEach((p, i) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-4 py-2"><input type="text" value="${p.name}" onchange="updatePaper(${i}, 'name', this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none" /></td>
-                    <td class="px-4 py-2">
-                        <select onchange="updatePaper(${i}, 'size', this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none">
-                            ${Object.keys(PAPER_SIZES).map(k => `<option value="${k}" ${p.size===k?'selected':''}>${PAPER_SIZES[k].name}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="px-4 py-2"><input type="number" value="${p.price}" onchange="updatePaper(${i}, 'price', +this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none font-mono" /></td>
-                    <td class="px-4 py-2"><input type="number" value="${p.count}" onchange="updatePaper(${i}, 'count', +this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-gray-900 dark:text-orange-400 rounded outline-none font-mono" /></td>
-                    <td class="px-4 py-2"><input type="number" value="${p.maxSalePrice}" onchange="updatePaper(${i}, 'maxSalePrice', +this.value)" class="w-full p-1.5 border border-gray-300 dark:border-gray-750 bg-white dark:bg-gray-800 text-orange-600 dark:text-orange-400 rounded outline-none font-mono font-bold" /></td>
-                    <td class="px-4 py-2 text-center"><button onclick="removePaper('${p.id}')" class="text-red-500 hover:bg-red-50 p-1.5 rounded">X</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-        window.updatePaper = (idx, field, val) => { state.papers[idx][field] = val; state.customSuggestedPrice = null; }
-        window.removePaper = (id) => { if(state.papers.length>1){ state.papers = state.papers.filter(p=>p.id!==id); if(state.paperId===id) state.paperId=state.papers[0].id; renderSettingsTable(); }}
 
         function updateSalesUI() {
-         function updateSalesUI() {
             const log = state.salesLog;
             const tableBody = document.getElementById('sales-table-body');
+            if (!tableBody) return;
+            
             tableBody.innerHTML = '';
             
             if(log.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">No hay ventas registradas hoy.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">No hay ventas registradas.</td></tr>';
                 return;
             }
 
-            // Mostrar solo los últimos 5 invertidos (más reciente primero)
+            // Muestra últimos 5
             const top5 = log.slice(-5).reverse();
-
             top5.forEach(sale => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -1169,331 +996,25 @@
                 tableBody.appendChild(tr);
             });
         }
-            });
-
-            totSheets.innerText = sheetsAccum;
-            totOp.innerText = `$${opAccum.toFixed(2)}`;
-            totSug.innerText = `$${sugAccum.toFixed(2)}`;
-        }
-
-        function registerSaleAndPrint() {
-            if (state.images.length === 0) {
-                showToast('Carga imágenes antes de registrar e imprimir.', 'error');
-                return;
-            }
-
-            const c = state.costs;
-            const p = derived.currentPaper;
-            const costPerSheet = p.price / p.count;
-            const eq = c.printerPrice / (c.printerLife * 2);
-
-            let totOp = 0;
-            derived.pages.forEach((pg, idx) => {
-                const density = state.pageDensities[idx] || 0;
-                const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
-                totOp += (costPerSheet + ink + eq);
-            });
-
-            // Respetar la personalización negociada por el usuario
-            const finalSug = parseFloat(document.getElementById('fin-suggested').value) || 0;
-            const totalPhysicalPages = derived.pages.length * state.canvasCopies;
-
-            const d = new Date();            const d = new Date();
-            const dd = String(d.getDate()).padStart(2, '0');
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const yy = String(d.getFullYear()).slice(-2);
-            const hh = String(d.getHours()).padStart(2, '0');
-            const mins = String(d.getMinutes()).padStart(2, '0');
-            const ticketId = `${dd}${mm}${yy}${hh}${mins}`;
-
-            const newSale = {
-                id: ticketId,
-                timestamp: d.toISOString(),
-                paper: p.name,
-                pages: totalPhysicalPages,
-                totalOp: totOp,
-                totalSug: finalSug
-            };
-            state.salesLog.push(newSale);
-            localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
-            updateSalesUI();
-
-            showToast(`Venta registrada (Tck: ${ticketId}). Abriendo impresora...`, 'success');
-
-            const onAfterPrint = () => {
-                state.images = [];
-                state.imageCopies = 1;
-                state.canvasCopies = 1;
-                state.imageZoom = 100;
-                state.workspaceZoom = 100;
-                state.customSuggestedPrice = null;
-                document.getElementById('ui-opt-copies').value = 1;
-                document.getElementById('ui-opt-canvas-copies').value = 1;
-                document.getElementById('ui-zoom-img').value = 100;
-                document.getElementById('ui-zoom-work').value = 100;
-                document.getElementById('btn-clear').onclick = () => {
-                state.images = [];
-                state.imageCopies = 1;
-                state.canvasCopies = 1;
-                document.getElementById('ui-opt-copies').value = 1;
-                document.getElementById('ui-opt-canvas-copies').value = 1;
-                state.customSuggestedPrice = null;
-                updateAll();
-                updateAll();
-                showToast('Mesa de trabajo reestablecida tras impresión.', 'success');
-                window.removeEventListener('afterprint', onAfterPrint);
-            };
-                showToast('Mesa de trabajo reestablecida tras impresión.', 'success');
-                window.removeEventListener('afterprint', onAfterPrint);
-            };
-            window.addEventListener('afterprint', onAfterPrint);
-
-            setTimeout(() => {
-                window.print();
-            }, 600);
-        }
-
-        function openCorteModal() {
-            if (state.salesLog.length === 0) {
-                showToast('No hay ventas registradas el día de hoy para realizar el corte.', 'error');
-                return;
-            }
-
-            let sheetsAccum = 0;
-            let opAccum = 0;
-            let sugAccum = 0;
-
-            state.salesLog.forEach(sale => {
-                sheetsAccum += sale.pages;
-                opAccum += sale.totalOp;
-                sugAccum += sale.totalSug;
-            });
-
-            const profit = sugAccum - opAccum;
-
-            const modalHtml = `
-            <div id="corte-modal" class="fixed inset-0 bg-gray-900/50 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in no-print">
-                <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 p-6 flex flex-col gap-6">
-                    <div class="flex items-center gap-3 text-red-600 dark:text-red-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                        <h3 class="text-lg font-black uppercase tracking-wider">Corte de Caja Diario</h3>
-                    </div>
-                    
-                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                        Estás por realizar el corte diario. Esto resumirá la actividad del día, **generará un reporte gráfico (PNG)** y reiniciará el registro de caja.
-                    </p>
-                    
-                    <div class="bg-gray-50 dark:bg-gray-950 rounded-xl p-4 border border-gray-100 dark:border-gray-800 space-y-3 font-mono text-xs">
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Ventas Realizadas:</span>
-                            <span class="font-bold text-gray-800 dark:text-gray-100">${state.salesLog.length}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Hojas Impresas:</span>
-                            <span class="font-bold text-gray-800 dark:text-gray-100">${sheetsAccum}</span>
-                        </div>
-                        <div class="h-px bg-gray-200 dark:bg-gray-800"></div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-400 font-bold">Ingresos Totales (Caja):</span>
-                            <span class="font-black text-green-600 dark:text-green-400">$${sugAccum.toFixed(2)}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-400">Costo Operativo Neto:</span>
-                            <span class="font-black text-red-500">$${opAccum.toFixed(2)}</span>
-                        </div>
-                        <div class="flex justify-between text-base">
-                            <span class="text-gray-500 dark:text-gray-400 font-bold">Utilidad Real:</span>
-                            <span class="font-black text-emerald-500">$${profit.toFixed(2)}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-3 mt-2">
-                        <button onclick="closeCorteModal()" class="flex-1 py-2.5 text-sm font-semibold text-gray-700 bg-gray-100 dark:bg-gray-800 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-750 transition">
-                            Cancelar
-                        </button>
-                        <button onclick="confirmCorte()" class="flex-1 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-md">
-                            Efectuar Corte
-                        </button>
-                    </div>
-                </div>
-            </div>`;
-            
-            const modalDiv = document.createElement('div');
-            modalDiv.id = 'corte-modal-wrapper';
-            modalDiv.innerHTML = modalHtml;
-            document.body.appendChild(modalDiv);
-        }
-        
-        window.closeCorteModal = function() {
-            const el = document.getElementById('corte-modal-wrapper');
-            if (el) el.remove();
-        }
-        
-        window.confirmCorte = function() {
-            let sheetsAccum = 0;
-            let opAccum = 0;
-            let sugAccum = 0;
-
-            state.salesLog.forEach(sale => {
-                sheetsAccum += sale.pages;
-                opAccum += sale.totalOp;
-                sugAccum += sale.totalSug;
-            });
-
-            const profit = sugAccum - opAccum;
-
-            try {
-                const canvas = document.createElement('canvas');
-                canvas.width = 600;
-                canvas.height = 700;
-                const ctx = canvas.getContext('2d');
-
-                ctx.fillStyle = '#0f172a'; 
-                ctx.fillRect(0, 0, 600, 700);
-
-                ctx.fillStyle = '#1e293b'; 
-                ctx.fillRect(15, 15, 570, 670);
-                ctx.fillStyle = '#0f172a'; 
-                ctx.fillRect(20, 20, 560, 660);
-
-                ctx.fillStyle = '#ef4444'; 
-                ctx.fillRect(20, 20, 560, 10);
-
-                ctx.fillStyle = '#f1f5f9';
-                ctx.font = 'bold 24px sans-serif';
-                ctx.fillText('PAPEPRINTER - REPORTE DE CORTE', 50, 80);
-
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '14px monospace';
-                const dateStr = new Date().toLocaleString('es-MX');
-                ctx.fillText('Fecha de Cierre: ' + dateStr, 50, 120);
-                ctx.fillText('----------------------------------------------------', 50, 150);
-
-                ctx.font = '18px sans-serif';
-                ctx.fillStyle = '#cbd5e1';
-                ctx.fillText('Órdenes de Venta:', 50, 200);
-                ctx.font = 'bold 20px monospace';
-                ctx.fillStyle = '#38bdf8';
-                ctx.fillText(state.salesLog.length + ' ventas', 350, 200);
-
-                ctx.font = '18px sans-serif';
-                ctx.fillStyle = '#cbd5e1';
-                ctx.fillText('Total Hojas Impresas:', 50, 260);
-                ctx.font = 'bold 20px monospace';
-                ctx.fillStyle = '#f1f5f9';
-                ctx.fillText(sheetsAccum + ' unidad(es)', 350, 260);
-
-                ctx.font = '18px sans-serif';
-                ctx.fillStyle = '#cbd5e1';
-                ctx.fillText('Costo Operativo:', 50, 320);
-                ctx.font = 'bold 20px monospace';
-                ctx.fillStyle = '#ef4444';
-                ctx.fillText('$' + opAccum.toFixed(2), 350, 320);
-
-                ctx.font = '18px sans-serif';
-                ctx.fillStyle = '#cbd5e1';
-                ctx.fillText('Ingresos Recibidos:', 50, 380);
-                ctx.font = 'bold 22px monospace';
-                ctx.fillStyle = '#4ade80';
-                ctx.fillText('$' + sugAccum.toFixed(2), 350, 380);
-
-                ctx.font = '18px sans-serif';
-                ctx.fillStyle = '#cbd5e1';
-                ctx.fillText('Utilidad Neta:', 50, 440);
-                ctx.font = 'bold 26px monospace';
-                ctx.fillStyle = '#10b981';
-                ctx.fillText('$' + profit.toFixed(2), 350, 440);
-
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '14px monospace';
-                ctx.fillText('----------------------------------------------------', 50, 500);
-
-                ctx.fillStyle = '#6366f1';
-                ctx.font = 'italic bold 16px sans-serif';
-                ctx.fillText('PapePrinter by Edgar & Gemini', 50, 545);
-
-                ctx.fillStyle = '#64748b';
-                ctx.font = '12px sans-serif';
-                ctx.fillText('Este reporte fue firmado digitalmente al efectuar el corte.', 50, 580);
-                ctx.fillText('Asegúrese de conservar este comprobante de caja.', 50, 600);
-
-                const link = document.createElement('a');
-                link.download = `corte_caja_${new Date().toISOString().split('T')[0]}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch(e) {
-                console.error("No se pudo generar el reporte visual de corte:", e);
-            }
-
-            state.salesLog = [];
-            localStorage.removeItem('papePrinterSalesLog');
-            updateSalesUI();
-            closeCorteModal();
-            showToast('Corte realizado con éxito. Reporte PNG descargado y caja reiniciada a $0.00', 'success');
-        }
 
         function setupEventListeners() {
-            // Manejador del menú de parámetros desplegable en móviles
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
-            const btnCloseSidebarMobile = document.getElementById('btn-close-sidebar-mobile');
-
-            function toggleMobileSidebar() {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
+            // Eventos UI
+            if (document.getElementById('btn-theme')) {
+                document.getElementById('btn-theme').onclick = () => { state.isDarkMode = !state.isDarkMode; checkTheme(); };
             }
 
-            if (btnToggleSidebar) btnToggleSidebar.onclick = toggleMobileSidebar;
-            if (overlay) overlay.onclick = toggleMobileSidebar;
-            if (btnCloseSidebarMobile) btnCloseSidebarMobile.onclick = toggleMobileSidebar;
-
-            const w = document.getElementById('canvas-container');
-            w.addEventListener('dragover', e=>e.preventDefault());
-            w.addEventListener('drop', async e=>{
-                e.preventDefault();
-                const files = Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
-                if(files.length){
-                    state.customSuggestedPrice = null;
-                    const imgs = await Promise.all(files.map(loadImg));
-                    state.images.push(...imgs);
-                    updateAll();
-                }
-            });
-
-            document.getElementById('ui-paper').onchange = e => { 
-                state.paperId = e.target.value; 
-                state.customSuggestedPrice = null; 
-                updateAll(); 
-            };
-            document.querySelectorAll('#ui-orientation button').forEach(b => b.onclick = (e) => { 
-                state.isPortrait = e.target.dataset.val === 'true'; 
-                state.customSuggestedPrice = null; 
-                updateAll(); 
-            });
-            document.querySelectorAll('#ui-grid-mode button').forEach(b => b.onclick = (e) => { 
-                state.gridMode = e.target.dataset.val; 
-                state.customSuggestedPrice = null; 
-                updateAll(); 
-            });
-            document.getElementById('ui-slider').oninput = e => { 
-                state.gridCm = parseFloat(e.target.value); 
-                document.getElementById('ui-slider-val').innerText = `${state.gridCm} cm`; 
-                state.customSuggestedPrice = null; 
-                updateAll(); 
-            };
+            // Opciones y Efectos Visuales
+            const optMono = document.getElementById('ui-opt-mono');
+            if(optMono) optMono.onchange = e => { state.isMonochrome = e.target.checked; updateAll(); };
             
-            document.querySelectorAll('#ui-id-orientation button').forEach(b => {
-                b.onclick = (e) => {
-                    state.idOrientation = e.currentTarget.getAttribute('data-val');
-                    state.customSuggestedPrice = null;
-                    updateAll();
-                };
-            });
+            const optCrop = document.getElementById('ui-opt-crop');
+            if(optCrop) optCrop.onchange = e => { state.showCropMarks = e.target.checked; updateAll(); };
+            
+            const optSticker = document.getElementById('ui-opt-sticker');
+            if(optSticker) optSticker.onchange = e => { state.isStickerMode = e.target.checked; updateAll(); };
 
-            document.getElementById('ui-opt-sticker').onchange = e => { state.isStickerMode = e.target.checked; updateAll(); };
-            document.getElementById('ui-opt-crop').onchange = e => { state.showCropMarks = e.target.checked; updateAll(); };
-            document.getElementById('ui-opt-copies').onchange = e => { 
+            const optCopies = document.getElementById('ui-opt-copies');
+            if(optCopies) optCopies.onchange = e => { 
                 let val = parseInt(e.target.value);
                 if (isNaN(val) || val < 1) val = 1;
                 e.target.value = val;
@@ -1501,157 +1022,114 @@
                 state.customSuggestedPrice = null;
                 updateAll(); 
             };
-            document.getElementById('ui-opt-mono').onchange = e => { state.isMonochrome = e.target.checked; updateAll(); };
 
-            document.getElementById('btn-theme').onclick = () => { state.isDarkMode = !state.isDarkMode; renderUI(); };
-            
-            document.getElementById('btn-png').onclick = () => {
-                if(state.images.length === 0) {
-                    showToast('Carga imágenes antes de exportar.', 'error');
-                    return;
-                }
-                derived.pages.forEach((page, idx) => {
-                    setTimeout(() => {
-                        const c = document.createElement('canvas');
-                        drawToCanvas(c, page, true, idx);
-                        const l = document.createElement('a'); 
-                        l.download = `papeprinter_hoja_${idx + 1}.png`; 
-                        l.href = c.toDataURL('image/png'); 
-                        l.click();
-                    }, idx * 350); 
-                });
-                showToast(`Iniciando descarga de ${derived.pages.length} imagen(es).`);
-            };
-
-            document.getElementById('btn-pdf').onclick = () => {
-                if(state.images.length === 0) {
-                    showToast('Carga imágenes antes de generar tu PDF.', 'error');
-                    return;
-                }
-                showToast('Asegúrate de seleccionar "Guardar como PDF" en el destino de impresión.', 'indigo');
-                setTimeout(() => {
-                    window.print();
-                }, 100);
-            };
-
-            document.getElementById('btn-print-sales').onclick = () => {
-                registerSaleAndPrint();
-            };
-
-            document.querySelectorAll('#ui-fit button').forEach(b => b.onclick = (e) => { state.imageFit = e.target.dataset.val; updateAll(); });
-            document.getElementById('ui-zoom-img').oninput = e => { state.imageZoom = parseInt(e.target.value); updateAll(); };
-            document.getElementById('ui-zoom-work').oninput = e => { state.workspaceZoom = parseInt(e.target.value); renderCanvases(); };
-            
-            document.getElementById('btn-clear').onclick = () => {
-                state.images = [];
-                state.imageCopies = 1;
-                document.getElementById('ui-opt-copies').value = 1;
+            const optCanvasCopies = document.getElementById('ui-opt-canvas-copies');
+            if(optCanvasCopies) optCanvasCopies.onchange = e => { 
+                let val = parseInt(e.target.value);
+                if (isNaN(val) || val < 1) val = 1;
+                e.target.value = val;
+                state.canvasCopies = val; 
                 state.customSuggestedPrice = null;
-                updateAll();
-                showToast('Mesa de trabajo restaurada.');
+                updateAll(); 
             };
 
-            // Escuchador para Modificación Manual de Precio de Venta Sugerido (Cobro Flexible)
-            document.getElementById('fin-suggested').oninput = e => {
-                state.customSuggestedPrice = parseFloat(e.target.value) || 0;
-                
-                // Recalcular la ganancia basada en el nuevo valor de la negociación
-                const c = state.costs;
-                const p = derived.currentPaper;
-                const costPerSheet = p.price / p.count;
-                const eq = c.printerPrice / (c.printerLife * 2);
-
-                let totOp = 0;
-                derived.pages.forEach((pg, idx) => {
-                    const density = state.pageDensities[idx] || 0;
-                    const ink = (density/100) * (c.inkPrice/c.inkYield) * 1.1;
-                    totOp += (costPerSheet + ink + eq);
-                });
-
-                const profit = state.customSuggestedPrice - totOp;
-                const pEl = document.getElementById('fin-profit');
-                pEl.innerText = `$${profit.toFixed(2)}`;
-                pEl.className = `text-lg sm:text-xl font-black font-mono ${profit > 0 ? 'text-emerald-500' : 'text-gray-400'}`;
-            };
-
-            document.getElementById('btn-toggle-sales').onclick = () => {
-                const drawer = document.getElementById('sales-drawer');
-                drawer.classList.toggle('hidden');
-            };
-
-            document.getElementById('btn-corte').onclick = () => {
-                openCorteModal();
-            };
-
-            const tModal = document.getElementById('modal-tutorial');
-            document.getElementById('btn-tutorial').onclick = () => {
-                tModal.classList.remove('hidden');
-                // Cerrar sidebar móvil al abrir tutorial
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    toggleMobileSidebar();
-                }
-            };
-            document.getElementById('btn-close-tutorial').onclick = () => tModal.classList.add('hidden');
-            document.getElementById('btn-close-tutorial-bottom').onclick = () => tModal.classList.add('hidden');
-
-            const modal = document.getElementById('modal-settings');
-            document.getElementById('btn-open-settings').onclick = () => {
-                document.getElementById('cfg-equip').value = state.costs.printerPrice;
-                document.getElementById('cfg-life').value = state.costs.printerLife;
-                document.getElementById('cfg-ink').value = state.costs.inkPrice;
-                document.getElementById('cfg-yield').value = state.costs.inkYield;
-                document.getElementById('cfg-multiplier').value = state.costs.minMarginMultiplier || 3;
-                
-                let rMode = state.costs.suggestedRounding;
-                if (rMode === true) rMode = 'half';
-                if (rMode === false) rMode = 'none';
-                if (!rMode) rMode = 'half';
-                document.getElementById('cfg-round-mode').value = rMode;
-
-                renderSettingsTable();
-                modal.classList.remove('hidden');
-                // Cerrar sidebar móvil al abrir configuración
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    toggleMobileSidebar();
-                }
-            };
-            document.getElementById('btn-close-settings').onclick = () => modal.classList.add('hidden');
-            document.getElementById('btn-add-paper').onclick = () => { state.papers.push({id:'p'+Date.now(), name:'Nuevo', size:'Letter', price:100, count:100, maxSalePrice:10}); renderSettingsTable(); };
-            
-            document.getElementById('btn-save').onclick = () => {
-                state.costs.printerPrice = +document.getElementById('cfg-equip').value;
-                state.costs.printerLife = +document.getElementById('cfg-life').value;
-                state.costs.inkPrice = +document.getElementById('cfg-ink').value;
-                state.costs.inkYield = +document.getElementById('cfg-yield').value;
-                state.costs.minMarginMultiplier = +document.getElementById('cfg-multiplier').value || 3;
-                state.costs.suggestedRounding = document.getElementById('cfg-round-mode').value;
-                localStorage.setItem('papePrinterVanilla', JSON.stringify({costs: state.costs, papers: state.papers}));
-                state.customSuggestedPrice = null;
-                updateAll();
-                modal.classList.add('hidden');
-                showToast('Configuraciones guardadas localmente.');
-            };
-
-            document.getElementById('btn-export').onclick = () => {
-                const b = new Blob([JSON.stringify({costs: state.costs, papers: state.papers}, null, 2)], {type:'application/json'});
-                const l = document.createElement('a'); l.href = URL.createObjectURL(b); l.download='pape_config.json'; l.click();
-            };
-            document.getElementById('btn-import').onchange = (e) => {
-                const f = e.target.files[0]; if(!f) return;
-                const r = new FileReader();
-                r.onload = ev => {
-                    try {
-                        const p = JSON.parse(ev.target.result);
-                        if(p.costs) state.costs = p.costs;
-                        if(p.papers) state.papers = p.papers;
-                        renderSettingsTable();
-                        showToast('JSON importado. Recuerda Guardar.');
-                    } catch(err){ showToast('Archivo JSON no válido.', 'error'); }
+            // Botón Limpiar Mesa (Reparado)
+            const btnClear = document.getElementById('btn-clear');
+            if(btnClear) {
+                btnClear.onclick = () => {
+                    state.images = [];
+                    state.imageCopies = 1;
+                    state.canvasCopies = 1;
+                    if(document.getElementById('ui-opt-copies')) document.getElementById('ui-opt-copies').value = 1;
+                    if(document.getElementById('ui-opt-canvas-copies')) document.getElementById('ui-opt-canvas-copies').value = 1;
+                    state.customSuggestedPrice = null;
+                    updateAll();
+                    showToast('Mesa de trabajo restaurada.');
                 };
-                r.readAsText(f);
+            }
+
+            // Precio Sugerido Manual Editable
+            const sugInput = document.getElementById('fin-suggested');
+            if(sugInput) {
+                sugInput.onchange = e => {
+                    state.customSuggestedPrice = parseFloat(e.target.value) || 0;
+                    updateFinancials();
+                };
+            }
+
+            // Acción: IMPRIMIR Y COBRAR (Reparado y Blindado)
+            // Busca cualquier botón que mande imprimir o tenga la clase de imprimir venta
+            const btnPrint = document.getElementById('btn-print-sale') || document.querySelector('button[onclick="window.print()"]');
+            if(btnPrint) {
+                btnPrint.onclick = (e) => {
+                    e.preventDefault(); 
+                    if (state.images.length === 0) {
+                        showToast('No hay imágenes para imprimir.', 'error');
+                        return;
+                    }
+
+                    // Calcular Costo Total Operativo Real
+                    let totOp = 0;
+                    const p = derived.currentPaper;
+                    const c = state.costs;
+                    const costPerSheet = p.price / p.count;
+                    const eq = c.printerPrice / (c.printerLife * 2);
+                    derived.pages.forEach((pg, idx) => {
+                        const density = state.pageDensities[idx] || 0;
+                        const ink = (density / 100) * (c.inkPrice / c.inkYield) * 1.1;
+                        totOp += (costPerSheet + ink + eq);
+                    });
+                    totOp *= state.canvasCopies;
+
+                    const finalSug = parseFloat(document.getElementById('fin-suggested').value) || 0;
+                    const totalPhysicalPages = derived.pages.length * state.canvasCopies;
+
+                    // Generar Ticket ID
+                    const d = new Date();
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const yy = String(d.getFullYear()).slice(-2);
+                    const hh = String(d.getHours()).padStart(2, '0');
+                    const mins = String(d.getMinutes()).padStart(2, '0');
+                    const ticketId = `${dd}${mm}${yy}${hh}${mins}`;
+
+                    const newSale = {
+                        id: ticketId,
+                        timestamp: d.toISOString(),
+                        paper: p.name,
+                        pages: totalPhysicalPages,
+                        totalOp: totOp,
+                        totalSug: finalSug
+                    };
+
+                    // Guardar Venta
+                    state.salesLog.push(newSale);
+                    localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
+                    updateSalesUI();
+
+                    showToast(`Venta registrada (Tck: ${ticketId}). Abriendo impresora...`, 'success');
+
+                    // Reinicio automático de la mesa POST-Impresión
+                    const onAfterPrint = () => {
+                        state.images = [];
+                        state.imageCopies = 1;
+                        state.canvasCopies = 1;
+                        state.customSuggestedPrice = null;
+                        if(document.getElementById('ui-opt-copies')) document.getElementById('ui-opt-copies').value = 1;
+                        if(document.getElementById('ui-opt-canvas-copies')) document.getElementById('ui-opt-canvas-copies').value = 1;
+                        updateAll();
+                        showToast('Mesa de trabajo reestablecida tras impresión.', 'success');
+                        window.removeEventListener('afterprint', onAfterPrint);
+                    };
+                    window.addEventListener('afterprint', onAfterPrint);
+
+                    // Lanzar impresión con un pequeño retraso
+                    setTimeout(() => { window.print(); }, 600);
+                };
             }
         }
 
+        // Inicializador
         window.onload = init;
     </script>
 </body>
