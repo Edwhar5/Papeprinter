@@ -65,7 +65,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                             Guía
                         </button>
-                        <a href="https://www.mercadopago.com.mx/payment-link/v1/redirect?link-id=9717741c-070d-46ca-be5f-effc258d2c55&source=link" target="_blank" class="p-2 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Donar via Mercado Pago">
+                        <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="p-2 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Donar via Mercado Pago">
                             <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" fill="#009EE3"/><path d="M30 18L18 30M18 18L30 30" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
                         <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-2 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Donar via PayPal">
@@ -272,16 +272,27 @@
                     </div>
                 </div>
 
-                <!-- Cajón Desplegable de Registro de Ventas -->
-                <div id="sales-drawer" class="hidden border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 p-4 sm:p-6 max-h-72 overflow-y-auto custom-scrollbar">
-                    <div class="max-w-7xl mx-auto flex flex-col gap-4">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">Ventas y Registro del Día</h4>
-                            <button id="btn-corte" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                                Corte de Caja
-                            </button>
-                        </div>
+<!-- Cajón Desplegable de Registro de Ventas -->
+<div id="sales-drawer" class="hidden border-t border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto flex flex-col gap-4 p-4">
+        <div class="flex justify-between items-center">
+            <h4 class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-500">Registro de Ventas</h4>
+            
+            <!-- Contenedor para alinear ambos botones -->
+            <div class="flex gap-2">
+                <!-- Botón nuevo: Detalles -->
+                <a href="registro-ventas.html" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] sm:text-xs font-bold rounded flex items-center gap-1 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    Detalles
+                </a>
+
+                <!-- Botón existente: Corte -->
+                <button id="btn-corte" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-[10px] sm:text-xs font-bold rounded transition">
+                    Corte de Caja
+                </button>
+            </div>
+        </div>
+</div>
                         
                         <div class="border border-gray-200 dark:border-gray-800 rounded-xl overflow-x-auto bg-white dark:bg-gray-900">
                             <table class="w-full text-xs text-left min-w-[600px]">
