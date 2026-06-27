@@ -3,88 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finanzas y Corte de Caja - PapePrinter</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Dashboard Financiero Pro - PapePrinter</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para las gráficas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        /* Glassmorphism effects */
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .dark .glass-card { background: rgba(31, 41, 55, 0.95); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
 
-    <!-- Encabezado -->
-    <header class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shadow-sm z-10">
+    <header class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shadow-sm z-20 sticky top-0">
         <div class="flex items-center gap-4">
-            <a href="index.html" class="flex items-center justify-center p-2 rounded-lg bg-gray-100 text-gray-500 hover:text-indigo-600 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition">
+            <a href="index.html" class="flex items-center justify-center p-2 rounded-lg bg-slate-100 text-slate-500 hover:text-indigo-600 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition" title="Volver al Lienzo">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
             </a>
-            <div class="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
+            <div class="w-px h-6 bg-slate-200 dark:bg-gray-700"></div>
+            
             <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-xl tracking-tight">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/></svg>
-                <span>PapePrinter <span class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 hidden sm:inline">Finanzas</span></span>
+                <span>PapePrinter <span class="text-xs font-bold text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded uppercase tracking-widest ml-1 hidden sm:inline">Pro 3.1</span></span>
+            </div>
+            
+            <!-- Autores -->
+            <div class="hidden md:flex items-center ml-2 px-3 py-1 bg-slate-100 dark:bg-gray-800 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                By Edwhar & Gemini
             </div>
         </div>
-        <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </button>
+
+        <div class="flex items-center gap-3">
+            <!-- Botones de Donación -->
+            <div class="hidden sm:flex items-center gap-2 mr-2 border-r border-slate-200 dark:border-gray-700 pr-4">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-1">Apoyar Proyecto:</span>
+                <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Apoyar vía Mercado Pago">
+                    <img src="https://http2.mlstatic.com/storage/mobile-on-demand-resources/image/web-private-nav-mp-logo-restyling_3X?updatedAt=0" alt="Mercado Pago" class="w-6 h-6 object-contain">
+                </a>
+                <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Apoyar vía PayPal">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+                </a>
+            </div>
+
+            <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+        </div>
     </header>
 
-    <main class="flex-1 max-w-6xl mx-auto w-full p-6 flex flex-col gap-6">
-        <!-- Tarjetas de Resumen -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 fade-in">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="text-xs uppercase font-bold text-gray-500 mb-1">Trabajos Realizados</div>
-                <div id="stat-jobs" class="text-3xl font-black text-gray-800 dark:text-gray-100">0</div>
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+        
+        <!-- Header de Acciones de Reporte -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 fade-in">
+            <div>
+                <h1 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Inteligencia de Negocios</h1>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Análisis de rendimiento, costos y utilidad en tiempo real.</p>
             </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="text-xs uppercase font-bold text-gray-500 mb-1">Hojas Consumidas</div>
-                <div id="stat-sheets" class="text-3xl font-black text-gray-800 dark:text-gray-100">0</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-red-200 dark:border-red-900/30">
-                <div class="text-xs uppercase font-bold text-red-500 mb-1">Costo Operativo Neto</div>
-                <div id="stat-costs" class="text-3xl font-black font-mono text-red-600 dark:text-red-400">$0.00</div>
-            </div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-green-200 dark:border-green-900/30">
-                <div class="text-xs uppercase font-bold text-green-600 mb-1">Ingresos Brutos</div>
-                <div id="stat-revenue" class="text-3xl font-black font-mono text-green-600 dark:text-green-400">$0.00</div>
+            <div class="flex gap-2">
+                <button onclick="exportToCSV()" class="px-4 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-slate-200 rounded-lg text-sm font-bold shadow-sm hover:bg-slate-50 dark:hover:bg-gray-700 transition flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Exportar a Excel (CSV)
+                </button>
             </div>
         </div>
 
-        <!-- Tabla Completa -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 flex-1 flex flex-col overflow-hidden fade-in">
-            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50">
-                <h3 class="font-bold text-gray-800 dark:text-gray-100">Desglose de Operaciones</h3>
-                <div class="text-sm font-bold text-emerald-500 flex gap-2 items-center">
-                    Utilidad Libre: <span id="stat-profit" class="text-xl font-mono">$0.00</span>
+        <!-- Tarjetas KPI -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 fade-in" style="animation-delay: 0.1s;">
+            <!-- Ingresos Brutos -->
+            <div class="glass-card p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-green-500/10 dark:text-green-500/5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="text-[10px] uppercase font-black text-slate-500 tracking-widest mb-1 relative z-10">Ingresos Brutos</div>
+                <div id="kpi-revenue" class="text-3xl font-black font-mono text-green-600 dark:text-green-400 relative z-10">$0.00</div>
+            </div>
+            <!-- Costos Operativos -->
+            <div class="glass-card p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-red-500/10 dark:text-red-500/5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="text-[10px] uppercase font-black text-slate-500 tracking-widest mb-1 relative z-10">Costos (Mat. + Tinta + Eq.)</div>
+                <div id="kpi-costs" class="text-3xl font-black font-mono text-red-500 dark:text-red-400 relative z-10">$0.00</div>
+            </div>
+            <!-- Utilidad Neta -->
+            <div class="glass-card p-5 rounded-2xl shadow-sm border border-emerald-200 dark:border-emerald-900/30 relative overflow-hidden bg-gradient-to-br from-emerald-50/50 to-white dark:from-emerald-900/10 dark:to-gray-900">
+                <div class="text-[10px] uppercase font-black text-emerald-600 dark:text-emerald-500 tracking-widest mb-1 relative z-10">Utilidad Libre</div>
+                <div id="kpi-profit" class="text-3xl font-black font-mono text-emerald-600 dark:text-emerald-400 relative z-10">$0.00</div>
+            </div>
+            <!-- Margen de Rentabilidad -->
+            <div class="glass-card p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 flex flex-col justify-center">
+                <div class="flex items-end justify-between">
+                    <div>
+                        <div class="text-[10px] uppercase font-black text-slate-500 tracking-widest mb-1">Margen ROI</div>
+                        <div id="kpi-margin" class="text-2xl font-black text-blue-600 dark:text-blue-400">0%</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] uppercase font-black text-slate-500 tracking-widest mb-1">Hojas</div>
+                        <div id="kpi-sheets" class="text-xl font-bold text-slate-700 dark:text-slate-300">0</div>
+                    </div>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-gray-700 rounded-full h-1.5 mt-3 overflow-hidden">
+                    <div id="kpi-margin-bar" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div>
                 </div>
             </div>
-            <div class="overflow-auto flex-1">
-                <table class="w-full text-sm text-left min-w-[800px]">
-                    <thead class="bg-gray-100 dark:bg-gray-800/80 text-gray-500 uppercase tracking-wider text-xs sticky top-0">
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 fade-in" style="animation-delay: 0.2s;">
+            <!-- Gráfica de Tendencia (Línea) -->
+            <div class="lg:col-span-2 glass-card p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm uppercase tracking-wider">Tendencia de Utilidad</h3>
+                </div>
+                <div class="h-64 w-full relative">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            <!-- Gráfica de Composición (Dona) -->
+            <div class="glass-card p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-sm uppercase tracking-wider">Materiales más rentables</h3>
+                </div>
+                <div class="h-64 w-full relative flex items-center justify-center">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 flex-1 flex flex-col overflow-hidden fade-in" style="animation-delay: 0.3s;">
+            <div class="p-5 border-b border-slate-100 dark:border-gray-800 flex justify-between items-center bg-slate-50/50 dark:bg-gray-900/50">
+                <h3 class="font-bold text-slate-800 dark:text-slate-100">Desglose Detallado de Operaciones</h3>
+                <span class="text-xs font-bold text-slate-400 bg-slate-200 dark:bg-gray-700 px-2 py-1 rounded" id="table-count">0 Tickets</span>
+            </div>
+            <div class="overflow-x-auto flex-1 custom-scrollbar">
+                <table class="w-full text-sm text-left min-w-[900px]">
+                    <thead class="bg-slate-100 dark:bg-gray-800 text-slate-500 uppercase tracking-wider text-[10px] font-black sticky top-0 z-10">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">Ticket ID</th>
-                            <th class="px-6 py-3 font-semibold">Material / Servicio</th>
-                            <th class="px-6 py-3 font-semibold text-center">Lienzos</th>
-                            <th class="px-6 py-3 font-semibold text-right">Costo Operativo</th>
-                            <th class="px-6 py-3 font-semibold text-right">Cobrado</th>
-                            <th class="px-6 py-3 font-semibold text-right">Ganancia</th>
+                            <th class="px-5 py-3">Fecha y Hora</th>
+                            <th class="px-5 py-3">Ticket ID</th>
+                            <th class="px-5 py-3">Material Trabajado</th>
+                            <th class="px-5 py-3 text-center">Hojas</th>
+                            <th class="px-5 py-3 text-right">Costo Op.</th>
+                            <th class="px-5 py-3 text-right">Cobrado</th>
+                            <th class="px-5 py-3 text-right">Utilidad Neta</th>
+                            <th class="px-5 py-3 text-center">Rendimiento</th>
                         </tr>
                     </thead>
-                    <tbody id="full-sales-body" class="divide-y divide-gray-100 dark:divide-gray-800 font-mono text-gray-700 dark:text-gray-300">
+                    <tbody id="full-sales-body" class="divide-y divide-slate-100 dark:divide-gray-800 font-mono text-slate-700 dark:text-slate-300 bg-white dark:bg-gray-900/50">
                         <!-- Llenado via JS -->
                     </tbody>
                 </table>
             </div>
-            <div class="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                <p class="text-xs text-gray-500 max-w-sm">El corte de caja generará un recibo en imagen (PNG) detallando tus ingresos y vaciará el historial para un nuevo turno.</p>
-                <button id="btn-generate-corte" class="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold shadow-lg shadow-red-600/20 transition flex items-center gap-2">
+            <div class="p-5 bg-slate-50 dark:bg-gray-900 border-t border-slate-100 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+                <p class="text-xs text-slate-500 max-w-sm text-center sm:text-left">Exporta los datos o genera el corte de caja diario. Esta acción vaciará el dashboard para el siguiente turno.</p>
+                <button onclick="generateCortePNG()" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold shadow-md shadow-rose-600/20 transition flex items-center justify-center gap-2 w-full sm:w-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Generar Corte de Caja y Borrar Historial
+                    Generar Ticket y Limpiar
                 </button>
             </div>
         </div>
@@ -95,99 +179,333 @@
 
     <script>
         let salesLog = [];
+        let trendChartInstance = null;
+        let doughnutChartInstance = null;
+        let isDarkMode = false;
 
+        // --- INICIALIZACIÓN ---
         function init() {
-            // Theme setup based on main app
+            // Theme check
             const pConfig = localStorage.getItem('papePrinterVanilla');
             if (pConfig) {
                 try {
                     const conf = JSON.parse(pConfig);
-                    if (conf.isDarkMode) document.documentElement.classList.add('dark');
+                    if (conf.isDarkMode) {
+                        isDarkMode = true;
+                        document.documentElement.classList.add('dark');
+                    }
                 } catch(e) {}
             }
+            updateThemeIcon();
 
+            // Cargar datos
             const saved = localStorage.getItem('papePrinterSalesLog');
             if (saved) {
-                try { salesLog = JSON.parse(saved); } catch(e){}
+                try { 
+                    salesLog = JSON.parse(saved); 
+                    if (!Array.isArray(salesLog)) salesLog = [];
+                } catch(e) { salesLog = []; }
             }
 
-            renderDashboard();
+            // Establecer default globales para Chart.js basados en el tema
+            Chart.defaults.color = isDarkMode ? '#94a3b8' : '#64748b';
+            Chart.defaults.font.family = "system-ui, -apple-system, sans-serif";
 
-            document.getElementById('btn-generate-corte').onclick = generateCortePNG;
+            renderDashboard();
+            renderCharts();
         }
 
+        // --- CONTROL DE TEMA ---
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            // Guardar preferencia para que index.html la respete (opcional)
+            try {
+                const conf = JSON.parse(localStorage.getItem('papePrinterVanilla') || '{}');
+                conf.isDarkMode = isDarkMode;
+                localStorage.setItem('papePrinterVanilla', JSON.stringify(conf));
+            } catch(e){}
+
+            updateThemeIcon();
+            
+            // Actualizar colores de las gráficas
+            Chart.defaults.color = isDarkMode ? '#94a3b8' : '#64748b';
+            if (trendChartInstance) {
+                trendChartInstance.options.scales.x.grid.color = isDarkMode ? '#334155' : '#e2e8f0';
+                trendChartInstance.options.scales.y.grid.color = isDarkMode ? '#334155' : '#e2e8f0';
+                trendChartInstance.update();
+            }
+        }
+
+        function updateThemeIcon() {
+            const icon = document.getElementById('theme-icon');
+            if (isDarkMode) {
+                icon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`; // Sun
+            } else {
+                icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`; // Moon
+            }
+        }
+
+        // --- RENDERIZADO DE KPIs Y TABLA ---
         function renderDashboard() {
             let sheets = 0, costs = 0, revenue = 0;
             const tbody = document.getElementById('full-sales-body');
             tbody.innerHTML = '';
 
+            document.getElementById('table-count').innerText = `${salesLog.length} Tickets`;
+
             if (salesLog.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-gray-400 font-sans">No hay operaciones registradas.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400 font-sans">No hay datos financieros registrados en este turno.</td></tr>';
             } else {
                 salesLog.slice().reverse().forEach(sale => {
-                    sheets += sale.pages;
-                    costs += sale.totalOp;
-                    revenue += sale.totalSug;
+                    const pages = parseInt(sale.pages) || 0;
+                    const op = parseFloat(sale.totalOp) || 0;
+                    const sug = parseFloat(sale.totalSug) || 0;
+                    const profit = sug - op;
+                    const margin = sug > 0 ? ((profit / sug) * 100) : 0;
+
+                    sheets += pages;
+                    costs += op;
+                    revenue += sug;
+
+                    // Formatear Fecha (El ID ya tiene formato Fecha/Hora, pero sacamos una legible)
+                    let dateStr = "N/A";
+                    if(sale.timestamp) {
+                        const d = new Date(sale.timestamp);
+                        dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    }
+
+                    // Indicador Visual de Rendimiento
+                    let badge = '';
+                    if (margin > 60) badge = '<span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full text-[10px] font-bold">Excelente</span>';
+                    else if (margin > 30) badge = '<span class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-full text-[10px] font-bold">Bueno</span>';
+                    else badge = '<span class="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-bold">Bajo</span>';
 
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors";
+                    tr.className = "hover:bg-slate-50 dark:hover:bg-gray-800/80 transition-colors";
                     tr.innerHTML = `
-                        <td class="px-6 py-3 font-bold text-indigo-600 dark:text-indigo-400">${sale.id}</td>
-                        <td class="px-6 py-3 font-sans font-medium text-gray-800 dark:text-gray-200">${sale.paper}</td>
-                        <td class="px-6 py-3 text-center">${sale.pages}</td>
-                        <td class="px-6 py-3 text-right text-red-500">$${sale.totalOp.toFixed(2)}</td>
-                        <td class="px-6 py-3 text-right text-green-600 dark:text-green-400 font-bold">$${sale.totalSug.toFixed(2)}</td>
-                        <td class="px-6 py-3 text-right text-emerald-500 font-bold">$${(sale.totalSug - sale.totalOp).toFixed(2)}</td>
+                        <td class="px-5 py-3 font-sans text-xs text-slate-500">${dateStr}</td>
+                        <td class="px-5 py-3 font-bold text-indigo-600 dark:text-indigo-400 text-xs">${sale.id || 'N/A'}</td>
+                        <td class="px-5 py-3 font-sans font-medium text-slate-800 dark:text-slate-200">${sale.paper || 'N/A'}</td>
+                        <td class="px-5 py-3 text-center text-slate-600 dark:text-slate-400">${pages}</td>
+                        <td class="px-5 py-3 text-right text-red-500/80">$${op.toFixed(2)}</td>
+                        <td class="px-5 py-3 text-right text-slate-700 dark:text-slate-300 font-bold">$${sug.toFixed(2)}</td>
+                        <td class="px-5 py-3 text-right text-emerald-600 dark:text-emerald-400 font-black">$${profit.toFixed(2)}</td>
+                        <td class="px-5 py-3 text-center font-sans">${badge}</td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
 
-            document.getElementById('stat-jobs').innerText = salesLog.length;
-            document.getElementById('stat-sheets').innerText = sheets;
-            document.getElementById('stat-costs').innerText = `$${costs.toFixed(2)}`;
-            document.getElementById('stat-revenue').innerText = `$${revenue.toFixed(2)}`;
-            document.getElementById('stat-profit').innerText = `$${(revenue - costs).toFixed(2)}`;
+            const totalProfit = revenue - costs;
+            const avgMargin = revenue > 0 ? (totalProfit / revenue) * 100 : 0;
+
+            document.getElementById('kpi-revenue').innerText = `$${revenue.toFixed(2)}`;
+            document.getElementById('kpi-costs').innerText = `$${costs.toFixed(2)}`;
+            document.getElementById('kpi-profit').innerText = `$${totalProfit.toFixed(2)}`;
+            document.getElementById('kpi-sheets').innerText = sheets;
+            document.getElementById('kpi-margin').innerText = `${avgMargin.toFixed(1)}%`;
+            document.getElementById('kpi-margin-bar').style.width = `${Math.min(100, Math.max(0, avgMargin))}%`;
+            
+            // Colorear la barra de margen según rendimiento
+            const bar = document.getElementById('kpi-margin-bar');
+            if(avgMargin > 60) bar.className = 'bg-emerald-500 h-1.5 rounded-full';
+            else if(avgMargin > 30) bar.className = 'bg-blue-500 h-1.5 rounded-full';
+            else bar.className = 'bg-amber-500 h-1.5 rounded-full';
         }
 
+        // --- RENDERIZADO DE GRÁFICAS (Chart.js) ---
+        function renderCharts() {
+            if (salesLog.length === 0) return; // No dibujar si no hay data
+
+            // Preparar datos para Línea (Agrupados por orden cronológico)
+            const labelsLine = [];
+            const dataProfit = [];
+            const dataCost = [];
+
+            // Preparar datos para Dona (Agrupados por material)
+            const materialCounts = {};
+            const materialProfits = {};
+
+            // Procesar cronológicamente (salesLog está del más antiguo al más nuevo)
+            salesLog.forEach((sale, i) => {
+                // Line chart
+                labelsLine.push(`T-${i+1}`); // Ej: T-1, T-2
+                dataProfit.push((parseFloat(sale.totalSug) - parseFloat(sale.totalOp)).toFixed(2));
+                dataCost.push(parseFloat(sale.totalOp).toFixed(2));
+
+                // Doughnut chart
+                const mat = sale.paper || 'Otro';
+                materialCounts[mat] = (materialCounts[mat] || 0) + parseInt(sale.pages);
+                materialProfits[mat] = (materialProfits[mat] || 0) + (parseFloat(sale.totalSug) - parseFloat(sale.totalOp));
+            });
+
+            // 1. Instanciar Trend Chart (Area Line)
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            const gridColor = isDarkMode ? '#334155' : '#e2e8f0';
+            
+            trendChartInstance = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: labelsLine,
+                    datasets: [
+                        {
+                            label: 'Utilidad ($)',
+                            data: dataProfit,
+                            borderColor: '#10b981', // Emerald 500
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Costo Op. ($)',
+                            data: dataCost,
+                            borderColor: '#ef4444', // Red 500
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', align: 'end', labels: { boxWidth: 12, usePointStyle: true } },
+                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', titleColor: '#fff', padding: 10, cornerRadius: 8 }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: gridColor }, beginAtZero: true }
+                    }
+                }
+            });
+
+            // 2. Instanciar Doughnut Chart
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            const donutLabels = Object.keys(materialProfits);
+            const donutData = Object.values(materialProfits);
+            
+            // Paleta de colores profesionales
+            const bgColors = ['#6366f1', '#10b981', '#f59e0b', '#0ea5e9', '#8b5cf6', '#ec4899'];
+
+            doughnutChartInstance = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: donutLabels,
+                    datasets: [{
+                        data: donutData,
+                        backgroundColor: bgColors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, usePointStyle: true, padding: 20 } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            callbacks: {
+                                label: function(context) {
+                                    return ` $${context.raw.toFixed(2)} (Utilidad)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- EXPORTAR A CSV ---
+        function exportToCSV() {
+            if (salesLog.length === 0) {
+                alert("No hay datos para exportar.");
+                return;
+            }
+
+            // Crear Cabeceras
+            let csvContent = "Fecha y Hora,Ticket ID,Material,Hojas Procesadas,Costo Operativo,Monto Cobrado,Utilidad Neta\n";
+
+            // Llenar Datos
+            salesLog.forEach(sale => {
+                let dateStr = "N/A";
+                if(sale.timestamp) {
+                    const d = new Date(sale.timestamp);
+                    dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+                }
+                const op = parseFloat(sale.totalOp) || 0;
+                const sug = parseFloat(sale.totalSug) || 0;
+                const profit = sug - op;
+                
+                // Limpiar comas del material por si acaso rompen el CSV
+                const safeMaterial = sale.paper ? sale.paper.replace(/,/g, '') : 'N/A';
+
+                csvContent += `"${dateStr}","${sale.id}","${safeMaterial}",${sale.pages},${op.toFixed(2)},${sug.toFixed(2)},${profit.toFixed(2)}\n`;
+            });
+
+            // Descargar Archivo
+            const blob = new Blob(["\ufeff", csvContent], { type: 'text/csv;charset=utf-8;' }); // \ufeff para BOM y soporte Excel tildes
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            const filename = `PapePrinter_Finanzas_${new Date().toLocaleDateString().replace(/\//g,'-')}.csv`;
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- CORTE DE CAJA (PNG) ---
         function generateCortePNG() {
             if (salesLog.length === 0) {
                 alert("No hay ventas para realizar el corte de caja.");
                 return;
             }
 
-            if (!confirm("¿Estás seguro de generar el corte? Esto borrará el historial de ventas actual para iniciar un nuevo turno.")) {
+            if (!confirm("¿Estás seguro de generar el corte? Esto borrará el historial del Dashboard para iniciar un nuevo turno.")) {
                 return;
             }
 
             const canvas = document.getElementById('corte-canvas');
             const ctx = canvas.getContext('2d');
             
-            // Cálculos
+            // Cálculos Totales
             let s = 0, c = 0, r = 0;
-            salesLog.forEach(x => { s+=x.pages; c+=x.totalOp; r+=x.totalSug; });
-            const profit = r - c;
+            salesLog.forEach(x => { 
+                s += (parseInt(x.pages) || 0); 
+                c += (parseFloat(x.totalOp) || 0); 
+                r += (parseFloat(x.totalSug) || 0); 
+            });
 
-            // Dimensiones del ticket
+            // Dimensiones
             const width = 600;
             const rowHeight = 35;
             const padding = 40;
             const headerHeight = 250;
-            const footerHeight = 150;
+            const footerHeight = 200;
             canvas.width = width;
             canvas.height = headerHeight + (salesLog.length * rowHeight) + footerHeight;
 
-            // Fondo
+            // Fondo Blanco Puro
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Estilos de texto
-            ctx.fillStyle = "#1e293b";
+            ctx.fillStyle = "#0f172a";
             ctx.textAlign = "center";
             
-            // Cabecera
-            ctx.font = "bold 32px sans-serif";
-            ctx.fillText("PapePrinter", width/2, padding + 20);
+            // Cabecera Ticket
+            ctx.font = "bold 34px sans-serif";
+            ctx.fillText("PapePrinter PRO", width/2, padding + 20);
             
             ctx.font = "20px sans-serif";
             ctx.fillStyle = "#64748b";
@@ -197,7 +515,7 @@
             ctx.font = "16px monospace";
             ctx.fillText(`Fecha: ${now.toLocaleDateString()} - ${now.toLocaleTimeString()}`, width/2, padding + 85);
 
-            // Línea divisoria
+            // Línea Divisoria
             ctx.strokeStyle = "#cbd5e1";
             ctx.lineWidth = 2;
             ctx.setLineDash([5, 5]);
@@ -206,72 +524,102 @@
             ctx.lineTo(width - padding, padding + 120);
             ctx.stroke();
 
-            // Encabezados de tabla
+            // Encabezados Tabla
             ctx.setLineDash([]);
             ctx.textAlign = "left";
             ctx.font = "bold 16px sans-serif";
-            ctx.fillStyle = "#1e293b";
-            let y = padding + 160;
-            ctx.fillText("TICKET", padding, y);
-            ctx.fillText("HOJAS", padding + 150, y);
-            ctx.fillText("COSTO", padding + 250, y);
-            ctx.fillText("COBRADO", padding + 370, y);
+            ctx.fillStyle = "#0f172a";
+            
+            ctx.fillText("TICKET", padding, padding + 160);
+            ctx.fillText("HOJAS", padding + 120, padding + 160);
+            ctx.fillText("COSTO", padding + 220, padding + 160);
+            ctx.fillText("COBRADO", width - padding - 100, padding + 160);
+
+            // Línea Sólida
+            ctx.beginPath();
+            ctx.moveTo(padding, padding + 175);
+            ctx.lineTo(width - padding, padding + 175);
+            ctx.stroke();
 
             // Filas
             ctx.font = "16px monospace";
-            y += 10;
+            ctx.fillStyle = "#334155";
+            let startY = padding + 210;
+            
             salesLog.forEach(sale => {
-                y += rowHeight;
-                ctx.fillStyle = "#475569";
-                ctx.fillText(sale.id, padding, y);
-                ctx.fillText(sale.pages, padding + 150, y);
-                ctx.fillStyle = "#ef4444";
-                ctx.fillText(`$${sale.totalOp.toFixed(2)}`, padding + 250, y);
-                ctx.fillStyle = "#10b981";
-                ctx.fillText(`$${sale.totalSug.toFixed(2)}`, padding + 370, y);
+                const op = parseFloat(sale.totalOp) || 0;
+                const sug = parseFloat(sale.totalSug) || 0;
+                const idShort = sale.id ? sale.id.substring(sale.id.length - 6) : 'N/A'; // Mostrar ultimos 6 chars
+                
+                ctx.fillText(`#${idShort}`, padding, startY);
+                ctx.fillText(sale.pages, padding + 120, startY);
+                ctx.fillText(`$${op.toFixed(2)}`, padding + 220, startY);
+                ctx.fillText(`$${sug.toFixed(2)}`, width - padding - 100, startY);
+                
+                startY += rowHeight;
             });
 
-            // Línea divisoria 2
-            y += 30;
+            // Resumen Final
+            ctx.setLineDash([5, 5]);
             ctx.beginPath();
-            ctx.moveTo(padding, y);
-            ctx.lineTo(width - padding, y);
+            ctx.moveTo(padding, startY);
+            ctx.lineTo(width - padding, startY);
             ctx.stroke();
+            ctx.setLineDash([]);
 
-            // Totales (Footer)
-            y += 40;
-            ctx.textAlign = "right";
+            startY += 40;
             ctx.font = "bold 20px sans-serif";
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("RESUMEN DE OPERACIONES", padding, startY);
             
-            ctx.fillStyle = "#64748b";
-            ctx.fillText("Total Operaciones:", width - padding - 150, y);
-            ctx.fillStyle = "#1e293b";
-            ctx.fillText(salesLog.length, width - padding, y);
-            
-            y += 35;
-            ctx.fillStyle = "#64748b";
-            ctx.fillText("Costo Operativo:", width - padding - 150, y);
-            ctx.fillStyle = "#ef4444";
-            ctx.fillText(`$${c.toFixed(2)}`, width - padding, y);
+            startY += 35;
+            ctx.font = "18px sans-serif";
+            ctx.fillStyle = "#475569";
+            ctx.fillText("Total Hojas Procesadas:", padding, startY);
+            ctx.textAlign = "right";
+            ctx.fillText(s, width - padding, startY);
 
-            y += 35;
-            ctx.fillStyle = "#1e293b";
-            ctx.fillText("INGRESO BRUTO:", width - padding - 150, y);
-            ctx.fillStyle = "#10b981";
-            ctx.fillText(`$${r.toFixed(2)}`, width - padding, y);
+            startY += 30;
+            ctx.textAlign = "left";
+            ctx.fillText("Inversión Operativa (Costo):", padding, startY);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#ef4444"; // Red
+            ctx.fillText(`$${c.toFixed(2)}`, width - padding, startY);
 
-            // Descargar
+            startY += 30;
+            ctx.textAlign = "left";
+            ctx.fillStyle = "#475569";
+            ctx.fillText("Ingresos Brutos Cobrados:", padding, startY);
+            ctx.textAlign = "right";
+            ctx.font = "bold 22px monospace";
+            ctx.fillStyle = "#10b981"; // Green
+            ctx.fillText(`$${r.toFixed(2)}`, width - padding, startY);
+
+            startY += 40;
+            ctx.textAlign = "left";
+            ctx.font = "bold 24px sans-serif";
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("UTILIDAD LIBRE:", padding, startY);
+            ctx.textAlign = "right";
+            ctx.font = "bold 26px monospace";
+            ctx.fillText(`$${(r - c).toFixed(2)}`, width - padding, startY);
+
+            // Exportar Imagen
             const link = document.createElement('a');
-            link.download = `Corte_Caja_${now.toISOString().split('T')[0]}.png`;
-            link.href = canvas.toDataURL();
+            link.download = `Corte_Caja_${now.getTime()}.png`;
+            link.href = canvas.toDataURL('image/png');
             link.click();
 
-            // Borrar historial
+            // Limpiar Historial después de exportar
+            localStorage.setItem('papePrinterSalesLog', JSON.stringify([]));
             salesLog = [];
-            localStorage.setItem('papePrinterSalesLog', JSON.stringify(salesLog));
-            renderDashboard();
             
-            alert("Corte de caja generado y descargado correctamente. El historial ha sido reiniciado.");
+            // Limpiar gráficas
+            if(trendChartInstance) trendChartInstance.destroy();
+            if(doughnutChartInstance) doughnutChartInstance.destroy();
+            
+            renderDashboard();
+            alert("Corte de caja generado exitosamente. El historial se ha limpiado.");
         }
 
         window.onload = init;
