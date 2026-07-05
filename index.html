@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PapePrinter Pro - Suite Unificada</title>
+    
+    <!-- Librerías Externas -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        tailwind.config = { darkMode: 'class' };
+    </script>
+    
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        
+        /* Ocultar barra de desplazamiento en elementos horizontales móviles */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animaciones para cambio de vistas */
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(5px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        /* Ocultar elementos nativos de impresión excepto el contenedor de impresión */
+        @media print {
+            body, html { background-color: white !important; margin: 0; padding: 0; height: 100%; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body > *:not(#print-container) { display: none !important; }
+            #print-container { display: block !important; }
+            .print-page { page-break-after: always; overflow: hidden; background: white; position: relative; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 h-screen flex flex-col transition-colors duration-300 overflow-hidden">
+
+    <!-- HEADER GLOBAL -->
+    <header class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 sm:px-6 shadow-sm z-[60]">
+        <div class="flex items-center gap-6 h-full">
+            <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-lg sm:text-xl tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z"/>
+                    <path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h4"/>
+                </svg>
+                <span>PapePrinter <span class="text-[10px] sm:text-xs font-bold text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded uppercase tracking-widest ml-1 hidden sm:inline">PRO 4.3</span></span>
+            </div>
+            
+            <div class="w-px h-6 bg-slate-200 dark:bg-gray-700 hidden md:block"></div>
+            
+            <!-- Pestañas de Navegación (Solo Escritorio) -->
+            <nav class="hidden md:flex h-full gap-1">
+                <button onclick="switchView('canvas')" id="nav-canvas" class="nav-btn h-full px-4 border-b-2 font-bold text-sm transition-colors border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400">Lienzo Gráfico</button>
+                <button onclick="switchView('pdf')" id="nav-pdf" class="nav-btn h-full px-4 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Lotes PDF</button>
+                <button onclick="switchView('finance')" id="nav-finance" class="nav-btn h-full px-4 border-b-2 border-transparent font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">Finanzas</button>
+            </nav>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+            <div class="hidden sm:flex items-center gap-2 mr-2 border-r border-slate-200 dark:border-gray-700 pr-4">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-1">Edwhar & Gemini</span>
+                <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Apoyar vía Mercado Pago">
+                    <img src="https://http2.mlstatic.com/storage/mobile-on-demand-resources/image/web-private-nav-mp-logo-restyling_3X?updatedAt=0" alt="Mercado Pago" class="w-6 h-6 object-contain">
+                </a>
+            </div>
+            <button onclick="toggleConfigModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition" title="Configuración Global">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+            <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN MÓVIL (BOTTOM NAV) -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-white dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 flex justify-around items-center h-16 z-[70] pb-safe">
+        <button onclick="switchView('canvas')" id="mob-nav-canvas" class="flex flex-col items-center justify-center w-full h-full text-indigo-600 dark:text-indigo-400 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><rect x="7" y="7" width="3" height="9"/><rect x="14" y="7" width="3" height="5"/></svg>
+            <span class="text-[10px] font-bold mt-1">Lienzo</span>
+        </button>
+        <button onclick="switchView('pdf')" id="mob-nav-pdf" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span class="text-[10px] font-bold mt-1">PDFs</span>
+        </button>
+        <button onclick="switchView('finance')" id="mob-nav-finance" class="flex flex-col items-center justify-center w-full h-full text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span class="text-[10px] font-bold mt-1">Finanzas</span>
+        </button>
+    </nav>
+
+    <!-- BACKDROP BARRA LATERAL MÓVIL -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[40] hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
+
+    <!-- CONTENEDOR DE VISTAS PRINCIPALES -->
+    <main class="flex-1 relative overflow-hidden pb-16 md:pb-0">
+        
+        <!-- ========================================== -->
+        <!-- VISTA 1: LIENZO GRÁFICO (CANVAS ENGINE)    -->
+        <!-- ========================================== -->
+        <section id="view-canvas" class="view-section h-full flex flex-col md:flex-row absolute inset-0 bg-slate-100/50 dark:bg-slate-950">
+            
+            <!-- Sidebar Canvas (Panel Lateral) -->
+            <aside id="canvas-sidebar" class="w-72 md:w-80 h-full flex flex-col border-r border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 shadow-xl md:shadow-sm z-[50] md:z-10 overflow-y-auto custom-scrollbar fixed md:relative left-0 top-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+                <div class="p-5 flex flex-col gap-6 pb-20 md:pb-5">
+                    
+                    <!-- Header Sidebar Móvil -->
+                    <div class="flex justify-between items-center md:hidden border-b border-slate-100 dark:border-gray-800 pb-3 -mt-2">
+                        <span class="font-black text-slate-700 dark:text-slate-200 text-sm tracking-widest uppercase">Herramientas</span>
+                        <button onclick="toggleSidebar()" class="text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-gray-800 p-1.5 rounded font-bold">✕</button>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Material</label>
+                        <select id="cvs-paper" onchange="updateCanvasConfig()" class="w-full p-2.5 text-sm font-medium rounded-lg border border-slate-300 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"></select>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-slate-100 dark:bg-gray-800 rounded-lg p-1.5 border border-slate-200 dark:border-gray-700">
+                        <span class="text-[10px] uppercase font-bold text-slate-400 px-2">Orientación</span>
+                        <div class="flex gap-1">
+                            <button id="btn-port" onclick="setPortrait(true)" class="px-3 py-1.5 text-xs font-medium rounded-md bg-white shadow-sm text-indigo-700 dark:bg-gray-700 dark:text-indigo-300 transition">Vertical</button>
+                            <button id="btn-land" onclick="setPortrait(false)" class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:bg-slate-200 dark:hover:bg-gray-600 transition">Horizontal</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Retícula</label>
+                            <span id="cvs-grid-lbl" class="text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded text-[10px] font-bold">Preset</span>
+                        </div>
+                        <div class="flex bg-slate-100 dark:bg-gray-800 p-1 rounded-lg mb-3 border border-slate-200 dark:border-gray-700">
+                            <button onclick="setGridMode('preset')" id="btn-m-pre" class="flex-1 py-1.5 text-[10px] font-medium bg-white shadow-sm text-slate-800 dark:bg-gray-700 dark:text-slate-100 rounded transition">División</button>
+                            <button onclick="setGridMode('slider')" id="btn-m-sli" class="flex-1 py-1.5 text-[10px] font-medium text-slate-500 hover:text-slate-700 transition">Medida</button>
+                            <button onclick="setGridMode('id')" id="btn-m-id" class="flex-1 py-1.5 text-[10px] font-medium text-slate-500 hover:text-slate-700 transition">Cédula</button>
+                        </div>
+                        <div id="grid-controls-container"></div>
+                    </div>
+
+                    <div class="space-y-2 bg-slate-50 dark:bg-gray-800/50 border border-slate-200 dark:border-gray-700 rounded-lg p-3">
+                        <div class="flex items-center justify-between text-sm p-1">
+                            <span class="font-medium text-slate-700 dark:text-slate-300 text-xs">Repetir c/imagen:</span>
+                            <input type="number" id="cvs-img-rep" value="1" min="1" max="99" onchange="updateCanvasConfig()" class="w-12 text-center border border-slate-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 outline-none focus:border-indigo-500 text-sm">
+                        </div>
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="cvs-sticker" onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium">Modo Sticker (1ra)</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="cvs-margin" checked onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium">Borde seguridad (5mm)</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="cvs-mono" onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium text-amber-600 dark:text-amber-400">Filtro Monocromo</span>
+                        </label>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Área Principal del Lienzo -->
+            <div class="flex-1 flex flex-col relative overflow-hidden pb-32 md:pb-0">
+                
+                <!-- Barra de herramientas interna adaptada a móvil -->
+                <div class="h-14 md:h-12 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-slate-200 dark:border-gray-800 flex items-center px-2 md:px-4 z-[20] shrink-0 gap-2 md:gap-4 hide-scrollbar overflow-x-auto w-full">
+                    
+                    <button onclick="toggleSidebar()" class="md:hidden shrink-0 p-2 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg hover:bg-slate-200 transition flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        <span class="text-[10px] font-bold">Ajustes</span>
+                    </button>
+
+                    <div class="w-px h-6 bg-slate-200 dark:bg-gray-700 shrink-0 md:hidden"></div>
+
+                    <div class="flex gap-1 shrink-0 bg-slate-100 dark:bg-gray-800 p-1 rounded-lg">
+                        <button onclick="setFit('cover')" id="btn-fit-cov" class="px-3 py-1.5 text-[10px] sm:text-xs font-semibold rounded bg-white shadow-sm text-slate-800 dark:bg-gray-700 dark:text-slate-100">Rellenar</button>
+                        <button onclick="setFit('contain')" id="btn-fit-con" class="px-3 py-1.5 text-[10px] sm:text-xs font-semibold rounded text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Ajustar</button>
+                    </div>
+                    
+                    <div class="flex gap-2 items-center shrink-0 ml-auto pr-2">
+                        <button onclick="document.getElementById('cvs-upload').click()" class="text-[10px] sm:text-xs font-bold px-3 py-1.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 rounded-lg flex items-center gap-1 transition shadow-sm hover:bg-indigo-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span class="hidden sm:inline">Subir</span> Imágenes
+                        </button>
+                        <button onclick="clearCanvas()" class="text-[10px] sm:text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 px-3 py-1.5 rounded-lg transition">Limpiar</button>
+                        <input type="file" id="cvs-upload" multiple accept="image/png, image/jpeg, image/jpg, image/webp" class="hidden" onchange="handleImageUpload(event)">
+                    </div>
+                </div>
+                
+                <!-- Contenedor de Renderizado (Render Area + DRAG & DROP) -->
+                <div id="canvas-render-area" class="flex-1 overflow-auto custom-scrollbar p-4 md:p-8 flex flex-col items-center gap-8 pb-32 transition-colors relative">
+                    
+                    <!-- Estado Vacío Mejorado (Drag and Drop UI) -->
+                    <div id="canvas-empty-state" class="w-full max-w-2xl mt-4 md:mt-12 px-2 sm:px-4">
+                        <div onclick="document.getElementById('cvs-upload').click()" class="border-2 border-dashed border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-[2rem] p-8 sm:p-16 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group">
+                            <div class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-full mb-4 sm:mb-6 shadow-sm border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 mb-2 tracking-tight">Arrastra tus imágenes aquí</h3>
+                            <p class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm leading-relaxed px-4">O haz clic (tap) para explorar en tu dispositivo. Puedes subir múltiples archivos JPG o PNG a la vez.</p>
+                            <span class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-200 dark:shadow-none text-[11px] sm:text-sm flex items-center gap-2">
+                                Explorar Archivos
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Panel Financiero Flotante Adaptado a Móvil -->
+                <div class="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 p-3 sm:p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-center z-[30]">
+                    
+                    <div class="flex items-center justify-between w-full md:w-auto gap-4 md:gap-6">
+                        <div>
+                            <div class="text-[9px] sm:text-[10px] uppercase font-black text-slate-400 tracking-widest">Costo Op.</div>
+                            <div class="text-sm sm:text-lg font-black text-red-500 font-mono" id="cvs-cost">$0.00</div>
+                        </div>
+                        <div class="text-right md:text-left">
+                            <div class="text-[9px] sm:text-[10px] uppercase font-black text-emerald-500 tracking-widest" title="Puedes editar este valor antes de cobrar">Sugerido (Edit)</div>
+                            <div class="flex items-center text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono justify-end md:justify-start">
+                                <span>$</span>
+                                <input type="number" id="cvs-sug" step="0.5" onchange="State.cvs.totalSug=parseFloat(this.value)||0" class="w-20 sm:w-24 bg-transparent outline-none border-b border-transparent hover:border-emerald-300 focus:border-emerald-500 transition-colors ml-1 text-right md:text-left" value="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 sm:gap-4 border-t md:border-t-0 border-slate-100 dark:border-gray-800 pt-3 md:pt-0">
+                        <div class="flex items-center gap-2 bg-slate-100 dark:bg-gray-800 px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 dark:border-gray-700">
+                            <span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 hidden sm:inline">Juegos:</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-500 sm:hidden">Copia(s):</span>
+                            <input type="number" id="cvs-copies" value="1" min="1" max="99" onchange="calcCanvasFinancials()" class="w-10 sm:w-12 bg-white dark:bg-gray-900 text-center text-xs sm:text-sm font-bold border border-slate-300 dark:border-gray-600 rounded outline-none focus:border-indigo-500 py-0.5">
+                        </div>
+
+                        <button onclick="registerCanvasSaleAndPrint()" class="flex-1 md:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Cobrar e Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VISTA 2: LOTES PDF (COTIZADOR)             -->
+        <!-- ========================================== -->
+        <section id="view-pdf" class="view-section hidden h-full flex flex-col md:flex-row absolute inset-0 bg-slate-50 dark:bg-slate-950 p-4 md:p-6 gap-4 md:gap-6">
+            <aside class="w-full md:w-80 shrink-0 flex flex-col gap-4 md:gap-6 h-auto md:h-full">
+                <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 p-4 md:p-5">
+                    <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-widest">Material</label>
+                    <select id="pdf-paper" onchange="calcPdfFinancials()" class="w-full p-2.5 text-sm font-medium rounded-lg border border-slate-300 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 outline-none"></select>
+                    
+                    <div class="mt-4">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-[10px] md:text-xs font-bold text-slate-500">Cobertura Manual (+100 págs)</label>
+                            <span id="pdf-cov-val" class="text-xs font-mono font-bold text-indigo-600">10%</span>
+                        </div>
+                        <input type="range" id="pdf-cov" min="5" max="100" value="10" step="5" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('pdf-cov-val').innerText=this.value+'%'" onchange="calcPdfFinancials()">
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 p-4 md:p-5 flex-1 flex flex-col overflow-hidden min-h-[200px]">
+                    <h2 class="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Cola de Archivos</h2>
+                    <input type="file" id="pdf-upload" multiple accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
+                    <div onclick="document.getElementById('pdf-upload').click()" class="border-2 border-dashed border-slate-300 dark:border-gray-700 rounded-xl p-4 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-800 transition mb-4">
+                        <p class="text-xs font-medium text-slate-600 dark:text-slate-400">+ Añadir PDFs</p>
+                    </div>
+                    <div id="pdf-queue" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mb-4 text-xs font-medium"></div>
+                    <button id="btn-process-pdf" onclick="processPdfQueue()" class="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-bold text-sm disabled:opacity-50 transition">Analizar Lote</button>
+                </div>
+            </aside>
+
+            <div class="flex-1 flex flex-col gap-4 md:gap-6 h-full overflow-hidden">
+                <div id="pdf-progress" class="hidden bg-white dark:bg-gray-900 rounded-2xl border border-slate-200 dark:border-gray-800 p-4 shrink-0 shadow-sm">
+                    <div class="flex justify-between text-[10px] md:text-sm font-bold mb-2"><span id="pdf-prog-txt">Analizando...</span><span id="pdf-prog-pct">0%</span></div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div id="pdf-prog-bar" class="bg-indigo-600 h-2 rounded-full w-0 transition-all"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 flex-1 flex flex-col overflow-hidden">
+                    <div class="overflow-x-auto flex-1 custom-scrollbar">
+                        <table class="w-full text-xs md:text-sm text-left min-w-[600px] md:min-w-[800px]">
+                            <thead class="bg-slate-100 dark:bg-gray-800 text-slate-500 uppercase tracking-wider text-[9px] md:text-[10px] font-black sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-3 md:px-4 py-3">Documento</th>
+                                    <th class="px-2 md:px-4 py-3 text-center">Págs.</th>
+                                    <th class="px-2 md:px-4 py-3 text-center">Tinta</th>
+                                    <th class="px-2 md:px-4 py-3 text-center">Juegos</th>
+                                    <th class="px-2 md:px-4 py-3 text-right">Sug/Hj</th>
+                                    <th class="px-3 md:px-4 py-3 text-right">Total</th>
+                                    <th class="px-2 md:px-4 py-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="pdf-jobs" class="divide-y divide-slate-100 dark:divide-gray-800 font-mono text-slate-700 dark:text-slate-300">
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center text-slate-400 font-sans text-xs md:text-sm">Sube PDFs a la cola y presiona Analizar Lote.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 md:p-5 bg-slate-800 dark:bg-gray-900 border-t border-slate-700 text-white flex flex-col sm:flex-row justify-between items-center shrink-0 gap-4 sm:gap-0">
+                        <div class="flex justify-between w-full sm:w-auto sm:gap-8">
+                            <div>
+                                <div class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold">Costo Op</div>
+                                <div id="pdf-tot-op" class="text-base md:text-xl font-mono text-rose-400">$0.00</div>
+                            </div>
+                            <div class="text-right sm:text-left">
+                                <div class="text-[9px] md:text-[10px] text-emerald-400 uppercase font-bold" title="Puedes editar este valor antes de cobrar">Cobro Total (Editable)</div>
+                                <div class="flex items-center justify-end sm:justify-start text-xl md:text-2xl font-mono text-emerald-400 font-black">
+                                    <span>$</span>
+                                    <input type="number" id="pdf-tot-sug" step="0.5" onchange="State.pdf.globSug=parseFloat(this.value)||0" class="w-24 md:w-32 bg-transparent outline-none border-b border-transparent hover:border-emerald-600 focus:border-emerald-400 transition-colors ml-1 text-right sm:text-left" value="0.00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button onclick="registerPdfSale(false)" class="flex-1 sm:flex-none px-3 md:px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-bold text-[10px] md:text-sm transition">Solo Cobrar</button>
+                            <button onclick="registerPdfSale(true)" class="flex-1 sm:flex-none px-3 md:px-5 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-bold text-[10px] md:text-sm shadow-md transition">Cobrar y Abrir PDFs</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VISTA 3: FINANZAS (DASHBOARD)              -->
+        <!-- ========================================== -->
+        <section id="view-finance" class="view-section hidden h-full flex flex-col absolute inset-0 bg-slate-50 dark:bg-slate-950 p-4 md:p-6 overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-end mb-4 md:mb-6">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-black">Inteligencia de Negocios</h2>
+                    <p class="text-[10px] md:text-sm text-slate-500">Rendimiento en tiempo real.</p>
+                </div>
+                <button onclick="exportCSV()" class="px-3 md:px-4 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-[10px] md:text-sm font-bold shadow-sm transition">Exportar CSV</button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
+                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 shadow-sm">
+                    <div class="text-[9px] md:text-[10px] uppercase font-bold text-slate-400">Ingresos Brutos</div>
+                    <div id="fin-rev" class="text-base md:text-2xl font-mono font-black text-emerald-600">$0.00</div>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 shadow-sm">
+                    <div class="text-[9px] md:text-[10px] uppercase font-bold text-slate-400">Costos Operativos</div>
+                    <div id="fin-cos" class="text-base md:text-2xl font-mono font-black text-rose-500">$0.00</div>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 shadow-sm">
+                    <div class="text-[9px] md:text-[10px] uppercase font-bold text-slate-400">Utilidad Libre</div>
+                    <div id="fin-pro" class="text-base md:text-2xl font-mono font-black text-blue-600">$0.00</div>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 shadow-sm">
+                    <div class="text-[9px] md:text-[10px] uppercase font-bold text-slate-400">Hojas / R.O.I.</div>
+                    <div id="fin-roi" class="text-base md:text-2xl font-mono font-black text-slate-700 dark:text-slate-200">0 <span class="text-xs text-slate-400">(0%)</span></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
+                <div class="lg:col-span-2 bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 h-64 md:h-72 shadow-sm">
+                    <canvas id="chart-trend"></canvas>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 h-64 md:h-72 shadow-sm">
+                    <canvas id="chart-doughnut"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-slate-200 dark:border-gray-800 flex flex-col flex-1 min-h-[250px] overflow-hidden shadow-sm">
+                <div class="p-3 md:p-4 border-b border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 font-bold text-xs md:text-sm">Historial de Turno</div>
+                <div class="overflow-x-auto flex-1 custom-scrollbar">
+                    <table class="w-full text-xs md:text-sm text-left">
+                        <thead class="bg-slate-100 dark:bg-gray-800 text-[9px] md:text-[10px] uppercase text-slate-500">
+                            <tr>
+                                <th class="p-2 md:p-3">Ticket</th><th class="p-2 md:p-3">Material</th><th class="p-2 md:p-3 text-center">Hojas</th><th class="p-2 md:p-3 text-right">Costo</th><th class="p-2 md:p-3 text-right">Cobro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fin-table" class="font-mono divide-y divide-slate-100 dark:divide-gray-800"></tbody>
+                    </table>
+                </div>
+                <div class="p-3 md:p-4 bg-slate-50 dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 text-right shrink-0">
+                    <button onclick="corteCaja()" class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-2.5 bg-rose-600 hover:bg-rose-700 transition text-white rounded-lg font-bold flex items-center justify-center gap-2 sm:ml-auto shadow-md text-xs md:text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Generar Ticket de Corte
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- MODAL DE CONFIGURACIÓN GLOBAL              -->
+    <!-- ========================================== -->
+    <div id="modal-config" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] border border-slate-200 dark:border-gray-800">
+            
+            <div class="p-4 md:p-5 border-b border-slate-100 dark:border-gray-800 flex justify-between items-center bg-slate-50 dark:bg-gray-900 rounded-t-2xl">
+                <h3 class="font-bold text-base md:text-lg text-slate-800 dark:text-slate-100">Configuración Maestra</h3>
+                <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-red-500 dark:hover:text-red-400 text-2xl font-bold transition">✕</button>
+            </div>
+            
+            <div class="p-4 md:p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6 md:space-y-8">
+                <!-- Variables de Costos -->
+                <section>
+                    <h4 class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 md:mb-4">Parámetros de Operación</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div>
+                            <label class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500">Valor Impresora ($)</label>
+                            <input type="number" id="cfg-p-price" class="w-full p-2 border border-slate-300 dark:border-gray-600 rounded mt-1 bg-white dark:bg-gray-800 outline-none focus:border-indigo-500 text-xs md:text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500">Vida Útil (Págs)</label>
+                            <input type="number" id="cfg-p-life" class="w-full p-2 border border-slate-300 dark:border-gray-600 rounded mt-1 bg-white dark:bg-gray-800 outline-none focus:border-indigo-500 text-xs md:text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500">Kit Tintas ($)</label>
+                            <input type="number" id="cfg-i-price" class="w-full p-2 border border-slate-300 dark:border-gray-600 rounded mt-1 bg-white dark:bg-gray-800 outline-none focus:border-indigo-500 text-xs md:text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500">Rendimiento (Págs)</label>
+                            <input type="number" id="cfg-i-yield" class="w-full p-2 border border-slate-300 dark:border-gray-600 rounded mt-1 bg-white dark:bg-gray-800 outline-none focus:border-indigo-500 text-xs md:text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reglas de Negocio -->
+                <section>
+                    <h4 class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 md:mb-4">Reglas de Negocio</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                        <div>
+                            <label class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500">Modo de Redondeo Final</label>
+                            <select id="cfg-round" class="w-full p-2 border border-slate-300 dark:border-gray-600 rounded mt-1 bg-white dark:bg-gray-800 outline-none focus:border-indigo-500 text-xs md:text-sm">
+                                <option value="exact">Exacto (Con centavos)</option>
+                                <option value="half">Mitad ($0.50)</option>
+                                <option value="round">Entero ($1.00)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[9px] md:text-[10px] uppercase font-bold text-slate-500">Margen Mínimo Operativo</label>
+                            <input type="number" id="cfg-min-mult" step="0.5" class="w-full p-2 border border-slate-300 dark:border-gray-600 rounded mt-1 bg-white dark:bg-gray-800 outline-none focus:border-indigo-500 text-xs md:text-sm" title="Ej. 2 = Cobrar al menos el doble del costo real">
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Tabla de Materiales -->
+                <section>
+                    <div class="flex justify-between items-center mb-3 md:mb-4">
+                        <h4 class="text-[10px] uppercase font-bold text-slate-500">Catálogo de Materiales (Papeles)</h4>
+                        <button onclick="addConfigPaper()" class="text-[10px] md:text-xs bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-100 transition shadow-sm">+ Nuevo Papel</button>
+                    </div>
+                    <div class="overflow-x-auto border border-slate-200 dark:border-gray-700 rounded-lg bg-slate-50 dark:bg-gray-800 shadow-inner">
+                        <table class="w-full text-xs text-left min-w-[700px]">
+                            <thead class="bg-slate-100 dark:bg-gray-900 text-slate-500 border-b border-slate-200 dark:border-gray-700">
+                                <tr>
+                                    <th class="p-2 md:p-3 font-bold">Nombre del Material</th>
+                                    <th class="p-2 md:p-3 font-bold w-20 md:w-24">Ancho (mm)</th>
+                                    <th class="p-2 md:p-3 font-bold w-20 md:w-24">Alto (mm)</th>
+                                    <th class="p-2 md:p-3 font-bold w-20 md:w-24">$ Resma</th>
+                                    <th class="p-2 md:p-3 font-bold w-20 md:w-24">Cant. Hojas</th>
+                                    <th class="p-2 md:p-3 font-bold text-indigo-600 dark:text-indigo-400 w-24 md:w-28">Max Venta</th>
+                                    <th class="p-2 md:p-3 text-center font-bold w-12 md:w-16">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cfg-papers-tbody" class="divide-y divide-slate-100 dark:divide-gray-700">
+                                <!-- Las filas se generan vía JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+            
+            <div class="p-4 md:p-5 border-t border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 flex justify-end rounded-b-2xl">
+                <button onclick="saveMasterConfig()" class="w-full sm:w-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-lg font-bold shadow-md text-xs md:text-sm">
+                    Guardar Cambios y Aplicar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR OCULTO PARA IMPRESIÓN NATIVA -->
+    <div id="print-container" class="hidden"></div>
+
+    <!-- ========================================== -->
+    <!-- LÓGICA JAVASCRIPT                          -->
+    <!-- ========================================== -->
+    <script>
+        // --- 1. CONSTANTES GLOBALES ---
+        const PAPER_SIZES = { 
+            'Letter': {w:215.9, h:279.4}, 
+            'Oficio': {w:215.9, h:340}, 
+            'Tabloid': {w:279.4, h:431.8}, 
+            'A4': {w:210, h:297} 
+        };
+        
+        // --- 2. ESTADO GLOBAL ---
+        const State = {
+            view: 'canvas',
+            isDarkMode: false,
+            config: { 
+                printerPrice: 4500, printerLife: 20000, 
+                inkPrice: 850, inkYield: 6500, 
+                roundingMode: 'half', minMultiplier: 2 
+            },
+            papers: [
+                { id: 'p1', name: 'Carta Bond', w: 215.9, h: 279.4, price: 650, count: 5000, maxSalePrice: 8 }
+            ],
+            salesLog: [],
+            cvs: { 
+                images: [], pages: [], paperId: 'p1', 
+                isPortrait: true, mode: 'preset', preset: 4, cm: 5, 
+                idVertical: false, sticker: false, mono: false, fit: 'cover', 
+                copies: 1, density: 0, totalOp: 0, totalSug: 0 
+            },
+            pdf: { 
+                queue: [], jobs: [], paperId: 'p1', 
+                covManual: 10, globOp: 0, globSug: 0 
+            }
+        };
+
+        // --- 3. INICIALIZACIÓN Y NAVEGACIÓN ---
+        function init() {
+            try {
+                const lsConf = JSON.parse(localStorage.getItem('papePrinterVanilla'));
+                if (lsConf) {
+                    if (lsConf.costs) State.config = lsConf.costs;
+                    if (lsConf.papers) State.papers = lsConf.papers;
+                    if (lsConf.isDarkMode) State.isDarkMode = true;
+                }
+                const lsSales = JSON.parse(localStorage.getItem('papePrinterSalesLog'));
+                if (lsSales) State.salesLog = lsSales;
+            } catch (e) { console.warn("No se pudo cargar config local.", e); }
+
+            if (State.papers.length > 0) {
+                State.cvs.paperId = State.papers[0].id;
+                State.pdf.paperId = State.papers[0].id;
+            }
+
+            applyTheme();
+            populateSelects();
+            renderGridControls();
+            initDragAndDrop(); // Iniciar Lógica Drag & Drop
+            switchView('canvas');
+        }
+
+        let sidebarOpen = false;
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const sidebar = document.getElementById('canvas-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if(sidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function switchView(viewName) {
+            State.view = viewName;
+            
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Navegación Desktop
+            document.querySelectorAll('.nav-btn').forEach(el => { 
+                el.classList.remove('border-indigo-600', 'text-indigo-600', 'dark:border-indigo-400', 'dark:text-indigo-400'); 
+                el.classList.add('border-transparent', 'text-slate-500'); 
+            });
+            const navBtn = document.getElementById(`nav-${viewName}`);
+            if (navBtn) { 
+                navBtn.classList.remove('border-transparent', 'text-slate-500'); 
+                navBtn.classList.add('border-indigo-600', 'text-indigo-600', 'dark:border-indigo-400', 'dark:text-indigo-400'); 
+            }
+
+            // Navegación Móvil (Bottom Nav)
+            ['canvas', 'pdf', 'finance'].forEach(v => {
+                const mobBtn = document.getElementById(`mob-nav-${v}`);
+                if (mobBtn) {
+                    mobBtn.classList.remove('text-indigo-600', 'dark:text-indigo-400');
+                    mobBtn.classList.add('text-slate-500');
+                }
+            });
+            const activeMobBtn = document.getElementById(`mob-nav-${viewName}`);
+            if (activeMobBtn) {
+                activeMobBtn.classList.remove('text-slate-500');
+                activeMobBtn.classList.add('text-indigo-600', 'dark:text-indigo-400');
+            }
+            
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+
+            if(sidebarOpen) toggleSidebar(); // Cerrar sidebar si cambia de vista en móvil
+
+            if (viewName === 'canvas') updateCanvasConfig();
+            if (viewName === 'pdf') calcPdfFinancials();
+            if (viewName === 'finance') renderFinanceDashboard();
+        }
+
+        function toggleTheme() { 
+            State.isDarkMode = !State.isDarkMode; 
+            applyTheme(); 
+            saveConfigLocally(); 
+        }
+
+        function applyTheme() {
+            if (State.isDarkMode) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+            Chart.defaults.color = State.isDarkMode ? '#94a3b8' : '#64748b';
+            Chart.defaults.font.family = "system-ui";
+        }
+
+        function saveConfigLocally() {
+            localStorage.setItem('papePrinterVanilla', JSON.stringify({ costs: State.config, papers: State.papers, isDarkMode: State.isDarkMode }));
+        }
+
+        function populateSelects() {
+            const selects = [document.getElementById('cvs-paper'), document.getElementById('pdf-paper')];
+            selects.forEach(selectElement => {
+                if (!selectElement) return;
+                selectElement.innerHTML = '';
+                State.papers.forEach(paper => {
+                    if (!paper.w || !paper.h) {
+                        const fallback = PAPER_SIZES[paper.size] || PAPER_SIZES['Letter'];
+                        paper.w = fallback.w; paper.h = fallback.h;
+                    }
+                    const option = document.createElement('option'); 
+                    option.value = paper.id; option.innerText = `${paper.name} ($${paper.maxSalePrice} max)`; 
+                    selectElement.appendChild(option);
+                });
+            });
+            saveConfigLocally();
+        }
+
+        // --- 4. CONFIGURACIÓN MAESTRA (MODAL) ---
+        function toggleConfigModal() {
+            const modal = document.getElementById('modal-config');
+            if (modal.classList.contains('hidden')) {
+                document.getElementById('cfg-p-price').value = State.config.printerPrice;
+                document.getElementById('cfg-p-life').value = State.config.printerLife;
+                document.getElementById('cfg-i-price').value = State.config.inkPrice;
+                document.getElementById('cfg-i-yield').value = State.config.inkYield;
+                document.getElementById('cfg-round').value = State.config.roundingMode || 'exact';
+                document.getElementById('cfg-min-mult').value = State.config.minMultiplier || 2;
+                renderConfigPapers();
+                modal.classList.remove('hidden');
+            } else { modal.classList.add('hidden'); }
+        }
+
+        function renderConfigPapers() {
+            const tbody = document.getElementById('cfg-papers-tbody');
+            tbody.innerHTML = '';
+            State.papers.forEach((paper, idx) => {
+                const inputClasses = "w-full p-1.5 md:p-2 border rounded bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-600 outline-none focus:border-indigo-500 transition-colors text-xs md:text-sm";
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition">
+                        <td class="p-1 md:p-1.5"><input type="text" value="${paper.name}" onchange="State.papers[${idx}].name=this.value" class="${inputClasses}"></td>
+                        <td class="p-1 md:p-1.5"><input type="number" value="${paper.w}" onchange="State.papers[${idx}].w=parseFloat(this.value)" class="${inputClasses}"></td>
+                        <td class="p-1 md:p-1.5"><input type="number" value="${paper.h}" onchange="State.papers[${idx}].h=parseFloat(this.value)" class="${inputClasses}"></td>
+                        <td class="p-1 md:p-1.5"><input type="number" value="${paper.price}" onchange="State.papers[${idx}].price=parseFloat(this.value)" class="${inputClasses}"></td>
+                        <td class="p-1 md:p-1.5"><input type="number" value="${paper.count}" onchange="State.papers[${idx}].count=parseInt(this.value)" class="${inputClasses}"></td>
+                        <td class="p-1 md:p-1.5"><input type="number" value="${paper.maxSalePrice}" onchange="State.papers[${idx}].maxSalePrice=parseFloat(this.value)" class="${inputClasses} font-bold text-indigo-600 dark:text-indigo-400"></td>
+                        <td class="p-1 md:p-1.5 text-center">
+                            <button onclick="State.papers.splice(${idx},1); renderConfigPapers()" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Eliminar Material">✕</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function addConfigPaper() {
+            State.papers.push({ id: 'p' + Date.now(), name: 'Nuevo Papel', w: 215.9, h: 279.4, price: 500, count: 500, maxSalePrice: 10 });
+            renderConfigPapers();
+        }
+
+        function saveMasterConfig() {
+            State.config.printerPrice = parseFloat(document.getElementById('cfg-p-price').value) || 0;
+            State.config.printerLife = parseFloat(document.getElementById('cfg-p-life').value) || 1;
+            State.config.inkPrice = parseFloat(document.getElementById('cfg-i-price').value) || 0;
+            State.config.inkYield = parseFloat(document.getElementById('cfg-i-yield').value) || 1;
+            State.config.roundingMode = document.getElementById('cfg-round').value;
+            State.config.minMultiplier = parseFloat(document.getElementById('cfg-min-mult').value) || 2;
+            saveConfigLocally();
+            populateSelects();
+            toggleConfigModal();
+            if (State.view === 'canvas') updateCanvasConfig();
+            if (State.view === 'pdf') calcPdfFinancials();
+        }
+
+        // --- 5. DRAG AND DROP Y CARGA DE IMÁGENES ---
+        function initDragAndDrop() {
+            const renderArea = document.getElementById('canvas-render-area');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                renderArea.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                renderArea.addEventListener(eventName, () => {
+                    renderArea.classList.add('bg-indigo-50/50', 'dark:bg-indigo-900/10');
+                    const emptyState = document.getElementById('canvas-empty-state');
+                    if(emptyState) emptyState.firstElementChild.classList.add('scale-105', 'border-indigo-500', 'bg-indigo-100', 'dark:bg-indigo-900/40');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                renderArea.addEventListener(eventName, () => {
+                    renderArea.classList.remove('bg-indigo-50/50', 'dark:bg-indigo-900/10');
+                    const emptyState = document.getElementById('canvas-empty-state');
+                    if(emptyState) emptyState.firstElementChild.classList.remove('scale-105', 'border-indigo-500', 'bg-indigo-100', 'dark:bg-indigo-900/40');
+                }, false);
+            });
+
+            renderArea.addEventListener('drop', async (e) => {
+                const dt = e.dataTransfer;
+                const files = Array.from(dt.files).filter(f => f.type.startsWith('image/'));
+                if(files.length > 0) await processImages(files);
+            }, false);
+        }
+
+        async function handleImageUpload(e) {
+            const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+            if(files.length > 0) await processImages(files);
+            e.target.value = ''; // Reset input
+        }
+
+        async function processImages(files) {
+            for (let file of files) {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                await new Promise((resolve, reject) => { 
+                    img.onload = resolve; img.onerror = reject; img.src = url; 
+                });
+                State.cvs.images.push({ img, w: img.width, h: img.height });
+            }
+            updateCanvasConfig();
+        }
+
+        function clearCanvas() { 
+            State.cvs.images = []; 
+            document.getElementById('cvs-cost').innerText = '$0.00'; 
+            document.getElementById('cvs-sug').value = '0.00'; 
+            State.cvs.totalOp = 0; State.cvs.totalSug = 0; 
+            updateCanvasConfig(); 
+        }
+
+        // --- 6. MÓDULO 1: LIENZO GRÁFICO (CANVAS ENGINE) ---
+        function setPortrait(isPortrait) { 
+            State.cvs.isPortrait = isPortrait; 
+            const activeClass = "px-3 py-1.5 text-xs font-medium rounded-md bg-white shadow-sm text-indigo-700 dark:bg-gray-700 dark:text-indigo-300 transition";
+            const inactiveClass = "px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:bg-slate-200 dark:hover:bg-gray-600 transition";
+            document.getElementById('btn-port').className = isPortrait ? activeClass : inactiveClass;
+            document.getElementById('btn-land').className = !isPortrait ? activeClass : inactiveClass;
+            updateCanvasConfig(); 
+        }
+        
+        function setGridMode(mode) { 
+            State.cvs.mode = mode; 
+            const labelMap = { 'preset': 'Preset', 'slider': 'Medida', 'id': 'Cédula' };
+            document.getElementById('cvs-grid-lbl').innerText = labelMap[mode] || mode;
+            const activeClass = "flex-1 py-1.5 text-[10px] font-medium bg-white shadow-sm text-slate-800 dark:bg-gray-700 dark:text-slate-100 rounded transition";
+            const inactiveClass = "flex-1 py-1.5 text-[10px] font-medium text-slate-500 hover:text-slate-700 transition";
+            ['pre', 'sli', 'id'].forEach(prefix => { document.getElementById(`btn-m-${prefix}`).className = inactiveClass; });
+            const activeBtn = document.getElementById(`btn-m-${mode.substring(0, 3)}`);
+            if (activeBtn) activeBtn.className = activeClass;
+            renderGridControls(); updateCanvasConfig(); 
+        }
+        
+        function setFit(fitType) { 
+            State.cvs.fit = fitType; 
+            const activeClass = "px-3 py-1.5 text-[10px] sm:text-xs font-semibold rounded bg-white shadow-sm text-slate-800 dark:bg-gray-700 dark:text-slate-100";
+            const inactiveClass = "px-3 py-1.5 text-[10px] sm:text-xs font-semibold rounded text-slate-500 hover:text-slate-700 dark:hover:text-slate-300";
+            document.getElementById('btn-fit-cov').className = fitType === 'cover' ? activeClass : inactiveClass;
+            document.getElementById('btn-fit-con').className = fitType === 'contain' ? activeClass : inactiveClass;
+            drawCanvasPages(); 
+        }
+
+        function renderGridControls() {
+            const container = document.getElementById('grid-controls-container'); 
+            container.innerHTML = '';
+            if (State.cvs.mode === 'preset') {
+                const presets = [1, 2, 4, 6, 8, 9, 12, 16, 24, 32];
+                let buttonsHTML = presets.map(n => {
+                    const isSelected = State.cvs.preset === n;
+                    const classes = isSelected ? 'bg-indigo-50 border-indigo-400 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300' : 'bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-gray-700';
+                    return `<button onclick="State.cvs.preset=${n}; updateCanvasConfig()" class="py-1.5 text-xs font-medium border rounded transition ${classes}">${n}</button>`;
+                }).join('');
+                container.innerHTML = `<div class="grid grid-cols-5 gap-1.5">${buttonsHTML}</div>`;
+            } else if (State.cvs.mode === 'slider') {
+                container.innerHTML = `
+                    <input type="range" min="3" max="9" step="0.5" value="${State.cvs.cm}" oninput="document.getElementById('cvs-cm-lbl').innerText=this.value+' cm'; State.cvs.cm=parseFloat(this.value); updateCanvasConfig()" class="w-full accent-indigo-600 cursor-pointer">
+                    <div id="cvs-cm-lbl" class="text-center text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-1">${State.cvs.cm} cm</div>
+                `;
+            } else if (State.cvs.mode === 'id') {
+                const isVert = State.cvs.idVertical;
+                const activeClass = 'bg-indigo-50 border-indigo-400 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border-slate-300';
+                const inactiveClass = 'bg-white dark:bg-gray-800 text-slate-500 hover:bg-slate-50 border-slate-200 dark:border-gray-700';
+                container.innerHTML = `
+                    <div class="flex gap-2 justify-center mt-2">
+                        <button onclick="State.cvs.idVertical=false; updateCanvasConfig()" class="flex-1 py-1.5 text-[10px] font-bold border rounded transition ${!isVert ? activeClass : inactiveClass}">Horizontal</button>
+                        <button onclick="State.cvs.idVertical=true; updateCanvasConfig()" class="flex-1 py-1.5 text-[10px] font-bold border rounded transition ${isVert ? activeClass : inactiveClass}">Vertical</button>
+                    </div>
+                    <p class="text-[9px] text-center text-slate-400 mt-2 font-medium leading-tight">Espacios a 4cm del borde superior.</p>
+                `;
+            }
+        }
+
+        function getGridInfo(paper, isPortrait) {
+            const margin = document.getElementById('cvs-margin')?.checked ? 5 : 0; 
+            let w = isPortrait ? (paper.w || 215.9) : (paper.h || 279.4); 
+            let h = isPortrait ? (paper.h || 279.4) : (paper.w || 215.9);
+            let workW = w - (margin * 2); let workH = h - (margin * 2); let cells = [];
+            
+            if (State.cvs.mode === 'id') {
+                const isVert = State.cvs.idVertical;
+                const idW = isVert ? 55 : 85; const idH = isVert ? 85 : 55;
+                const topY = 40; const gap = 10;
+                const startX = (w - (idW * 2 + gap)) / 2;
+                cells.push({ x: startX, y: topY, w: idW, h: idH });
+                cells.push({ x: startX + idW + gap, y: topY, w: idW, h: idH });
+                return cells;
+            }
+            
+            let cols = 1, rows = 1;
+            if (State.cvs.mode === 'preset') {
+                const pMap = { 1: {c:1, r:1}, 2: {c:1, r:2}, 4: {c:2, r:2}, 6: {c:2, r:3}, 8: {c:2, r:4}, 9: {c:3, r:3}, 12: {c:3, r:4}, 16: {c:4, r:4}, 24: {c:4, r:6}, 32: {c:4, r:8} };
+                const p = pMap[State.cvs.preset] || {c:1, r:1};
+                cols = isPortrait ? p.c : p.r; rows = isPortrait ? p.r : p.c;
+            } else if (State.cvs.mode === 'slider') {
+                const mmSize = State.cvs.cm * 10; 
+                cols = Math.max(1, Math.floor(workW / mmSize)); rows = Math.max(1, Math.floor(workH / mmSize));
+            }
+            
+            const cellW = workW / cols; const cellH = workH / rows;
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) { cells.push({ x: margin + (c * cellW), y: margin + (r * cellH), w: cellW, h: cellH }); }
+            }
+            return cells;
+        }
+
+        function updateCanvasConfig() {
+            const paperSelect = document.getElementById('cvs-paper');
+            if (!paperSelect) return;
+            
+            State.cvs.paperId = paperSelect.value;
+            State.cvs.sticker = document.getElementById('cvs-sticker').checked;
+            State.cvs.mono = document.getElementById('cvs-mono').checked;
+            State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
+            const imgRepeat = parseInt(document.getElementById('cvs-img-rep').value) || 1;
+            
+            if (['preset', 'slider', 'id'].includes(State.cvs.mode)) renderGridControls();
+            
+            const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
+            if (!paper) return;
+
+            const cells = getGridInfo(paper, State.cvs.isPortrait);
+            
+            let expandedImages = [];
+            State.cvs.images.forEach(img => { for (let i = 0; i < imgRepeat; i++) expandedImages.push(img); });
+
+            State.cvs.pages = [];
+            if (expandedImages.length > 0) {
+                if (State.cvs.sticker) {
+                    State.cvs.pages.push(Array(cells.length).fill(expandedImages[0]));
+                } else {
+                    for (let i = 0; i < expandedImages.length; i += cells.length) {
+                        State.cvs.pages.push(expandedImages.slice(i, i + cells.length));
+                    }
+                }
+            }
+            
+            drawCanvasPages(paper, cells);
+            calcCanvasFinancials();
+        }
+
+        function drawCanvasPages(paper = (State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0]), cells = getGridInfo(paper, State.cvs.isPortrait)) {
+            const area = document.getElementById('canvas-render-area');
+            
+            if (State.cvs.pages.length === 0) { 
+                // Restauramos el Empty State Gigante si no hay imágenes
+                area.innerHTML = `
+                    <div id="canvas-empty-state" class="w-full max-w-2xl mt-4 md:mt-12 px-2 sm:px-4">
+                        <div onclick="document.getElementById('cvs-upload').click()" class="border-2 border-dashed border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-[2rem] p-8 sm:p-16 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group">
+                            <div class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-full mb-4 sm:mb-6 shadow-sm border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            </div>
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 mb-2 tracking-tight">Arrastra tus imágenes aquí</h3>
+                            <p class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm leading-relaxed px-4">O haz clic (tap) para explorar en tu dispositivo. Puedes subir múltiples archivos JPG o PNG a la vez.</p>
+                            <span class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-200 dark:shadow-none text-[11px] sm:text-sm flex items-center gap-2">Explorar Archivos</span>
+                        </div>
+                    </div>`; 
+                return; 
+            }
+            
+            area.innerHTML = '';
+            const pW = paper.w || 215.9; const pH = paper.h || 279.4;
+            const MM_TO_PX = 3.7795; 
+            const pxW = (State.cvs.isPortrait ? pW : pH) * MM_TO_PX; const pxH = (State.cvs.isPortrait ? pH : pW) * MM_TO_PX;
+
+            State.cvs.pages.forEach((pageImgs, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = "relative shadow-2xl bg-white ring-1 ring-slate-200 dark:ring-gray-700 shrink-0 mb-8 max-w-full";
+                wrap.style.width = '600px'; 
+                wrap.style.height = `${(pxH / pxW) * 600}px`;
+                if(window.innerWidth < 640) { // Ajuste para móviles
+                    wrap.style.width = '95%';
+                    wrap.style.height = 'auto';
+                    wrap.style.aspectRatio = `${pxW} / ${pxH}`;
+                }
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = pxW; canvas.height = pxH;
+                canvas.className = "w-full h-full block";
+                wrap.appendChild(canvas); area.appendChild(wrap);
+
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, pxW, pxH);
+                if (State.cvs.mono) ctx.filter = 'grayscale(100%) contrast(1.2)';
+
+                cells.forEach((cell, i) => {
+                    const cx = cell.x * MM_TO_PX; const cy = cell.y * MM_TO_PX; const cw = cell.w * MM_TO_PX; const ch = cell.h * MM_TO_PX;
+                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                    
+                    const imgData = pageImgs[i];
+                    if (imgData) {
+                        ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
+                        const img = imgData.img; const iw = imgData.w; const ih = imgData.h;
+                        const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
+                        const needsRotation = cellIsLandscape !== imgIsLandscape;
+                        
+                        let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
+                        const dw = iw * scale; const dh = ih * scale;
+
+                        if (needsRotation) {
+                            ctx.translate(cx + cw / 2, cy + ch / 2); ctx.rotate(Math.PI / 2);
+                            ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+                        } else {
+                            ctx.drawImage(img, cx + (cw - dw) / 2, cy + (ch - dh) / 2, dw, dh);
+                        }
+                        ctx.restore();
+                    }
+                });
+
+                if (idx === 0) {
+                    setTimeout(() => {
+                        const tmpCanvas = document.createElement('canvas'); const scale = 0.1;
+                        tmpCanvas.width = pxW * scale; tmpCanvas.height = pxH * scale;
+                        const tmpCtx = tmpCanvas.getContext('2d', { willReadFrequently: true }); 
+                        tmpCtx.drawImage(canvas, 0, 0, tmpCanvas.width, tmpCanvas.height);
+                        
+                        const pixelData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height).data;
+                        let coloredPixels = 0;
+                        for (let j = 0; j < pixelData.length; j += 4) { if (pixelData[j] < 240 || pixelData[j+1] < 240 || pixelData[j+2] < 240) coloredPixels++; }
+                        State.cvs.density = (coloredPixels / (tmpCanvas.width * tmpCanvas.height)) * 100;
+                        calcCanvasFinancials();
+                    }, 100);
+                }
+            });
+        }
+
+        function calcCanvasFinancials() {
+            if (State.cvs.pages.length === 0) {
+                document.getElementById('cvs-cost').innerText = '$0.00'; document.getElementById('cvs-sug').value = '0.00'; return;
+            }
+            State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
+            const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
+            const cfg = State.config;
+            
+            const inkCostPerSheet = (State.cvs.density / 100) * (cfg.inkPrice / cfg.inkYield);
+            const opSheetCost = (paper.price / paper.count) + inkCostPerSheet + (cfg.printerPrice / (cfg.printerLife * 2));
+            const totalPhysicalSheets = State.cvs.pages.length * State.cvs.copies;
+            const totalOpCost = opSheetCost * totalPhysicalSheets;
+            
+            let sugSheetPrice = paper.maxSalePrice * (State.cvs.density / 100);
+            if (sugSheetPrice > paper.maxSalePrice) sugSheetPrice = paper.maxSalePrice;
+            const minAllowedPrice = opSheetCost * (cfg.minMultiplier || 2);
+            if (sugSheetPrice < minAllowedPrice) sugSheetPrice = minAllowedPrice;
+            if (State.cvs.mono) sugSheetPrice *= 0.25;
+
+            let totalSugCost = sugSheetPrice * totalPhysicalSheets;
+            if (cfg.roundingMode === 'half') totalSugCost = Math.ceil(totalSugCost * 2) / 2;
+            else if (cfg.roundingMode === 'round') totalSugCost = Math.ceil(totalSugCost);
+
+            State.cvs.totalOp = totalOpCost; State.cvs.totalSug = totalSugCost;
+            document.getElementById('cvs-cost').innerText = `$${totalOpCost.toFixed(2)}`;
+            document.getElementById('cvs-sug').value = totalSugCost.toFixed(2);
+        }
+
+        function registerCanvasSaleAndPrint() {
+            if (State.cvs.pages.length === 0) return;
+            const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
+            const ticketId = `CVS${Date.now().toString().slice(-8)}`;
+            const totalSheets = State.cvs.pages.length * State.cvs.copies;
+            
+            State.salesLog.push({ 
+                id: ticketId, timestamp: new Date().toISOString(), paper: paper.name, details: 'Lienzo Gráfico', 
+                pages: totalSheets, totalOp: State.cvs.totalOp, totalSug: State.cvs.totalSug 
+            });
+            localStorage.setItem('papePrinterSalesLog', JSON.stringify(State.salesLog));
+            
+            const printContainer = document.getElementById('print-container'); printContainer.innerHTML = '';
+            const isPort = State.cvs.isPortrait; const cells = getGridInfo(paper, isPort);
+            const pW = paper.w || 215.9; const pH = paper.h || 279.4;
+
+            for (let copy = 0; copy < State.cvs.copies; copy++) {
+                State.cvs.pages.forEach(pageImgs => {
+                    const pageDiv = document.createElement('div'); pageDiv.className = 'print-page';
+                    pageDiv.style.width = isPort ? `${pW}mm` : `${pH}mm`; pageDiv.style.height = isPort ? `${pH}mm` : `${pW}mm`;
+                    
+                    cells.forEach((cell, i) => {
+                        if (!pageImgs[i]) return;
+                        const imgContainer = document.createElement('div');
+                        imgContainer.style.position = 'absolute'; imgContainer.style.left = `${cell.x}mm`; imgContainer.style.top = `${cell.y}mm`; imgContainer.style.width = `${cell.w}mm`; imgContainer.style.height = `${cell.h}mm`;
+                        imgContainer.style.display = 'flex'; imgContainer.style.alignItems = 'center'; imgContainer.style.justifyContent = 'center'; imgContainer.style.overflow = 'hidden';
+                        
+                        const imgNode = document.createElement('img'); imgNode.src = pageImgs[i].img.src;
+                        const needsRot = (cell.w > cell.h) !== (pageImgs[i].w > pageImgs[i].h);
+                        imgNode.style.width = needsRot ? `${cell.h}mm` : `${cell.w}mm`; imgNode.style.height = needsRot ? `${cell.w}mm` : `${cell.h}mm`;
+                        imgNode.style.objectFit = State.cvs.fit;
+                        if (needsRot) imgNode.style.transform = 'rotate(90deg)';
+                        if (State.cvs.mono) imgNode.style.filter = 'grayscale(100%) contrast(1.2)';
+                        imgContainer.appendChild(imgNode); pageDiv.appendChild(imgContainer);
+                    });
+                    printContainer.appendChild(pageDiv);
+                });
+            }
+            setTimeout(() => { window.print(); printContainer.innerHTML = ''; clearCanvas(); }, 500);
+        }
+
+        // --- 7. MÓDULO 2: LOTES PDF (COTIZADOR) ---
+        function handlePdfUpload(e) {
+            const files = Array.from(e.target.files).filter(f => f.type === 'application/pdf');
+            files.forEach(file => { State.pdf.queue.push({ id: Math.random().toString(36).substr(2, 9), file: file, name: file.name }); });
+            renderPdfQueue();
+        }
+
+        function renderPdfQueue() {
+            const queueContainer = document.getElementById('pdf-queue'); queueContainer.innerHTML = '';
+            State.pdf.queue.forEach((item, index) => {
+                queueContainer.innerHTML += `
+                    <div class="flex justify-between items-center p-2 bg-slate-50 dark:bg-gray-800 rounded border border-slate-100 dark:border-gray-700 transition">
+                        <span class="truncate w-[85%]">${item.name}</span>
+                        <button onclick="State.pdf.queue.splice(${index},1); renderPdfQueue()" class="text-red-400 hover:text-red-600 transition">✕</button>
+                    </div>`;
+            });
+            document.getElementById('btn-process-pdf').disabled = State.pdf.queue.length === 0;
+        }
+
+        async function processPdfQueue() {
+            if (State.pdf.queue.length === 0) return;
+            const btnProcess = document.getElementById('btn-process-pdf'); const progressWrapper = document.getElementById('pdf-progress');
+            const progressBar = document.getElementById('pdf-prog-bar'); const progressTxt = document.getElementById('pdf-prog-txt');
+            
+            btnProcess.disabled = true; progressWrapper.classList.remove('hidden');
+            let newJobs = [];
+            
+            for (let i = 0; i < State.pdf.queue.length; i++) {
+                const qItem = State.pdf.queue[i]; progressTxt.innerText = `Leyendo: ${qItem.name}`;
+                try {
+                    const arrBuffer = await qItem.file.arrayBuffer();
+                    const pdfDoc = await pdfjsLib.getDocument(arrBuffer).promise;
+                    const totalPages = pdfDoc.numPages;
+                    let density = State.pdf.covManual; let validPages = totalPages;
+
+                    if (totalPages <= 100) {
+                        let totalDensityAccum = 0; let blankPagesCount = 0;
+                        for (let p = 1; p <= totalPages; p++) {
+                            const page = await pdfDoc.getPage(p); const viewport = page.getViewport({ scale: 0.2 });
+                            const tmpCanvas = document.createElement('canvas'); tmpCanvas.width = viewport.width; tmpCanvas.height = viewport.height;
+                            const ctx = tmpCanvas.getContext('2d', { willReadFrequently: true });
+                            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+                            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                            
+                            const pixelData = ctx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height).data; let coloredPixels = 0; 
+                            for (let j = 0; j < pixelData.length; j += 4) { if (pixelData[j] < 250 || pixelData[j+1] < 250 || pixelData[j+2] < 250) coloredPixels++; }
+                            
+                            const pageDensity = (coloredPixels / (tmpCanvas.width * tmpCanvas.height)) * 100;
+                            if (pageDensity < 0.1) blankPagesCount++; else totalDensityAccum += pageDensity;
+                            progressBar.style.width = Math.round(((i / State.pdf.queue.length) * 100) + ((p / totalPages) * (100 / State.pdf.queue.length))) + '%';
+                        }
+                        validPages = totalPages - blankPagesCount;
+                        density = validPages > 0 ? (totalDensityAccum / validPages) : 0;
+                    }
+
+                    if (validPages > 0) {
+                        newJobs.push({ 
+                            id: qItem.id, name: qItem.name, pages: validPages, originalPages: totalPages, 
+                            density: Math.min(100, Math.max(0, density)), type: totalPages <= 100 ? 'Auto' : 'Man', 
+                            copies: 1, url: URL.createObjectURL(qItem.file) 
+                        });
+                    } else { alert(`El archivo ${qItem.name} parece estar en blanco.`); }
+                } catch (e) { console.error("Error al procesar PDF", e); }
+            }
+            State.pdf.jobs = [...State.pdf.jobs, ...newJobs]; State.pdf.queue = []; renderPdfQueue();
+            setTimeout(() => { progressWrapper.classList.add('hidden'); calcPdfFinancials(); }, 500);
+        }
+
+        function calcPdfFinancials() {
+            State.pdf.paperId = document.getElementById('pdf-paper').value;
+            State.pdf.covManual = parseFloat(document.getElementById('pdf-cov').value);
+            const tableBody = document.getElementById('pdf-jobs'); tableBody.innerHTML = '';
+            
+            if (State.pdf.jobs.length === 0) { 
+                tableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400 font-sans text-sm">Sube PDFs a la cola y presiona Analizar Lote.</td></tr>'; return; 
+            }
+
+            const paper = State.papers.find(x => x.id === State.pdf.paperId) || State.papers[0];
+            const cfg = State.config; const opBaseCost = (paper.price / paper.count) + (cfg.printerPrice / (cfg.printerLife * 2));
+            const minMultiplier = cfg.minMultiplier || 2;
+            let globalOpCost = 0; let globalSugCost = 0;
+
+            State.pdf.jobs.forEach((job, idx) => {
+                const appliedDensity = job.type === 'Man' ? State.pdf.covManual : job.density;
+                const opSheetCost = opBaseCost + ((appliedDensity / 100) * (cfg.inkPrice / cfg.inkYield));
+                const totalSheets = job.pages * job.copies; const jobOpCost = opSheetCost * totalSheets;
+                
+                let sugSheetPrice = paper.maxSalePrice * (appliedDensity / 100);
+                if (sugSheetPrice > paper.maxSalePrice) sugSheetPrice = paper.maxSalePrice;
+                if (sugSheetPrice < opSheetCost * minMultiplier) sugSheetPrice = opSheetCost * minMultiplier;
+                
+                let jobSugCost = sugSheetPrice * totalSheets;
+                if (cfg.roundingMode === 'half') jobSugCost = Math.ceil(jobSugCost * 2) / 2;
+                else if (cfg.roundingMode === 'round') jobSugCost = Math.ceil(jobSugCost);
+
+                globalOpCost += jobOpCost; globalSugCost += jobSugCost;
+                const blankWarningHTML = job.originalPages > job.pages ? `<br><span class="text-[9px] text-gray-400 font-bold">(${job.originalPages - job.pages} blancas omitidas)</span>` : '';
+
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition">
+                        <td class="px-3 md:px-4 py-3 truncate max-w-[120px] md:max-w-[150px]" title="${job.name}">${job.name}</td>
+                        <td class="px-2 md:px-4 py-3 text-center leading-tight">${job.pages}${blankWarningHTML}</td>
+                        <td class="px-2 md:px-4 py-3 text-center text-[10px]"><span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 px-2 py-0.5 rounded-full font-bold">${appliedDensity.toFixed(0)}% (${job.type})</span></td>
+                        <td class="px-2 md:px-4 py-3 text-center"><input type="number" min="1" value="${job.copies}" onchange="State.pdf.jobs[${idx}].copies=parseInt(this.value); calcPdfFinancials()" class="w-10 md:w-12 text-center border rounded bg-transparent outline-none focus:border-indigo-500 py-1"></td>
+                        <td class="px-2 md:px-4 py-3 text-right text-slate-500">$${(jobSugCost / totalSheets).toFixed(2)}</td>
+                        <td class="px-3 md:px-4 py-3 text-right font-bold text-emerald-600">$${jobSugCost.toFixed(2)}</td>
+                        <td class="px-2 md:px-4 py-3 text-center"><button onclick="State.pdf.jobs.splice(${idx},1); calcPdfFinancials()" class="text-red-400 hover:text-red-600 transition">✕</button></td>
+                    </tr>
+                `;
+            });
+
+            State.pdf.globOp = globalOpCost; State.pdf.globSug = globalSugCost;
+            document.getElementById('pdf-tot-op').innerText = `$${globalOpCost.toFixed(2)}`;
+            document.getElementById('pdf-tot-sug').value = globalSugCost.toFixed(2);
+        }
+
+        function registerPdfSale(shouldOpenPdfs) {
+            if (State.pdf.jobs.length === 0) return;
+            const paper = State.papers.find(x => x.id === State.pdf.paperId) || State.papers[0];
+            const ticketId = `PDL${Date.now().toString().slice(-8)}`;
+            const totalSheets = State.pdf.jobs.reduce((acc, job) => acc + (job.pages * job.copies), 0);
+            
+            State.salesLog.push({ 
+                id: ticketId, timestamp: new Date().toISOString(), paper: paper.name, details: 'Lote PDFs', 
+                pages: totalSheets, totalOp: State.pdf.globOp, totalSug: State.pdf.globSug 
+            });
+            localStorage.setItem('papePrinterSalesLog', JSON.stringify(State.salesLog));
+            
+            if (shouldOpenPdfs) { State.pdf.jobs.forEach(job => { const anchor = document.createElement('a'); anchor.href = job.url; anchor.target = '_blank'; anchor.click(); }); }
+            State.pdf.jobs = []; document.getElementById('pdf-tot-op').innerText = '$0.00'; document.getElementById('pdf-tot-sug').value = '0.00'; 
+            State.pdf.globOp = 0; State.pdf.globSug = 0; calcPdfFinancials();
+        }
+
+        // --- 8. MÓDULO 3: FINANZAS (DASHBOARD Y TICKET) ---
+        let trendChart = null; let doughnutChart = null;
+
+        function renderFinanceDashboard() {
+            let totalSheets = 0; let totalCost = 0; let totalRev = 0;
+            const tableBody = document.getElementById('fin-table'); tableBody.innerHTML = '';
+            const materialCounts = {}; const materialProfits = {};
+            const chartLabels = []; const chartProfits = []; const chartCosts = [];
+
+            State.salesLog.forEach((sale, index) => {
+                const op = parseFloat(sale.totalOp) || 0; const sug = parseFloat(sale.totalSug) || 0; const profit = sug - op;
+                totalSheets += parseInt(sale.pages) || 0; totalCost += op; totalRev += sug;
+                
+                tableBody.innerHTML = `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                        <td class="p-2 md:p-3 text-indigo-600 dark:text-indigo-400 font-bold">${sale.id}</td>
+                        <td class="p-2 md:p-3 truncate max-w-[100px] md:max-w-none">${sale.paper}</td>
+                        <td class="p-2 md:p-3 text-center">${sale.pages}</td>
+                        <td class="p-2 md:p-3 text-right text-rose-500">$${op.toFixed(2)}</td>
+                        <td class="p-2 md:p-3 text-right font-bold text-emerald-600 dark:text-emerald-400">$${sug.toFixed(2)}</td>
+                    </tr>` + tableBody.innerHTML;
+                
+                chartLabels.push(`T-${index + 1}`); chartProfits.push(profit.toFixed(2)); chartCosts.push(op.toFixed(2));
+                materialCounts[sale.paper] = (materialCounts[sale.paper] || 0) + sale.pages;
+                materialProfits[sale.paper] = (materialProfits[sale.paper] || 0) + profit;
+            });
+
+            const netProfit = totalRev - totalCost; const roiPercent = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
+            
+            document.getElementById('fin-rev').innerText = `$${totalRev.toFixed(2)}`;
+            document.getElementById('fin-cos').innerText = `$${totalCost.toFixed(2)}`;
+            document.getElementById('fin-pro').innerText = `$${netProfit.toFixed(2)}`;
+            
+            const roiColorClass = roiPercent > 40 ? 'text-emerald-500' : roiPercent > 20 ? 'text-blue-500' : 'text-rose-500';
+            document.getElementById('fin-roi').innerHTML = `${totalSheets} <span class="text-xs ${roiColorClass}">(${roiPercent.toFixed(1)}%)</span>`;
+
+            if (trendChart) trendChart.destroy(); if (doughnutChart) doughnutChart.destroy();
+            const gridColor = State.isDarkMode ? '#334155' : '#e2e8f0';
+            
+            trendChart = new Chart(document.getElementById('chart-trend'), {
+                type: 'line', data: { labels: chartLabels, datasets: [{ label: 'Utilidad', data: chartProfits, borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3 }, { label: 'Costo', data: chartCosts, borderColor: '#ef4444', borderDash: [5,5], tension: 0.3 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor } } }, plugins: { legend: { position: 'bottom' } } }
+            });
+            
+            doughnutChart = new Chart(document.getElementById('chart-doughnut'), {
+                type: 'doughnut', data: { labels: Object.keys(materialProfits), datasets: [{ data: Object.values(materialProfits), backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#0ea5e9', '#ec4899'] }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        function exportCSV() {
+            if (State.salesLog.length === 0) return;
+            let csv = "Fecha,Ticket,Material,Hojas,Costo,Cobro,Utilidad\n";
+            State.salesLog.forEach(sale => {
+                const op = parseFloat(sale.totalOp) || 0; const sug = parseFloat(sale.totalSug) || 0;
+                csv += `"${new Date(sale.timestamp).toLocaleString()}","${sale.id}","${sale.paper}",${sale.pages},${op.toFixed(2)},${sug.toFixed(2)},${(sug - op).toFixed(2)}\n`;
+            });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob(["\ufeff", csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `Corte_${Date.now()}.csv`; link.click();
+        }
+
+        function corteCaja() {
+            if (State.salesLog.length === 0) { alert("No hay ventas registradas."); return; }
+            if (!confirm("¿Generar Corte de Caja? Esto limpiará el turno actual y descargará tu PNG.")) return;
+            
+            let sheets = 0, cost = 0, rev = 0; const matCount = {};
+            State.salesLog.forEach(sale => {
+                const op = parseFloat(sale.totalOp) || 0; const sug = parseFloat(sale.totalSug) || 0;
+                sheets += parseInt(sale.pages) || 0; cost += op; rev += sug;
+                matCount[sale.paper] = (matCount[sale.paper] || 0) + (parseInt(sale.pages) || 0);
+            });
+            const netProfit = rev - cost;
+            const cvs = document.createElement('canvas'); cvs.width = 400; cvs.height = 460 + (Object.keys(matCount).length * 25);
+            const ctx = cvs.getContext('2d');
+            
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = '#0f172a'; ctx.font = 'bold 24px monospace'; ctx.textAlign = 'center'; ctx.fillText('PAPEPRINTER PRO', 200, 40);
+            ctx.font = '16px monospace'; ctx.fillStyle = '#475569'; ctx.fillText('TICKET DE CORTE DE CAJA', 200, 65);
+            ctx.font = '12px monospace'; ctx.fillText(new Date().toLocaleString(), 200, 85);
+            ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(20, 105); ctx.lineTo(380, 105); ctx.stroke(); ctx.setLineDash([]);
+            
+            ctx.textAlign = 'left'; ctx.font = 'bold 14px monospace'; ctx.fillStyle = '#0f172a'; ctx.fillText('RESUMEN DE OPERACIÓN:', 20, 135);
+            ctx.font = '14px monospace'; ctx.fillStyle = '#334155'; ctx.fillText(`Trabajos Procesados: ${State.salesLog.length}`, 20, 160); ctx.fillText(`Hojas Impresas:      ${sheets}`, 20, 180);
+            ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(20, 205); ctx.lineTo(380, 205); ctx.stroke(); ctx.setLineDash([]);
+            
+            ctx.textAlign = 'left'; ctx.font = 'bold 14px monospace'; ctx.fillStyle = '#0f172a'; ctx.fillText('MATERIALES USADOS:', 20, 235);
+            ctx.font = '14px monospace'; ctx.fillStyle = '#334155';
+            let cursorY = 260;
+            for (let [mat, qty] of Object.entries(matCount)) {
+                ctx.fillText(`${mat}:`, 20, cursorY); ctx.textAlign = 'right'; ctx.fillText(`${qty} hj(s)`, 380, cursorY); ctx.textAlign = 'left'; cursorY += 25;
+            }
+            
+            ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(20, cursorY); ctx.lineTo(380, cursorY); ctx.stroke(); ctx.setLineDash([]); cursorY += 25;
+            ctx.textAlign = 'left'; ctx.font = 'bold 14px monospace'; ctx.fillStyle = '#0f172a'; ctx.fillText('FINANZAS (MXN):', 20, cursorY); cursorY += 25;
+            
+            ctx.font = '14px monospace'; ctx.fillStyle = '#ef4444'; ctx.fillText('Costo Operativo Total:', 20, cursorY); ctx.textAlign = 'right'; ctx.fillText(`-$${cost.toFixed(2)}`, 380, cursorY); ctx.textAlign = 'left'; cursorY += 25;
+            ctx.fillStyle = '#10b981'; ctx.fillText('Ingresos Brutos (Cobro):', 20, cursorY); ctx.textAlign = 'right'; ctx.fillText(`+$${rev.toFixed(2)}`, 380, cursorY); ctx.textAlign = 'left'; cursorY += 30;
+            ctx.font = 'bold 16px monospace'; ctx.fillStyle = '#0ea5e9'; ctx.fillText('UTILIDAD NETA LIBRE:', 20, cursorY); ctx.textAlign = 'right'; ctx.fillText(`$${netProfit.toFixed(2)}`, 380, cursorY); ctx.textAlign = 'left'; cursorY += 40;
+            ctx.textAlign = 'center'; ctx.font = '10px monospace'; ctx.fillStyle = '#94a3b8'; ctx.fillText('Sistema PapePrinter Pro - Resumen Generado', 200, cursorY);
+
+            const link = document.createElement('a'); link.download = `Corte_Caja_${Date.now()}.png`; link.href = cvs.toDataURL('image/png'); link.click();
+            State.salesLog = []; localStorage.setItem('papePrinterSalesLog', '[]'); renderFinanceDashboard();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
