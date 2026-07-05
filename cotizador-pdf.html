@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador PDF - PapePrinter Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        tailwind.config = { darkMode: 'class' };
+    </script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        #drop-zone.dragover { background-color: rgba(99, 102, 241, 0.1); border-color: #6366f1; }
+        .dark #drop-zone.dragover { background-color: rgba(99, 102, 241, 0.2); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <header class="h-16 shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 shadow-sm z-20 sticky top-0">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="flex items-center justify-center p-2 rounded-lg bg-slate-100 text-slate-500 hover:text-indigo-600 hover:bg-slate-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition" title="Volver al Lienzo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </a>
+            <div class="w-px h-6 bg-slate-200 dark:bg-gray-700"></div>
+            
+            <div class="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-black text-xl tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span>Cotizador PDF <span class="text-xs font-bold text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded uppercase tracking-widest ml-1 hidden sm:inline">Pro Lotes</span></span>
+            </div>
+            
+            <div class="hidden md:flex items-center ml-2 px-3 py-1 bg-slate-100 dark:bg-gray-800 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                By Edwhar & Gemini
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 mr-2 border-r border-slate-200 dark:border-gray-700 pr-4">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-1">Apoyar Proyecto:</span>
+                <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Apoyar vía Mercado Pago">
+                    <img src="https://http2.mlstatic.com/storage/mobile-on-demand-resources/image/web-private-nav-mp-logo-restyling_3X?updatedAt=0" alt="Mercado Pago" class="w-6 h-6 object-contain">
+                </a>
+                <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-blue-50 dark:hover:bg-gray-800" title="Apoyar vía PayPal">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+                </a>
+            </div>
+            <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-6">
+        
+        <aside class="w-full lg:w-80 shrink-0 flex flex-col gap-6">
+            
+            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 p-5">
+                <h2 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Ajustes Base</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1.5">Material de Impresión</label>
+                        <select id="ui-paper" class="w-full p-2.5 text-sm font-medium rounded-lg border border-slate-300 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-xs font-bold text-slate-500">Cobertura Tinta (Docs +100 págs)</label>
+                            <span id="ui-coverage-val" class="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400">10%</span>
+                        </div>
+                        <input type="range" id="ui-coverage" min="5" max="100" value="10" step="5" class="w-full accent-indigo-600 cursor-pointer">
+                        <p class="text-[10px] text-slate-400 mt-1 leading-tight">Densidad manual de reserva. Archivos menores a 100 páginas se calculan <b>automáticamente pixel por pixel</b>.</p>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-900/50">
+                        <div class="flex items-center gap-2 text-xs font-bold text-blue-700 dark:text-blue-400 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                            Regla de Precio / Redondeo
+                        </div>
+                        <p class="text-[10px] text-blue-600 dark:text-blue-300">
+                            Precios leídos de la mesa principal. Redondeo: <span id="ui-rounding-info" class="font-bold uppercase"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 p-5 flex-1 flex flex-col">
+                <h2 class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">Archivos en Cola</h2>
+                
+                <div id="drop-zone" class="border-2 border-dashed border-slate-300 dark:border-gray-700 rounded-xl p-4 text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-gray-800 transition mb-4">
+                    <svg class="mx-auto h-8 w-8 text-slate-400 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    <p class="text-xs font-medium text-slate-600 dark:text-slate-400">Arrastra PDFs aquí o clica</p>
+                    <input type="file" id="file-input" multiple accept="application/pdf" class="hidden">
+                </div>
+
+                <div id="queue-list" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mb-4 max-h-48 border-t border-slate-100 dark:border-gray-800 pt-2 empty:hidden">
+                </div>
+
+                <div class="mt-auto pt-4 border-t border-slate-100 dark:border-gray-800 flex flex-col gap-2">
+                    <button id="btn-process-queue" disabled class="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-bold text-sm shadow-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex justify-center items-center gap-2">
+                        Analizar Lote
+                    </button>
+                    <button id="btn-clear-queue" class="text-xs font-bold text-slate-400 hover:text-red-500 transition">
+                        Vaciar Cola
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <section class="flex-1 flex flex-col gap-6">
+            
+            <div id="progress-container" class="hidden bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 p-5">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="progress-text" class="text-sm font-bold text-slate-700 dark:text-slate-300">Analizando archivos...</span>
+                    <span id="progress-percent" class="text-sm font-mono text-indigo-600 dark:text-indigo-400">0%</span>
+                </div>
+                <div class="w-full bg-slate-100 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 flex-1 flex flex-col overflow-hidden min-h-[300px]">
+                <div class="p-4 border-b border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 dark:text-slate-100">Desglose por Trabajo</h3>
+                </div>
+                
+                <div class="overflow-x-auto flex-1 custom-scrollbar">
+                    <table class="w-full text-sm text-left min-w-[800px]">
+                        <thead class="bg-slate-100 dark:bg-gray-800 text-slate-500 uppercase tracking-wider text-[10px] font-black sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3">Documento</th>
+                                <th class="px-4 py-3 text-center">Págs.</th>
+                                <th class="px-4 py-3 text-center">Tinta / Tipo</th>
+                                <th class="px-4 py-3 text-center">Juegos</th>
+                                <th class="px-4 py-3 text-right">Costo/Hj</th>
+                                <th class="px-4 py-3 text-right">Sug./Hj</th>
+                                <th class="px-4 py-3 text-right">Total Sug.</th>
+                                <th class="px-4 py-3 text-center w-12"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobs-body" class="divide-y divide-slate-100 dark:divide-gray-800 font-mono text-slate-700 dark:text-slate-300">
+                            <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400 font-sans">Agrega PDFs a la cola y presiona "Analizar Lote".</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="checkout-panel" class="hidden bg-slate-800 dark:bg-gray-900 rounded-2xl shadow-lg border border-slate-700 dark:border-gray-800 p-6 flex flex-col md:flex-row items-center justify-between gap-6 text-white fade-in">
+                
+                <div class="flex gap-8">
+                    <div>
+                        <div class="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Costo Operativo</div>
+                        <div id="fin-op" class="text-2xl font-black text-rose-400 font-mono">$0.00</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] uppercase font-black text-emerald-400 tracking-widest mb-1">Precio Cobro Sugerido</div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-3xl font-black text-emerald-400 font-mono">$</span>
+                            <input type="number" id="fin-suggested" class="bg-transparent border-b-2 border-emerald-500/50 hover:border-emerald-400 focus:border-emerald-400 outline-none text-3xl font-black text-emerald-400 font-mono w-28 text-left pb-1 transition-colors" value="0.00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row w-full md:w-auto gap-3">
+                    <button id="btn-sale-only" class="px-5 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold transition flex items-center justify-center gap-2">
+                        Solo Registrar Venta
+                    </button>
+                    <button id="btn-sale-open" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        Cobrar y Abrir PDFs
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-800 px-6 py-3 rounded-xl font-bold shadow-xl flex items-center gap-3 z-50"></div>
+
+    <script>
+        const state = {
+            config: null,      
+            papers: [],        
+            salesLog: [],      
+            paperId: null,     
+            coverage: 10, // Densidad manual (slider) fallback
+            fileQueue: [],     
+            jobs: [],          
+            globalTotalOp: 0,  
+            globalTotalSug: 0,
+            isDarkMode: false
+        };
+
+        const els = {
+            dropZone: document.getElementById('drop-zone'),
+            fileInput: document.getElementById('file-input'),
+            queueList: document.getElementById('queue-list'),
+            btnProcess: document.getElementById('btn-process-queue'),
+            jobsBody: document.getElementById('jobs-body'),
+            checkoutPanel: document.getElementById('checkout-panel')
+        };
+
+        function toggleTheme() {
+            state.isDarkMode = !state.isDarkMode;
+            if (state.isDarkMode) { document.documentElement.classList.add('dark'); } 
+            else { document.documentElement.classList.remove('dark'); }
+            const icon = document.getElementById('theme-icon');
+            if (state.isDarkMode) {
+                icon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`; 
+            } else {
+                icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+            }
+        }
+
+        function init() {
+            const pConfig = localStorage.getItem('papePrinterVanilla');
+            if (pConfig) {
+                try {
+                    const conf = JSON.parse(pConfig);
+                    state.config = conf.costs;
+                    state.papers = conf.papers || [];
+                    if (conf.isDarkMode) { state.isDarkMode = true; document.documentElement.classList.add('dark'); }
+                } catch(e) {}
+            }
+            toggleTheme(); // Trigger initial icon set
+            toggleTheme(); // Revert back to correct state
+
+            const savedSales = localStorage.getItem('papePrinterSalesLog');
+            if (savedSales) {
+                try { state.salesLog = JSON.parse(savedSales); } catch(e) {}
+            }
+
+            if (!state.config) {
+                alert("Advertencia: No se encontró la configuración principal de PapePrinter.");
+                state.config = { printerPrice: 4000, printerLife: 20000, inkPrice: 800, inkYield: 6000, roundingMode: 'exact' };
+                state.papers = [{ id: 'p1', name: 'Predeterminado', count: 500, price: 100, maxSalePrice: 1 }];
+            }
+
+            let rndText = "Exacto";
+            if(state.config.roundingMode === 'half') rndText = "$.50 Centavos";
+            if(state.config.roundingMode === 'round') rndText = "$1.00 Peso";
+            document.getElementById('ui-rounding-info').innerText = rndText;
+
+            const paperSelect = document.getElementById('ui-paper');
+            state.papers.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.name} ($${p.maxSalePrice} max)`;
+                paperSelect.appendChild(opt);
+            });
+            state.paperId = state.papers[0]?.id;
+
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            document.getElementById('ui-paper').addEventListener('change', (e) => {
+                state.paperId = e.target.value;
+                if(state.jobs.length > 0) calculateFinancials(); 
+            });
+
+            const covInput = document.getElementById('ui-coverage');
+            covInput.addEventListener('input', (e) => {
+                state.coverage = parseFloat(e.target.value);
+                document.getElementById('ui-coverage-val').innerText = state.coverage + '%';
+            });
+            covInput.addEventListener('change', () => {
+                if(state.jobs.length > 0) calculateFinancials();
+            });
+
+            els.dropZone.addEventListener('click', () => els.fileInput.click());
+            els.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); els.dropZone.classList.add('dragover'); });
+            els.dropZone.addEventListener('dragleave', () => els.dropZone.classList.remove('dragover'));
+            els.dropZone.addEventListener('drop', (e) => { e.preventDefault(); els.dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+            els.fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            document.getElementById('btn-clear-queue').addEventListener('click', () => { state.fileQueue = []; renderQueue(); });
+            els.btnProcess.addEventListener('click', processQueue);
+
+            document.getElementById('btn-sale-only').addEventListener('click', () => executeSale(false));
+            document.getElementById('btn-sale-open').addEventListener('click', () => executeSale(true));
+            
+            document.getElementById('fin-suggested').addEventListener('change', (e) => {
+                const val = parseFloat(e.target.value);
+                if (val < state.globalTotalOp * 2) {
+                    showToast("El precio no puede ser menor al doble del costo operativo.", 'error');
+                    e.target.value = state.globalTotalSug.toFixed(2);
+                }
+            });
+        }
+
+        function handleFiles(files) {
+            const pdfFiles = Array.from(files).filter(f => f.type === 'application/pdf');
+            if (pdfFiles.length === 0) { showToast("Solo se aceptan archivos PDF.", 'error'); return; }
+            pdfFiles.forEach(f => {
+                state.fileQueue.push({ id: Math.random().toString(36).substr(2, 9), file: f, name: f.name });
+            });
+            renderQueue();
+            els.fileInput.value = ''; 
+        }
+
+        function renderQueue() {
+            els.queueList.innerHTML = '';
+            state.fileQueue.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center p-2 bg-slate-50 dark:bg-gray-800 rounded text-xs border border-slate-100 dark:border-gray-700";
+                div.innerHTML = `<span class="truncate font-medium text-slate-700 dark:text-slate-300 w-3/4">${q.name}</span><button onclick="removeFromQueue(${idx})" class="text-red-400 hover:text-red-600 transition" title="Quitar">✕</button>`;
+                els.queueList.appendChild(div);
+            });
+            els.btnProcess.disabled = state.fileQueue.length === 0;
+        }
+
+        window.removeFromQueue = function(idx) { state.fileQueue.splice(idx, 1); renderQueue(); };
+
+        async function processQueue() {
+            if (state.fileQueue.length === 0) return;
+            els.btnProcess.disabled = true;
+            document.getElementById('progress-container').classList.remove('hidden');
+            const pBar = document.getElementById('progress-bar');
+            const pText = document.getElementById('progress-text');
+            const pPct = document.getElementById('progress-percent');
+            
+            let newJobs = [];
+
+            for (let i = 0; i < state.fileQueue.length; i++) {
+                const qItem = state.fileQueue[i];
+                pText.innerText = `Leyendo: ${qItem.name}`;
+                
+                try {
+                    const arrayBuffer = await qItem.file.arrayBuffer();
+                    const pdfDoc = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    const numPages = pdfDoc.numPages;
+                    
+                    let computedDensity = state.coverage; // Fallback al slider manual
+                    let densityType = "Manual";
+
+                    // Freno de 100 páginas: Si es <= 100, analizamos hoja por hoja
+                    if (numPages <= 100) {
+                        densityType = "Calculada";
+                        let totalDensityScore = 0;
+                        for (let p = 1; p <= numPages; p++) {
+                            pText.innerText = `[${qItem.name}] Analizando Pág ${p}/${numPages}`;
+                            const page = await pdfDoc.getPage(p);
+                            const viewport = page.getViewport({ scale: 0.2 }); // Escala baja para máximo rendimiento
+                            const canvas = document.createElement('canvas');
+                            canvas.width = viewport.width; canvas.height = viewport.height;
+                            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                            
+                            // Fondo blanco
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                            
+                            // Analizar píxeles
+                            const imgd = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            const pix = imgd.data;
+                            let colored = 0;
+                            for (let j = 0; j < pix.length; j += 4) {
+                                if (pix[j] < 240 || pix[j+1] < 240 || pix[j+2] < 240) colored++;
+                            }
+                            totalDensityScore += (colored / (canvas.width * canvas.height)) * 100;
+                            
+                            // Progress minor step
+                            const overallPct = Math.round((i / state.fileQueue.length) * 100 + ((p / numPages) * (100 / state.fileQueue.length)));
+                            pBar.style.width = overallPct + '%';
+                            pPct.innerText = overallPct + '%';
+                        }
+                        computedDensity = totalDensityScore / numPages;
+                    }
+
+                    // Forma correcta y robusta de crear el Blob URL usando el objeto File original
+                    const fileUrl = URL.createObjectURL(qItem.file);
+
+                    newJobs.push({
+                        id: qItem.id,
+                        name: qItem.name,
+                        pages: numPages,
+                        density: Math.min(100, Math.max(0, computedDensity)), // Asegurar rango 0-100
+                        densityType: densityType,
+                        copies: 1,
+                        fileUrl: fileUrl
+                    });
+
+                } catch(err) {
+                    console.error("Error analizando PDF", err);
+                    showToast(`Error con ${qItem.name}`, 'error');
+                }
+
+                const pct = Math.round(((i + 1) / state.fileQueue.length) * 100);
+                pBar.style.width = pct + '%';
+                pPct.innerText = pct + '%';
+            }
+
+            state.jobs = [...state.jobs, ...newJobs];
+            state.fileQueue = [];
+            renderQueue();
+            
+            setTimeout(() => {
+                document.getElementById('progress-container').classList.add('hidden');
+                calculateFinancials();
+            }, 500);
+        }
+
+        function calculateFinancials() {
+            if (state.jobs.length === 0) {
+                els.checkoutPanel.classList.add('hidden');
+                els.jobsBody.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400 font-sans">Mesa de trabajo vacía.</td></tr>';
+                return;
+            }
+
+            const p = state.papers.find(x => x.id === state.paperId);
+            const c = state.config;
+            const costPerSheetBase = p.price / p.count;
+            const equipCostPerSheet = c.printerPrice / (c.printerLife * 2);
+            
+            // Traer configuraciones de redondeo y multiplicador mínimo desde el localStorage
+            const roundingMode = c.roundingMode || 'exact';
+            const minMultiplier = c.minMultiplier || 2; // Por defecto x2 si no está definido
+            
+            state.globalTotalOp = 0;
+            state.globalTotalSug = 0;
+
+            els.jobsBody.innerHTML = '';
+
+            state.jobs.forEach((job, idx) => {
+                // Cálculo del costo base (Material + Tinta Consumida + Desgaste)
+                const documentDensity = job.densityType === 'Manual' ? state.coverage : job.density;
+                const inkCostPerSheet = (documentDensity / 100) * (c.inkPrice / c.inkYield);
+                const opCostPerSheet = costPerSheetBase + inkCostPerSheet + equipCostPerSheet;
+                
+                const totalSheets = job.pages * job.copies;
+                const jobOpCost = opCostPerSheet * totalSheets;
+                
+                // --- NUEVA LÓGICA DE COTIZACIÓN PROPORCIONAL --- //
+                
+                // 1. Precio Base según la densidad (Cobertura * Precio Máximo de Venta)
+                let calculatedSheetPrice = p.maxSalePrice * (documentDensity / 100);
+                
+                // 2. Límites Estrictos: Tope Máximo y Piso Mínimo
+                const minAllowedPrice = opCostPerSheet * minMultiplier; 
+                
+                if (calculatedSheetPrice > p.maxSalePrice) calculatedSheetPrice = p.maxSalePrice; // Nunca mayor al máximo del papel
+                if (calculatedSheetPrice < minAllowedPrice) calculatedSheetPrice = minAllowedPrice; // Nunca menor al costo operativo * multiplicador
+                
+                // 3. Subtotal del trabajo completo
+                let jobSugCost = calculatedSheetPrice * totalSheets;
+
+                // 4. Aplicar Redondeo individualmente al trabajo para que los números de la tabla cuadren al centavo
+                if (roundingMode === 'half') jobSugCost = Math.ceil(jobSugCost * 2) / 2;
+                else if (roundingMode === 'round') jobSugCost = Math.ceil(jobSugCost);
+
+                state.globalTotalOp += jobOpCost;
+                state.globalTotalSug += jobSugCost;
+
+                // Color badge para la densidad
+                let densBadge = job.densityType === 'Calculada' 
+                    ? `<span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400 px-2 py-0.5 rounded-full">${documentDensity.toFixed(1)}% (Auto)</span>`
+                    : `<span class="bg-slate-200 text-slate-600 dark:bg-gray-700 dark:text-slate-300 px-2 py-0.5 rounded-full">${documentDensity.toFixed(0)}% (Manual)</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 truncate max-w-[180px]" title="${job.name}">${job.name}</td>
+                    <td class="px-4 py-3 text-center">${job.pages}</td>
+                    <td class="px-4 py-3 text-center text-[10px] font-bold">${densBadge}</td>
+                    <td class="px-4 py-3 text-center">
+                        <input type="number" min="1" max="999" value="${job.copies}" onchange="updateJobCopies(${idx}, this.value)" class="w-16 bg-white dark:bg-gray-900 border border-slate-300 dark:border-gray-600 rounded px-2 py-1 text-center outline-none focus:border-indigo-500">
+                    </td>
+                    <td class="px-4 py-3 text-right text-rose-500/80">$${opCostPerSheet.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-right text-slate-500" title="Precio efectivo por hoja: $${(jobSugCost/totalSheets).toFixed(2)}">$${(jobSugCost/totalSheets).toFixed(2)}</td>
+                    <td class="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400">$${jobSugCost.toFixed(2)}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="removeJob(${idx})" class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                    </td>
+                `;
+                els.jobsBody.appendChild(tr);
+            });
+
+            // Actualizar la Interfaz con los totales
+            document.getElementById('fin-op').innerText = `$${state.globalTotalOp.toFixed(2)}`;
+            document.getElementById('fin-suggested').value = state.globalTotalSug.toFixed(2);
+            els.checkoutPanel.classList.remove('hidden');
+        }
+
+        window.updateJobCopies = function(idx, val) {
+            const num = parseInt(val) || 1;
+            state.jobs[idx].copies = num;
+            calculateFinancials();
+        }
+
+        window.removeJob = function(idx) { state.jobs.splice(idx, 1); calculateFinancials(); }
+
+        function executeSale(openPdfs) {
+            if (state.jobs.length === 0) return;
+
+            const finalSug = parseFloat(document.getElementById('fin-suggested').value) || 0;
+            const d = new Date();
+            const ticketId = `PDL${String(d.getDate()).padStart(2, '0')}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getFullYear()).slice(-2)}${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}`;
+            
+            const p = state.papers.find(x => x.id === state.paperId);
+            const totalSheets = state.jobs.reduce((acc, job) => acc + (job.pages * job.copies), 0);
+            
+            // Resumen de detalles ocultos. El material ('paper') se mantiene limpio.
+            const namesResumen = state.jobs.length > 1 ? `Lote de ${state.jobs.length} PDFs` : state.jobs[0].name;
+
+            const newSale = {
+                id: ticketId,
+                timestamp: d.toISOString(),
+                paper: p.name, // 100% LIMPIO: Solo "Carta Bond" u "Opalina". No lleva la extensión del archivo.
+                details: namesResumen, // Nombres de los archivos
+                pages: totalSheets,
+                totalOp: state.globalTotalOp,
+                totalSug: finalSug
+            };
+
+            state.salesLog.push(newSale);
+            localStorage.setItem('papePrinterSalesLog', JSON.stringify(state.salesLog));
+            
+            showToast(`Ticket ${ticketId} registrado exitosamente.`, 'success');
+
+            if (openPdfs) {
+                // Generar apertura por enlace directo para evadir bloqueos de Popup estrictos
+                state.jobs.forEach(job => {
+                    const a = document.createElement('a');
+                    a.href = job.fileUrl;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+            }
+
+            // Limpiar Mesa
+            state.jobs = [];
+            calculateFinancials();
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = type === 'success' ? `✅ ${msg}` : type === 'error' ? `⚠️ ${msg}` : `ℹ️ ${msg}`;
+            toast.className = `fixed bottom-6 right-6 transform translate-y-0 opacity-100 transition-all duration-300 px-6 py-3 rounded-xl font-bold shadow-xl flex items-center gap-3 z-50 ${type === 'error' ? 'bg-rose-500 text-white' : type === 'success' ? 'bg-emerald-500 text-white' : 'bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-800'}`;
+            setTimeout(() => { toast.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
