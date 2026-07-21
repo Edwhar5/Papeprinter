@@ -73,6 +73,15 @@
         </div>
 
         <div class="flex items-center gap-2 sm:gap-3">
+            <div class="hidden sm:flex items-center gap-2 mr-2 border-r border-slate-200 dark:border-gray-700 pr-4">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mr-1">Apoyar:</span>
+                <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-slate-100 dark:hover:bg-gray-800" title="Apoyar vía Mercado Pago">
+                    <img src="https://http2.mlstatic.com/storage/mobile-on-demand-resources/image/web-private-nav-mp-logo-restyling_3X?updatedAt=0" alt="Mercado Pago" class="w-5 h-5 object-contain">
+                </a>
+                <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-slate-100 dark:hover:bg-gray-800" title="Apoyar vía PayPal">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+                </a>
+            </div>
             <button onclick="toggleConfigModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition" title="Configuración Global">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
@@ -163,6 +172,10 @@
                             <span class="font-medium">Borde seguridad (5mm)</span>
                         </label>
                         <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="cvs-cropmarks" checked onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium">Mostrar Guías de Corte</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
                             <input type="checkbox" id="cvs-mono" onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
                             <span class="font-medium text-amber-600 dark:text-amber-400">Filtro Monocromo</span>
                         </label>
@@ -195,6 +208,10 @@
                     </div>
                     
                     <div class="flex gap-2 items-center shrink-0 ml-auto pr-2">
+                        <button onclick="exportCanvasPNG()" class="text-[10px] sm:text-xs font-bold px-3 py-1.5 bg-white text-slate-700 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 dark:text-slate-200 rounded-lg flex items-center gap-1 transition shadow-sm hover:bg-slate-50 dark:hover:bg-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span class="hidden sm:inline">Exportar PNG</span>
+                        </button>
                         <button onclick="document.getElementById('cvs-upload').click()" class="text-[10px] sm:text-xs font-bold px-3 py-1.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 rounded-lg flex items-center gap-1 transition shadow-sm hover:bg-indigo-100">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             <span class="hidden sm:inline">Subir</span> Imágenes
@@ -223,32 +240,32 @@
                 </div>
 
                 <!-- Panel Financiero Flotante -->
-                <div class="absolute bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 p-3 sm:p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-center z-[30]">
+                <div class="absolute bottom-16 md:bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 p-2 sm:p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] flex flex-col md:flex-row gap-2 sm:gap-3 md:gap-0 justify-between items-center z-[30]">
                     
-                    <div class="flex items-center justify-between w-full md:w-auto gap-4 md:gap-6">
+                    <div class="flex items-center justify-between w-full md:w-auto gap-2 sm:gap-6">
                         <div>
                             <div class="text-[9px] sm:text-[10px] uppercase font-black text-slate-400 tracking-widest">Costo Op.</div>
-                            <div class="text-sm sm:text-lg font-black text-red-500 font-mono" id="cvs-cost">$0.00</div>
+                            <div class="text-sm sm:text-lg font-black text-red-500 font-mono truncate max-w-[80px] sm:max-w-none" id="cvs-cost">$0.00</div>
                         </div>
-                        <div class="text-right md:text-left">
-                            <div class="text-[9px] sm:text-[10px] uppercase font-black text-emerald-500 tracking-widest" title="Puedes editar este valor antes de cobrar">Sugerido (Edit)</div>
-                            <div class="flex items-center text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono justify-end md:justify-start">
+                        <div class="text-right md:text-left flex-1 md:flex-none flex flex-col items-end md:items-start">
+                            <div class="text-[9px] sm:text-[10px] uppercase font-bold text-emerald-500 tracking-widest truncate" title="Puedes editar este valor antes de cobrar">Sug. (Edit)</div>
+                            <div class="flex items-center text-lg sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono w-full justify-end md:justify-start">
                                 <span>$</span>
-                                <input type="number" id="cvs-sug" step="0.5" onchange="State.cvs.totalSug=parseFloat(this.value)||0; updateCostLabels();" class="w-20 sm:w-24 bg-transparent outline-none border-b border-transparent hover:border-emerald-300 focus:border-emerald-500 transition-colors ml-1 text-right md:text-left" value="0.00">
+                                <input type="number" id="cvs-sug" step="0.5" onchange="State.cvs.totalSug=parseFloat(this.value)||0; updateCostLabels();" class="w-16 sm:w-24 bg-transparent outline-none border-b border-transparent hover:border-emerald-300 focus:border-emerald-500 transition-colors ml-1 text-right md:text-left" value="0.00">
                             </div>
                         </div>
                     </div>
                     
-                    <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 sm:gap-4 border-t md:border-t-0 border-slate-100 dark:border-gray-800 pt-3 md:pt-0">
-                        <div class="flex items-center gap-2 bg-slate-100 dark:bg-gray-800 px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 dark:border-gray-700">
+                    <div class="flex items-center justify-between md:justify-end w-full md:w-auto gap-2 sm:gap-4 border-t md:border-t-0 border-slate-100 dark:border-gray-800 pt-2 md:pt-0">
+                        <div class="flex items-center gap-1 sm:gap-2 bg-slate-100 dark:bg-gray-800 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-slate-200 dark:border-gray-700 shrink-0">
                             <span class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 hidden sm:inline">Juegos:</span>
-                            <span class="text-[10px] uppercase font-bold text-slate-500 sm:hidden">Copia(s):</span>
-                            <input type="number" id="cvs-copies" value="1" min="1" max="99" onchange="calcCanvasFinancials()" class="w-10 sm:w-12 bg-white dark:bg-gray-900 text-center text-xs sm:text-sm font-bold border border-slate-300 dark:border-gray-600 rounded outline-none focus:border-indigo-500 py-0.5">
+                            <span class="text-[9px] uppercase font-bold text-slate-500 sm:hidden">Copia:</span>
+                            <input type="number" id="cvs-copies" value="1" min="1" max="99" onchange="calcCanvasFinancials()" class="w-8 sm:w-12 bg-white dark:bg-gray-900 text-center text-xs sm:text-sm font-bold border border-slate-300 dark:border-gray-600 rounded outline-none focus:border-indigo-500 py-0.5">
                         </div>
 
-                        <button id="btn-print-cobrar" onclick="registerCanvasSaleAndPrint()" class="flex-1 md:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm disabled:opacity-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                            Cobrar e Imprimir
+                        <button id="btn-print-cobrar" onclick="registerCanvasSaleAndPrint()" class="flex-1 md:flex-none px-3 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm disabled:opacity-50 truncate">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="hidden sm:block"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                            Cobrar / Imprimir
                         </button>
                     </div>
                 </div>
@@ -444,7 +461,7 @@
             config: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, roundingMode: 'half', minMultiplier: 2 },
             papers: [{ id: 'p1', name: 'Carta Bond', w: 215.9, h: 279.4, price: 650, count: 5000, maxSalePrice: 8 }],
             salesLog: [],
-            cvs: { images: [], pages: [], paperId: 'p1', isPortrait: true, mode: 'preset', preset: 4, cm: 5, idVertical: false, sticker: false, mono: false, fit: 'cover', copies: 1, density: 0, totalOp: 0, totalSug: 0, workspaceZoom: 30 },
+            cvs: { images: [], pages: [], paperId: 'p1', isPortrait: true, mode: 'preset', preset: 4, cm: 5, idVertical: false, sticker: false, cropMarks: true, mono: false, fit: 'cover', copies: 1, density: 0, totalOp: 0, totalSug: 0, workspaceZoom: 30 },
             pdf: { queue: [], jobs: [], paperId: 'p1', covManual: 10, globOp: 0, globSug: 0 }
         };
 
@@ -664,6 +681,7 @@
         function updateCanvasConfig() {
             const paperSelect = document.getElementById('cvs-paper'); if (!paperSelect) return;
             State.cvs.paperId = paperSelect.value; State.cvs.sticker = document.getElementById('cvs-sticker').checked;
+            State.cvs.cropMarks = document.getElementById('cvs-cropmarks').checked;
             State.cvs.mono = document.getElementById('cvs-mono').checked; State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
             const imgRepeat = parseInt(document.getElementById('cvs-img-rep').value) || 1;
             
@@ -736,7 +754,10 @@
 
                 cells.forEach((cell, i) => {
                     const cx = cell.x * MM_TO_PX; const cy = cell.y * MM_TO_PX; const cw = cell.w * MM_TO_PX; const ch = cell.h * MM_TO_PX;
-                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                    
+                    if (State.cvs.cropMarks) {
+                        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                    }
                     
                     const imgData = pageImgs[i];
                     if (imgData) {
@@ -843,6 +864,10 @@
                             if (!pageImgs[i]) return;
                             const cx = cell.x * PRINT_SCALE; const cy = cell.y * PRINT_SCALE; const cw = cell.w * PRINT_SCALE; const ch = cell.h * PRINT_SCALE;
                             
+                            if (State.cvs.cropMarks) {
+                                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                            }
+
                             ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
                             const img = pageImgs[i].img; const iw = pageImgs[i].w; const ih = pageImgs[i].h;
                             const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
@@ -880,6 +905,59 @@
                 }, 500);
 
             }, 50); // Timeout para permitir renderizar el estado "Generando..."
+        }
+        
+        // Función de Exportación a PNG Directa
+        function exportCanvasPNG() {
+            if (State.cvs.pages.length === 0) { alert('No hay imágenes en el lienzo para exportar.'); return; }
+            
+            const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
+            const isPort = State.cvs.isPortrait;
+            const cells = getGridInfo(paper, isPort);
+            
+            // Renderizamos a 300 DPI para alta calidad
+            const PRINT_SCALE = 300 / 25.4; 
+            const pxW = (isPort ? (paper.w || 215.9) : (paper.h || 279.4)) * PRINT_SCALE;
+            const pxH = (isPort ? (paper.h || 279.4) : (paper.w || 215.9)) * PRINT_SCALE;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = pxW; canvas.height = pxH;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, pxW, pxH);
+            if (State.cvs.mono) ctx.filter = 'grayscale(100%) contrast(1.2)';
+
+            cells.forEach((cell, i) => {
+                const cx = cell.x * PRINT_SCALE; const cy = cell.y * PRINT_SCALE; const cw = cell.w * PRINT_SCALE; const ch = cell.h * PRINT_SCALE;
+                
+                if (State.cvs.cropMarks) {
+                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                }
+                
+                const pageImgs = State.cvs.pages[0]; // Exportamos la primera hoja visible
+                if (!pageImgs || !pageImgs[i]) return;
+                
+                ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
+                const img = pageImgs[i].img; const iw = pageImgs[i].w; const ih = pageImgs[i].h;
+                const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
+                const needsRotation = cellIsLandscape !== imgIsLandscape;
+                
+                let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
+                const dw = iw * scale; const dh = ih * scale;
+
+                if (needsRotation) {
+                    ctx.translate(cx + cw / 2, cy + ch / 2); ctx.rotate(Math.PI / 2);
+                    ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+                } else {
+                    ctx.drawImage(img, cx + (cw - dw) / 2, cy + (ch - dh) / 2, dw, dh);
+                }
+                ctx.restore();
+            });
+
+            const link = document.createElement('a');
+            link.download = `PapePrinter_Export_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
         }
 
         // --- 7. MÓDULO 2: LOTES PDF (COTIZADOR) ---
