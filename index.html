@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PapePrinter Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+    <title>PapePrinter Pro - Suite Unificada</title>
     
     <!-- Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -176,6 +176,10 @@
                             <span class="font-medium">Mostrar Guías de Corte</span>
                         </label>
                         <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="cvs-duplex" onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium">Impresión a Doble Cara</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
                             <input type="checkbox" id="cvs-mono" onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
                             <span class="font-medium text-amber-600 dark:text-amber-400">Filtro Monocromo</span>
                         </label>
@@ -286,6 +290,17 @@
                             <span id="pdf-cov-val" class="text-xs font-mono font-bold text-indigo-600">10%</span>
                         </div>
                         <input type="range" id="pdf-cov" min="5" max="100" value="10" step="5" class="w-full accent-indigo-600 cursor-pointer" oninput="document.getElementById('pdf-cov-val').innerText=this.value+'%'" onchange="calcPdfFinancials()">
+                    </div>
+
+                    <div class="mt-4 space-y-2 bg-slate-50 dark:bg-gray-800/50 border border-slate-200 dark:border-gray-700 rounded-lg p-3">
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="pdf-duplex" onchange="calcPdfFinancials()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium">Impresión a Doble Cara</span>
+                        </label>
+                        <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <input type="checkbox" id="pdf-mono" onchange="calcPdfFinancials()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
+                            <span class="font-medium text-amber-600 dark:text-amber-400">Filtro Monocromo</span>
+                        </label>
                     </div>
                 </div>
 
@@ -460,8 +475,8 @@
             config: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, roundingMode: 'half', minMultiplier: 2 },
             papers: [{ id: 'p1', name: 'Carta Bond', w: 215.9, h: 279.4, price: 650, count: 5000, maxSalePrice: 8 }],
             salesLog: [],
-            cvs: { images: [], pages: [], paperId: 'p1', isPortrait: true, mode: 'preset', preset: 4, cm: 5, idVertical: false, sticker: false, cropMarks: true, mono: false, fit: 'cover', copies: 1, density: 0, totalOp: 0, totalSug: 0, workspaceZoom: 30 },
-            pdf: { queue: [], jobs: [], paperId: 'p1', covManual: 10, globOp: 0, globSug: 0 }
+            cvs: { images: [], pages: [], paperId: 'p1', isPortrait: true, mode: 'preset', preset: 4, cm: 5, idVertical: false, sticker: false, cropMarks: true, mono: false, duplex: false, fit: 'cover', copies: 1, density: 0, totalOp: 0, totalSug: 0, workspaceZoom: 30 },
+            pdf: { queue: [], jobs: [], paperId: 'p1', covManual: 10, globOp: 0, globSug: 0, mono: false, duplex: false }
         };
 
         // --- 3. INICIALIZACIÓN ---
@@ -591,7 +606,25 @@
             }
             updateCanvasConfig();
         }
-        function clearCanvas() { State.cvs.images = []; document.getElementById('cvs-cost').innerText = '$0.00'; document.getElementById('cvs-sug').value = '0.00'; State.cvs.totalOp = 0; State.cvs.totalSug = 0; updateCanvasConfig(); }
+        function clearCanvas() { 
+            State.cvs.images = []; 
+            State.cvs.pages = [];
+            State.cvs.totalOp = 0; 
+            State.cvs.totalSug = 0;
+            
+            document.getElementById('cvs-cost').innerText = '$0.00'; 
+            document.getElementById('cvs-sug').value = '0.00'; 
+            
+            // Restablecer controles a estado inicial
+            document.getElementById('cvs-copies').value = 1;
+            document.getElementById('cvs-mono').checked = false;
+            if (document.getElementById('cvs-duplex')) document.getElementById('cvs-duplex').checked = false;
+            document.getElementById('cvs-sticker').checked = false;
+            document.getElementById('cvs-cropmarks').checked = true;
+            if (document.getElementById('cvs-margin')) document.getElementById('cvs-margin').checked = true;
+            
+            updateCanvasConfig(); 
+        }
 
         // --- 6. MÓDULO 1: LIENZO GRÁFICO (CANVAS ENGINE) ---
         function setPortrait(isPortrait) { 
@@ -681,7 +714,9 @@
             const paperSelect = document.getElementById('cvs-paper'); if (!paperSelect) return;
             State.cvs.paperId = paperSelect.value; State.cvs.sticker = document.getElementById('cvs-sticker').checked;
             State.cvs.cropMarks = document.getElementById('cvs-cropmarks').checked;
-            State.cvs.mono = document.getElementById('cvs-mono').checked; State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
+            State.cvs.mono = document.getElementById('cvs-mono').checked; 
+            State.cvs.duplex = document.getElementById('cvs-duplex')?.checked || false;
+            State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
             const imgRepeat = parseInt(document.getElementById('cvs-img-rep').value) || 1;
             
             if (['preset', 'slider', 'id'].includes(State.cvs.mode)) renderGridControls();
@@ -801,19 +836,27 @@
             State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
             const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
             const cfg = State.config;
+            const minMultiplier = cfg.minMultiplier || 2;
             
-            const inkCostPerSheet = (State.cvs.density / 100) * (cfg.inkPrice / cfg.inkYield);
-            const opSheetCost = (paper.price / paper.count) + inkCostPerSheet + (cfg.printerPrice / (cfg.printerLife * 2));
-            const totalPhysicalSheets = State.cvs.pages.length * State.cvs.copies;
-            const totalOpCost = opSheetCost * totalPhysicalSheets;
+            const inkCostPerFace = (State.cvs.density / 100) * (cfg.inkPrice / cfg.inkYield);
+            const wearCostPerFace = (cfg.printerPrice / (cfg.printerLife * 2));
+            const paperCostPerSheet = (paper.price / paper.count);
             
-            let sugSheetPrice = paper.maxSalePrice * (State.cvs.density / 100);
-            if (sugSheetPrice > paper.maxSalePrice) sugSheetPrice = paper.maxSalePrice;
-            const minAllowedPrice = opSheetCost * (cfg.minMultiplier || 2);
-            if (sugSheetPrice < minAllowedPrice) sugSheetPrice = minAllowedPrice;
-            if (State.cvs.mono) sugSheetPrice *= 0.25;
+            const totalFaces = State.cvs.pages.length * State.cvs.copies;
+            const totalPhysicalSheets = (State.cvs.duplex ? Math.ceil(State.cvs.pages.length / 2) : State.cvs.pages.length) * State.cvs.copies;
+            
+            const totalOpCost = ((inkCostPerFace + wearCostPerFace) * totalFaces) + (paperCostPerSheet * totalPhysicalSheets);
+            
+            let sugFacePrice = paper.maxSalePrice * (State.cvs.density / 100);
+            if (sugFacePrice > paper.maxSalePrice) sugFacePrice = paper.maxSalePrice;
+            if (State.cvs.mono) sugFacePrice *= 0.25;
 
-            let totalSugCost = sugSheetPrice * totalPhysicalSheets;
+            let totalSugCost = sugFacePrice * totalFaces;
+            
+            // Priorizar margen mínimo operativo siempre
+            const minAllowedTotal = totalOpCost * minMultiplier;
+            if (totalSugCost < minAllowedTotal) totalSugCost = minAllowedTotal;
+            
             if (cfg.roundingMode === 'half') totalSugCost = Math.ceil(totalSugCost * 2) / 2;
             else if (cfg.roundingMode === 'round') totalSugCost = Math.ceil(totalSugCost);
 
@@ -828,7 +871,7 @@
             if (State.cvs.pages.length === 0) return;
             const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
             const ticketId = `CVS${Date.now().toString().slice(-8)}`;
-            const totalSheets = State.cvs.pages.length * State.cvs.copies;
+            const totalSheets = (State.cvs.duplex ? Math.ceil(State.cvs.pages.length / 2) : State.cvs.pages.length) * State.cvs.copies;
             
             State.salesLog.push({ 
                 id: ticketId, timestamp: new Date().toISOString(), paper: paper.name, details: 'Lienzo Gráfico', 
@@ -907,7 +950,7 @@
         }
         
         // Función de Exportación a PNG Directa
-        function exportCanvasPNG() {
+        async function exportCanvasPNG() {
             if (State.cvs.pages.length === 0) { alert('No hay imágenes en el lienzo para exportar.'); return; }
             
             const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
@@ -919,44 +962,50 @@
             const pxW = (isPort ? (paper.w || 215.9) : (paper.h || 279.4)) * PRINT_SCALE;
             const pxH = (isPort ? (paper.h || 279.4) : (paper.w || 215.9)) * PRINT_SCALE;
 
-            const canvas = document.createElement('canvas');
-            canvas.width = pxW; canvas.height = pxH;
-            const ctx = canvas.getContext('2d');
-            
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, pxW, pxH);
-            if (State.cvs.mono) ctx.filter = 'grayscale(100%) contrast(1.2)';
+            // Iteramos sobre TODAS las hojas generadas
+            for (let p = 0; p < State.cvs.pages.length; p++) {
+                const canvas = document.createElement('canvas');
+                canvas.width = pxW; canvas.height = pxH;
+                const ctx = canvas.getContext('2d');
+                
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, pxW, pxH);
+                if (State.cvs.mono) ctx.filter = 'grayscale(100%) contrast(1.2)';
 
-            cells.forEach((cell, i) => {
-                const cx = cell.x * PRINT_SCALE; const cy = cell.y * PRINT_SCALE; const cw = cell.w * PRINT_SCALE; const ch = cell.h * PRINT_SCALE;
-                
-                if (State.cvs.cropMarks) {
-                    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
-                }
-                
-                const pageImgs = State.cvs.pages[0]; // Exportamos la primera hoja visible
-                if (!pageImgs || !pageImgs[i]) return;
-                
-                ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
-                const img = pageImgs[i].img; const iw = pageImgs[i].w; const ih = pageImgs[i].h;
-                const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
-                const needsRotation = cellIsLandscape !== imgIsLandscape;
-                
-                let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
-                const dw = iw * scale; const dh = ih * scale;
+                cells.forEach((cell, i) => {
+                    const cx = cell.x * PRINT_SCALE; const cy = cell.y * PRINT_SCALE; const cw = cell.w * PRINT_SCALE; const ch = cell.h * PRINT_SCALE;
+                    
+                    if (State.cvs.cropMarks) {
+                        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                    }
+                    
+                    const pageImgs = State.cvs.pages[p]; // Exportamos la hoja actual del ciclo
+                    if (!pageImgs || !pageImgs[i]) return;
+                    
+                    ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
+                    const img = pageImgs[i].img; const iw = pageImgs[i].w; const ih = pageImgs[i].h;
+                    const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
+                    const needsRotation = cellIsLandscape !== imgIsLandscape;
+                    
+                    let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
+                    const dw = iw * scale; const dh = ih * scale;
 
-                if (needsRotation) {
-                    ctx.translate(cx + cw / 2, cy + ch / 2); ctx.rotate(Math.PI / 2);
-                    ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
-                } else {
-                    ctx.drawImage(img, cx + (cw - dw) / 2, cy + (ch - dh) / 2, dw, dh);
-                }
-                ctx.restore();
-            });
+                    if (needsRotation) {
+                        ctx.translate(cx + cw / 2, cy + ch / 2); ctx.rotate(Math.PI / 2);
+                        ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+                    } else {
+                        ctx.drawImage(img, cx + (cw - dw) / 2, cy + (ch - dh) / 2, dw, dh);
+                    }
+                    ctx.restore();
+                });
 
-            const link = document.createElement('a');
-            link.download = `PapePrinter_Export_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png', 1.0);
-            link.click();
+                const link = document.createElement('a');
+                link.download = `PapePrinter_Export_${Date.now()}_Hoja_${p + 1}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                link.click();
+                
+                // Pequeña pausa de 300ms para permitir que el navegador procese múltiples descargas sin bloquearlas
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
         }
 
         // --- 7. MÓDULO 2: LOTES PDF (COTIZADOR) ---
@@ -1030,6 +1079,9 @@
         function calcPdfFinancials() {
             State.pdf.paperId = document.getElementById('pdf-paper').value;
             State.pdf.covManual = parseFloat(document.getElementById('pdf-cov').value);
+            State.pdf.duplex = document.getElementById('pdf-duplex').checked;
+            State.pdf.mono = document.getElementById('pdf-mono').checked;
+            
             const tableBody = document.getElementById('pdf-jobs'); tableBody.innerHTML = '';
             
             if (State.pdf.jobs.length === 0) { 
@@ -1037,33 +1089,49 @@
             }
 
             const paper = State.papers.find(x => x.id === State.pdf.paperId) || State.papers[0];
-            const cfg = State.config; const opBaseCost = (paper.price / paper.count) + (cfg.printerPrice / (cfg.printerLife * 2));
+            const cfg = State.config; 
             const minMultiplier = cfg.minMultiplier || 2;
+            
+            const wearCostPerFace = (cfg.printerPrice / (cfg.printerLife * 2));
+            const paperCostPerSheet = (paper.price / paper.count);
+            
             let globalOpCost = 0; let globalSugCost = 0;
 
             State.pdf.jobs.forEach((job, idx) => {
                 const appliedDensity = job.type === 'Man' ? State.pdf.covManual : job.density;
-                const opSheetCost = opBaseCost + ((appliedDensity / 100) * (cfg.inkPrice / cfg.inkYield));
-                const totalSheets = job.pages * job.copies; const jobOpCost = opSheetCost * totalSheets;
                 
-                let sugSheetPrice = paper.maxSalePrice * (appliedDensity / 100);
-                if (sugSheetPrice > paper.maxSalePrice) sugSheetPrice = paper.maxSalePrice;
-                if (sugSheetPrice < opSheetCost * minMultiplier) sugSheetPrice = opSheetCost * minMultiplier;
+                const inkCostPerFace = (appliedDensity / 100) * (cfg.inkPrice / cfg.inkYield);
                 
-                let jobSugCost = sugSheetPrice * totalSheets;
+                const totalFaces = job.pages * job.copies;
+                const totalSheets = (State.pdf.duplex ? Math.ceil(job.pages / 2) : job.pages) * job.copies;
+                
+                const jobOpCost = ((inkCostPerFace + wearCostPerFace) * totalFaces) + (paperCostPerSheet * totalSheets);
+                
+                let sugFacePrice = paper.maxSalePrice * (appliedDensity / 100);
+                if (sugFacePrice > paper.maxSalePrice) sugFacePrice = paper.maxSalePrice;
+                if (State.pdf.mono) sugFacePrice *= 0.25;
+                
+                let jobSugCost = sugFacePrice * totalFaces;
+                
+                // Priorizar margen mínimo operativo
+                const minAllowedJob = jobOpCost * minMultiplier;
+                if (jobSugCost < minAllowedJob) jobSugCost = minAllowedJob;
+                
                 if (cfg.roundingMode === 'half') jobSugCost = Math.ceil(jobSugCost * 2) / 2;
                 else if (cfg.roundingMode === 'round') jobSugCost = Math.ceil(jobSugCost);
 
                 globalOpCost += jobOpCost; globalSugCost += jobSugCost;
+                
                 const blankWarningHTML = job.originalPages > job.pages ? `<br><span class="text-[9px] text-gray-400 font-bold">(${job.originalPages - job.pages} blancas omitidas)</span>` : '';
+                const duplexInfo = State.pdf.duplex ? `<br><span class="text-[9px] text-indigo-500 font-bold">(${totalSheets} hojas fís.)</span>` : '';
 
                 tableBody.innerHTML += `
                     <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50 transition">
                         <td class="px-3 md:px-4 py-3 truncate max-w-[120px] md:max-w-[150px]" title="${job.name}">${job.name}</td>
-                        <td class="px-2 md:px-4 py-3 text-center leading-tight">${job.pages}${blankWarningHTML}</td>
+                        <td class="px-2 md:px-4 py-3 text-center leading-tight">${job.pages}${blankWarningHTML}${duplexInfo}</td>
                         <td class="px-2 md:px-4 py-3 text-center text-[10px]"><span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 px-2 py-0.5 rounded-full font-bold">${appliedDensity.toFixed(0)}% (${job.type})</span></td>
                         <td class="px-2 md:px-4 py-3 text-center"><input type="number" min="1" value="${job.copies}" onchange="State.pdf.jobs[${idx}].copies=parseInt(this.value); calcPdfFinancials()" class="w-10 md:w-12 text-center border rounded bg-transparent outline-none focus:border-indigo-500 py-1"></td>
-                        <td class="px-2 md:px-4 py-3 text-right text-slate-500">$${(jobSugCost / totalSheets).toFixed(2)}</td>
+                        <td class="px-2 md:px-4 py-3 text-right text-slate-500">$${(jobSugCost / totalFaces).toFixed(2)}</td>
                         <td class="px-3 md:px-4 py-3 text-right font-bold text-emerald-600">$${jobSugCost.toFixed(2)}</td>
                         <td class="px-2 md:px-4 py-3 text-center"><button onclick="State.pdf.jobs.splice(${idx},1); calcPdfFinancials()" class="text-red-400 hover:text-red-600 transition">✕</button></td>
                     </tr>
@@ -1079,7 +1147,10 @@
             if (State.pdf.jobs.length === 0) return;
             const paper = State.papers.find(x => x.id === State.pdf.paperId) || State.papers[0];
             const ticketId = `PDL${Date.now().toString().slice(-8)}`;
-            const totalSheets = State.pdf.jobs.reduce((acc, job) => acc + (job.pages * job.copies), 0);
+            
+            const totalSheets = State.pdf.jobs.reduce((acc, job) => {
+                return acc + ((State.pdf.duplex ? Math.ceil(job.pages / 2) : job.pages) * job.copies);
+            }, 0);
             
             State.salesLog.push({ 
                 id: ticketId, timestamp: new Date().toISOString(), paper: paper.name, details: 'Lote PDFs', 
@@ -1089,38 +1160,68 @@
             
             if (shouldOpenPdfs) { State.pdf.jobs.forEach(job => { const anchor = document.createElement('a'); anchor.href = job.url; anchor.target = '_blank'; anchor.click(); }); }
             State.pdf.jobs = []; document.getElementById('pdf-tot-op').innerText = '$0.00'; document.getElementById('pdf-tot-sug').value = '0.00'; 
-            State.pdf.globOp = 0; State.pdf.globSug = 0; calcPdfFinancials();
+            State.pdf.globOp = 0; State.pdf.globSug = 0; 
+            
+            // Restablecer controles al estado inicial
+            document.getElementById('pdf-mono').checked = false; State.pdf.mono = false;
+            document.getElementById('pdf-duplex').checked = false; State.pdf.duplex = false;
+            document.getElementById('pdf-cov').value = 10; document.getElementById('pdf-cov-val').innerText = '10%'; State.pdf.covManual = 10;
+            
+            calcPdfFinancials();
         }
 
-        // --- 8. MÓDULO 3: FINANZAS (DASHBOARD Y TICKET) ---
-        let trendChart = null; let doughnutChart = null;
+        // --- 8. MÓDULO 3: FINANZAS (DASHBOARD) ---
+        let trendChart = null;
+        let doughnutChart = null;
 
         function renderFinanceDashboard() {
-            let totalSheets = 0; let totalCost = 0; let totalRev = 0;
-            const tableBody = document.getElementById('fin-table'); tableBody.innerHTML = '';
-            const materialCounts = {}; const materialProfits = {};
-            const chartLabels = []; const chartProfits = []; const chartCosts = [];
+            let totalRev = 0;
+            let totalCost = 0;
+            let totalSheets = 0;
+            const matCount = {};
+            const chartLabels = [];
+            const chartProfits = [];
+            const chartCosts = [];
+            const materialProfits = {};
 
-            State.salesLog.forEach((sale, index) => {
-                const op = parseFloat(sale.totalOp) || 0; const sug = parseFloat(sale.totalSug) || 0; const profit = sug - op;
-                totalSheets += parseInt(sale.pages) || 0; totalCost += op; totalRev += sug;
+            const tableBody = document.getElementById('fin-table');
+            tableBody.innerHTML = '';
+
+            if (State.salesLog.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-sans text-xs md:text-sm">No hay ventas registradas en este turno.</td></tr>';
+            }
+
+            State.salesLog.forEach((sale, i) => {
+                const op = parseFloat(sale.totalOp) || 0;
+                const sug = parseFloat(sale.totalSug) || 0;
+                const pages = parseInt(sale.pages) || 0;
                 
-                tableBody.innerHTML = `
-                    <tr class="hover:bg-slate-50 dark:bg-gray-800/50">
-                        <td class="p-2 md:p-3 text-indigo-600 dark:text-indigo-400 font-bold">${sale.id}</td>
-                        <td class="p-2 md:p-3 truncate max-w-[100px] md:max-w-none">${sale.paper}</td>
-                        <td class="p-2 md:p-3 text-center">${sale.pages}</td>
+                totalRev += sug;
+                totalCost += op;
+                totalSheets += pages;
+                
+                const mat = sale.paper || 'Otro';
+                matCount[mat] = (matCount[mat] || 0) + pages;
+                materialProfits[mat] = (materialProfits[mat] || 0) + (sug - op);
+                
+                chartLabels.push(`T-${i+1}`);
+                chartProfits.push(sug - op);
+                chartCosts.push(op);
+
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
+                        <td class="p-2 md:p-3 text-xs truncate max-w-[80px]">${sale.id}</td>
+                        <td class="p-2 md:p-3 text-xs truncate max-w-[100px]">${mat}</td>
+                        <td class="p-2 md:p-3 text-center">${pages}</td>
                         <td class="p-2 md:p-3 text-right text-rose-500">$${op.toFixed(2)}</td>
-                        <td class="p-2 md:p-3 text-right font-bold text-emerald-600 dark:text-emerald-400">$${sug.toFixed(2)}</td>
-                    </tr>` + tableBody.innerHTML;
-                
-                chartLabels.push(`T-${index + 1}`); chartProfits.push(profit.toFixed(2)); chartCosts.push(op.toFixed(2));
-                materialCounts[sale.paper] = (materialCounts[sale.paper] || 0) + sale.pages;
-                materialProfits[sale.paper] = (materialProfits[sale.paper] || 0) + profit;
+                        <td class="p-2 md:p-3 text-right text-emerald-600 font-bold">$${sug.toFixed(2)}</td>
+                    </tr>
+                `;
             });
 
-            const netProfit = totalRev - totalCost; const roiPercent = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
-            
+            const netProfit = totalRev - totalCost;
+            const roiPercent = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
+
             document.getElementById('fin-rev').innerText = `$${totalRev.toFixed(2)}`;
             document.getElementById('fin-cos').innerText = `$${totalCost.toFixed(2)}`;
             document.getElementById('fin-pro').innerText = `$${netProfit.toFixed(2)}`;
@@ -1129,17 +1230,20 @@
             document.getElementById('fin-roi').innerHTML = `${totalSheets} <span class="text-xs ${roiColorClass}">(${roiPercent.toFixed(1)}%)</span>`;
 
             if (trendChart) trendChart.destroy(); if (doughnutChart) doughnutChart.destroy();
-            const gridColor = State.isDarkMode ? '#334155' : '#e2e8f0';
             
-            trendChart = new Chart(document.getElementById('chart-trend'), {
-                type: 'line', data: { labels: chartLabels, datasets: [{ label: 'Utilidad', data: chartProfits, borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3 }, { label: 'Costo', data: chartCosts, borderColor: '#ef4444', borderDash: [5,5], tension: 0.3 }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor } } }, plugins: { legend: { position: 'bottom' } } }
-            });
-            
-            doughnutChart = new Chart(document.getElementById('chart-doughnut'), {
-                type: 'doughnut', data: { labels: Object.keys(materialProfits), datasets: [{ data: Object.values(materialProfits), backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#0ea5e9', '#ec4899'] }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
-            });
+            if (State.salesLog.length > 0) {
+                const gridColor = State.isDarkMode ? '#334155' : '#e2e8f0';
+                
+                trendChart = new Chart(document.getElementById('chart-trend'), {
+                    type: 'line', data: { labels: chartLabels, datasets: [{ label: 'Utilidad', data: chartProfits, borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3 }, { label: 'Costo', data: chartCosts, borderColor: '#ef4444', borderDash: [5,5], tension: 0.3 }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor } } }, plugins: { legend: { position: 'bottom' } } }
+                });
+                
+                doughnutChart = new Chart(document.getElementById('chart-doughnut'), {
+                    type: 'doughnut', data: { labels: Object.keys(materialProfits), datasets: [{ data: Object.values(materialProfits), backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#0ea5e9', '#ec4899'] }] },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+                });
+            }
         }
 
         function exportCSV() {
