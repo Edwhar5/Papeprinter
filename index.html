@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-    <title>PapePrinter Pro - Suite Unificada</title>
+    <title>PapePrinter</title>
     
     <!-- Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -849,7 +849,7 @@
             
             let sugFacePrice = paper.maxSalePrice * (State.cvs.density / 100);
             if (sugFacePrice > paper.maxSalePrice) sugFacePrice = paper.maxSalePrice;
-            if (State.cvs.mono) sugFacePrice *= 0.25;
+            if (State.cvs.mono) sugFacePrice *= 0.5;
 
             let totalSugCost = sugFacePrice * totalFaces;
             
@@ -1109,7 +1109,7 @@
                 
                 let sugFacePrice = paper.maxSalePrice * (appliedDensity / 100);
                 if (sugFacePrice > paper.maxSalePrice) sugFacePrice = paper.maxSalePrice;
-                if (State.pdf.mono) sugFacePrice *= 0.25;
+                if (State.pdf.mono) sugFacePrice *= 0.66;
                 
                 let jobSugCost = sugFacePrice * totalFaces;
                 
@@ -1146,7 +1146,7 @@
         function registerPdfSale(shouldOpenPdfs) {
             if (State.pdf.jobs.length === 0) return;
             const paper = State.papers.find(x => x.id === State.pdf.paperId) || State.papers[0];
-            const ticketId = `PDL${Date.now().toString().slice(-8)}`;
+            const ticketId = `P${Date.now().toString().slice(-8)}`;
             
             const totalSheets = State.pdf.jobs.reduce((acc, job) => {
                 return acc + ((State.pdf.duplex ? Math.ceil(job.pages / 2) : job.pages) * job.copies);
