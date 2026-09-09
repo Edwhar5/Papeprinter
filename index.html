@@ -989,7 +989,7 @@
             
             let sugFacePrice = paper.maxSalePrice * (State.cvs.density / 100);
             if (sugFacePrice > paper.maxSalePrice) sugFacePrice = paper.maxSalePrice;
-            if (State.cvs.mono) sugFacePrice *= 0.5;
+            if (State.cvs.mono) sugFacePrice *= 0.3;
 
             let totalSugCost = sugFacePrice * totalFaces;
             
