@@ -36,24 +36,15 @@
             @page { margin: 0; } 
             .print-page { 
                 width: 100vw; 
-                height: 100vh;
-                max-width: 100%;
-                max-height: 100%;
-                page-break-after: always;
-                page-break-inside: avoid;
+                height: 100vh; 
+                page-break-after: always; 
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 background: white; 
                 overflow: hidden;
             }
-            .print-page img, .print-page canvas { 
-            max-width: 100vw !important; 
-            max-height: 100vh !important; /* Tope estricto de altura */
-            object-fit: contain !important; 
-            page-break-inside: avoid; /* CRÍTICO: Evita que la imagen misma se ampute */
-            display: block;
-            margin: 0 auto;
+            .print-page img { width: 100%; height: 100%; object-fit: contain; }
         }
     </style>
 </head>
