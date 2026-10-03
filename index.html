@@ -4,30 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
     <title>PapePrinter</title>
-
+    
     <!-- Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         tailwind.config = { darkMode: 'class' };
     </script>
-
+    
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
-
+        
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
+        
         /* Ocultar elementos nativos de impresión y quitar márgenes del navegador */
         @media print {
             body, html { background-color: white !important; margin: 0 !important; padding: 0 !important; height: 100%; }
@@ -79,17 +79,15 @@
                     <img src="https://http2.mlstatic.com/storage/mobile-on-demand-resources/image/web-private-nav-mp-logo-restyling_3X?updatedAt=0" alt="Mercado Pago" class="w-5 h-5 object-contain">
                 </a>
                 <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-slate-100 dark:hover:bg-gray-800" title="Apoyar vía PayPal">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+			        <svg width="20" height="20" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
                 </a>
-                <a href="https://wa.me/527461111191" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-slate-100 dark:hover:bg-gray-800" title="Contactar vía WhatsApp">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#25D366">
-                    <path d="M12 2C6.48 2 2 6.48 2 12c0 2.12.66 4.09 1.79 5.72L2 22l4.39-1.73C7.91 21.34 9.9 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm.05 17.5c-1.77 0-3.42-.52-4.82-1.42l-.34-.21-2.87 1.13.97-2.8-.22-.36c-.82-1.34-1.29-2.9-1.29-4.54 0-4.69 3.82-8.5 8.54-8.5 2.28 0 4.42.89 6.02 2.49 1.6 1.6 2.49 3.74 2.49 6.01 0 4.69-3.82 8.5-8.48 8.5zm4.66-6.35c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.12-.57.13-.17.25-.65.8-.8.97-.15.17-.3.19-.55.06-.25-.13-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.25-.02-.39.11-.52.11-.11.25-.29.38-.43.13-.14.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.87-.21-.5-.42-.43-.57-.44-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.69.32-.23.25-.91.89-.91 2.17s.93 2.52 1.06 2.69c.13.17 1.83 2.79 4.44 3.91.62.27 1.1.43 1.48.55.62.2 1.18.17 1.62.1.5-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/> </svg>
-                </a>
+				<a href="https://wa.me/527461111191" target="_blank" class="p-1 hover:scale-110 transition rounded hover:bg-slate-100 dark:hover:bg-gray-800" title="Contactar vía WhatsApp">
+				    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M12 2C6.48 2 2 6.48 2 12c0 2.12.66 4.09 1.79 5.72L2 22l4.39-1.73C7.91 21.34 9.9 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm.05 17.5c-1.77 0-3.42-.52-4.82-1.42l-.34-.21-2.87 1.13.97-2.8-.22-.36c-.82-1.34-1.29-2.9-1.29-4.54 0-4.69 3.82-8.5 8.54-8.5 2.28 0 4.42.89 6.02 2.49 1.6 1.6 2.49 3.74 2.49 6.01 0 4.69-3.82 8.5-8.48 8.5zm4.66-6.35c-.25-.13-1.47-.72-1.7-.8-.23-.08-.4-.12-.57.13-.17.25-.65.8-.8.97-.15.17-.3.19-.55.06-.25-.13-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.25-.02-.39.11-.52.11-.11.25-.29.38-.43.13-.14.17-.25.25-.42.08-.17.04-.32-.02-.45-.06-.13-.57-1.37-.78-1.87-.21-.5-.42-.43-.57-.44-.15-.01-.32-.01-.49-.01-.17 0-.45.06-.69.32-.23.25-.91.89-.91 2.17s.93 2.52 1.06 2.69c.13.17 1.83 2.79 4.44 3.91.62.27 1.1.43 1.48.55.62.2 1.18.17 1.62.1.5-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.23-.17-.48-.3z"/> </svg>
+				</a>
             </div>
             <button onclick="toggleConfigModal()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition" title="Configuración Global">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                 </svg>
             </button>
             <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-gray-800 text-slate-500 transition">
@@ -122,10 +120,15 @@
     <!-- CONTENEDOR DE VISTAS PRINCIPALES -->
     <main class="flex-1 relative overflow-hidden pb-16 md:pb-0">
         
-        <!-- VISTA 1: LIENZO GRÁFICO -->
+        <!-- ========================================== -->
+        <!-- VISTA 1: LIENZO GRÁFICO (CANVAS ENGINE)    -->
+        <!-- ========================================== -->
         <section id="view-canvas" class="view-section h-full flex flex-col md:flex-row absolute inset-0 bg-slate-100/50 dark:bg-slate-950">
+            
+            <!-- Sidebar Canvas -->
             <aside id="canvas-sidebar" class="w-72 md:w-80 h-full flex flex-col border-r border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 shadow-xl md:shadow-sm z-[50] md:z-10 overflow-y-auto custom-scrollbar fixed md:relative left-0 top-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
                 <div class="p-5 flex flex-col gap-6 pb-20 md:pb-5">
+                    
                     <div class="flex justify-between items-center md:hidden border-b border-slate-100 dark:border-gray-800 pb-3 -mt-2">
                         <span class="font-black text-slate-700 dark:text-slate-200 text-sm tracking-widest uppercase">Herramientas</span>
                         <button onclick="toggleSidebar()" class="text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-gray-800 p-1.5 rounded font-bold">✕</button>
@@ -139,6 +142,7 @@
                     <div class="flex justify-between items-center bg-slate-100 dark:bg-gray-800 rounded-lg p-1.5 border border-slate-200 dark:border-gray-700">
                         <span class="text-[10px] uppercase font-bold text-slate-400 px-2">Orientación</span>
                         <div class="flex gap-1">
+                            <!-- El default será vertical -->
                             <button id="btn-port" onclick="setPortrait(true)" class="px-3 py-1.5 text-xs font-medium rounded-md bg-white shadow-sm text-indigo-700 dark:bg-gray-700 dark:text-indigo-300 transition">Vertical</button>
                             <button id="btn-land" onclick="setPortrait(false)" class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:bg-slate-200 dark:hover:bg-gray-600 transition">Horizontal</button>
                         </div>
@@ -162,7 +166,9 @@
                             <span class="font-medium text-slate-700 dark:text-slate-300 text-xs">Repetir c/imagen:</span>
                             <input type="number" id="cvs-img-rep" value="1" min="1" max="99" onchange="updateCanvasConfig()" class="w-12 text-center border border-slate-300 dark:border-gray-600 rounded bg-white dark:bg-gray-900 outline-none focus:border-indigo-500 text-sm">
                         </div>
+                        
                         <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <!-- Nueva Opción Global para Giro Automático -->
                             <input type="checkbox" id="cvs-autorotate" checked onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
                             <span class="font-medium">Giro Automático de Imagen</span>
                         </label>
@@ -171,10 +177,12 @@
                             <span class="font-medium">Modo Sticker (1ra)</span>
                         </label>
                         <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <!-- Con margen de seguridad por defecto -->
                             <input type="checkbox" id="cvs-margin" checked onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
                             <span class="font-medium">Borde seguridad (5mm)</span>
                         </label>
                         <label class="flex items-center gap-3 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-gray-700 p-1 rounded transition">
+                            <!-- Sin guías visibles por defecto -->
                             <input type="checkbox" id="cvs-cropmarks" onchange="updateCanvasConfig()" class="w-4 h-4 rounded text-indigo-600 border-slate-300"> 
                             <span class="font-medium">Mostrar Guías de Corte</span>
                         </label>
@@ -190,12 +198,17 @@
                 </div>
             </aside>
             
+            <!-- Área Principal del Lienzo -->
             <div class="flex-1 flex flex-col relative overflow-hidden pb-32 md:pb-0">
+                
+                <!-- Barra de herramientas interna -->
                 <div class="h-14 md:h-12 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-slate-200 dark:border-gray-800 flex items-center px-2 md:px-4 z-[20] shrink-0 gap-2 md:gap-4 hide-scrollbar overflow-x-auto w-full">
+                    
                     <button onclick="toggleSidebar()" class="md:hidden shrink-0 p-2 text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg hover:bg-slate-200 transition flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                         <span class="text-[10px] font-bold">Ajustes</span>
                     </button>
+
                     <div class="w-px h-6 bg-slate-200 dark:bg-gray-700 shrink-0 md:hidden"></div>
 
                     <div class="flex gap-1 shrink-0 bg-slate-100 dark:bg-gray-800 p-1 rounded-lg">
@@ -203,6 +216,7 @@
                         <button onclick="setFit('contain')" id="btn-fit-con" class="px-3 py-1.5 text-[10px] sm:text-xs font-semibold rounded text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Ajustar</button>
                     </div>
 
+                    <!-- CONTROL DE ZOOM GLOBAL -->
                     <div class="flex items-center gap-2 border-l border-slate-200 dark:border-gray-700 pl-4 hidden sm:flex shrink-0">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Zoom</span>
                         <input type="range" min="15" max="100" value="30" oninput="State.cvs.workspaceZoom=this.value; updateZoomVisuals()" class="w-20 accent-indigo-600 cursor-pointer">
@@ -210,11 +224,11 @@
                     
                     <div class="flex gap-2 items-center shrink-0 ml-auto pr-2">
                         <button onclick="exportCanvasPNG()" class="text-[10px] sm:text-xs font-bold px-3 py-1.5 bg-white text-slate-700 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 dark:text-slate-200 rounded-lg flex items-center gap-1 transition shadow-sm hover:bg-slate-50 dark:hover:bg-gray-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             <span class="hidden sm:inline">Exportar PNG</span>
                         </button>
                         <button onclick="document.getElementById('cvs-upload').click()" class="text-[10px] sm:text-xs font-bold px-3 py-1.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400 rounded-lg flex items-center gap-1 transition shadow-sm hover:bg-indigo-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                             <span class="hidden sm:inline">Subir</span> Imágenes
                         </button>
                         <button onclick="clearCanvas()" class="text-[10px] sm:text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 px-3 py-1.5 rounded-lg transition">Limpiar</button>
@@ -222,20 +236,27 @@
                     </div>
                 </div>
                 
+                <!-- Contenedor de Renderizado DRAG & DROP -->
                 <div id="canvas-render-area" class="flex-1 overflow-auto custom-scrollbar p-4 md:p-8 flex flex-col items-center gap-8 pb-32 transition-colors relative">
+                    
                     <div id="canvas-empty-state" class="w-full max-w-2xl mt-4 md:mt-12 px-2 sm:px-4">
                         <div onclick="document.getElementById('cvs-upload').click()" class="border-2 border-dashed border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-[2rem] p-8 sm:p-16 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group">
                             <div class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-full mb-4 sm:mb-6 shadow-sm border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                             </div>
                             <h3 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 mb-2 tracking-tight">Arrastra tus imágenes aquí</h3>
-                            <p class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm leading-relaxed px-4">O haz clic para explorar en tu dispositivo. Puedes subir múltiples archivos JPG o PNG a la vez.</p>
-                            <span class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-200 dark:shadow-none text-[11px] sm:text-sm flex items-center gap-2">Explorar Archivos</span>
+                            <p class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm leading-relaxed px-4">O haz clic (tap) para explorar en tu dispositivo. Puedes subir múltiples archivos JPG o PNG a la vez.</p>
+                            <span class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-200 dark:shadow-none text-[11px] sm:text-sm flex items-center gap-2">
+                                Explorar Archivos
+                            </span>
                         </div>
                     </div>
+
                 </div>
 
+                <!-- Panel Financiero Flotante -->
                 <div class="absolute bottom-16 md:bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 p-3 sm:p-4 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] flex flex-col md:flex-row gap-3 justify-between items-center z-[30] pb-safe">
+                    
                     <div class="flex items-center justify-between w-full md:w-auto gap-4">
                         <div>
                             <div class="text-[9px] sm:text-[10px] uppercase font-black text-slate-400 tracking-widest">Costo Op.</div>
@@ -265,7 +286,9 @@
             </div>
         </section>
 
-        <!-- VISTA 2: LOTES PDF -->
+        <!-- ========================================== -->
+        <!-- VISTA 2: LOTES PDF (COTIZADOR)             -->
+        <!-- ========================================== -->
         <section id="view-pdf" class="view-section hidden h-full flex flex-col md:flex-row absolute inset-0 bg-slate-50 dark:bg-slate-950 p-4 md:p-6 gap-4 md:gap-6">
             <aside class="w-full md:w-80 shrink-0 flex flex-col gap-4 md:gap-6 h-auto md:h-full">
                 <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-slate-200 dark:border-gray-800 p-4 md:p-5">
@@ -353,19 +376,20 @@
             </div>
         </section>
 
-        <!-- VISTA 3: FINANZAS -->
+        <!-- ========================================== -->
+        <!-- VISTA 3: FINANZAS (DASHBOARD)              -->
+        <!-- ========================================== -->
         <section id="view-finance" class="view-section hidden h-full flex flex-col absolute inset-0 bg-slate-50 dark:bg-slate-950 p-4 md:p-6 overflow-y-auto custom-scrollbar">
-            <div class="flex justify-between items-end mb-4 md:mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-6 gap-4 md:gap-0">
                 <div>
                     <h2 class="text-xl md:text-2xl font-black">Inteligencia de Negocios</h2>
-                    <p class="text-[10px] md:text-sm text-slate-500">
+                    <p class="text-[10px] md:text-sm text-slate-500 flex items-center flex-wrap gap-2">
                         Rendimiento en tiempo real. 
-                        <span class="font-bold text-indigo-600 dark:text-indigo-400 ml-2">
-                            Total histórico: <span id="fin-global-count">0</span> trabajos procesados
-                        </span>
+                        <span class="hidden md:inline">|</span> 
+                        <span class="font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded">Total Histórico: <span id="global-jobs-counter">0</span> tickets procesados</span>
                     </p>
                 </div>
-                <button onclick="exportCSV()" class="px-3 md:px-4 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-[10px] md:text-sm font-bold shadow-sm transition">Exportar CSV</button>
+                <button onclick="exportCSV()" class="w-full md:w-auto px-4 py-2 bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg text-sm font-bold shadow-sm transition hover:bg-slate-50 dark:hover:bg-gray-700">Exportar CSV</button>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-6">
@@ -376,15 +400,16 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
-                <div class="lg:col-span-2 bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 h-64 md:h-72 shadow-sm"><canvas id="chart-trend"></canvas></div>
-                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 h-64 md:h-72 shadow-sm"><canvas id="chart-doughnut"></canvas></div>
+                <div class="lg:col-span-2 bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 h-64 md:h-72 shadow-sm relative">
+                    <canvas id="chart-trend"></canvas>
+                </div>
+                <div class="bg-white dark:bg-gray-900 p-3 md:p-5 rounded-2xl border border-slate-200 dark:border-gray-800 h-64 md:h-72 shadow-sm">
+                    <canvas id="chart-doughnut"></canvas>
+                </div>
             </div>
 
             <div class="bg-white dark:bg-gray-900 rounded-2xl border border-slate-200 dark:border-gray-800 flex flex-col flex-1 min-h-[250px] overflow-hidden shadow-sm">
-                <div class="p-3 md:p-4 border-b border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 font-bold text-xs md:text-sm flex justify-between items-center">
-                    <span>Historial de Turno (Más recientes primero)</span>
-                    <span class="text-[10px] text-slate-400">Tickets del Turno</span>
-                </div>
+                <div class="p-3 md:p-4 border-b border-slate-100 dark:border-gray-800 bg-slate-50 dark:bg-gray-900 font-bold text-xs md:text-sm">Historial de Turno (Recientes Primero)</div>
                 <div class="overflow-x-auto flex-1 custom-scrollbar">
                     <table class="w-full text-xs md:text-sm text-left">
                         <thead class="bg-slate-100 dark:bg-gray-800 text-[9px] md:text-[10px] uppercase text-slate-500"><tr><th class="p-2 md:p-3">Ticket</th><th class="p-2 md:p-3">Material</th><th class="p-2 md:p-3 text-center">Hojas</th><th class="p-2 md:p-3 text-right">Costo</th><th class="p-2 md:p-3 text-right">Cobro</th></tr></thead>
@@ -392,39 +417,14 @@
                     </table>
                 </div>
                 <div class="p-3 md:p-4 bg-slate-50 dark:bg-gray-900 border-t border-slate-200 dark:border-gray-800 text-right shrink-0">
-                    <button onclick="corteCaja()" class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-2.5 bg-rose-600 hover:bg-rose-700 transition text-white rounded-lg font-bold flex items-center justify-center gap-2 sm:ml-auto shadow-md text-xs md:text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <button onclick="intentCorteCaja()" class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-2.5 bg-rose-600 hover:bg-rose-700 transition text-white rounded-lg font-bold flex items-center justify-center gap-2 sm:ml-auto shadow-md text-xs md:text-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         Generar Ticket de Corte
                     </button>
                 </div>
             </div>
         </section>
     </main>
-
-    <!-- MODAL DE NOTIFICACIÓN DE APOYO CUANDO SE LOGRAN 100 TRABAJOS -->
-    <div id="modal-support-milestone" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-gray-800 p-6 text-center">
-            <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-black">
-                🎉
-            </div>
-            <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 mb-2">¡Meta Alcanzada!</h3>
-            <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">
-                Has alcanzado <span id="milestone-jobs-count" class="font-bold text-indigo-600 dark:text-indigo-400">100</span> trabajos procesados en PapePrinter. 
-                Si esta herramienta facilita las ventas de tu negocio, considera dar un pequeño apoyo voluntario para mantener su desarrollo.
-            </p>
-            <div class="flex flex-col gap-3">
-                <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
-                    Apoyar vía Mercado Pago
-                </a>
-                <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
-                    Apoyar vía PayPal
-                </a>
-                <button onclick="closeMilestoneModal()" class="w-full py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold text-xs mt-1">
-                    Continuar Trabajando
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- MODAL DE CONFIGURACIÓN GLOBAL -->
     <div id="modal-config" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
@@ -481,6 +481,70 @@
         </div>
     </div>
 
+    <!-- MODAL CUSTOM DE ALERTA -->
+    <div id="modal-alert" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl shadow-2xl flex flex-col p-6 text-center border border-slate-200 dark:border-gray-800 fade-in">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900/30 mb-4">
+                <svg class="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Aviso</h3>
+            <p id="alert-msg" class="text-sm text-slate-500 dark:text-slate-400 mb-6 whitespace-pre-line"></p>
+            <button onclick="closeAlert()" class="w-full inline-flex justify-center rounded-lg border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm transition">Entendido</button>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM DE CONFIRMACIÓN -->
+    <div id="modal-confirm" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-sm rounded-2xl shadow-2xl flex flex-col p-6 text-center border border-slate-200 dark:border-gray-800 fade-in">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 mb-4">
+                <svg class="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Confirmación</h3>
+            <p id="confirm-msg" class="text-sm text-slate-500 dark:text-slate-400 mb-6"></p>
+            <div class="flex gap-3 w-full">
+                <button onclick="closeConfirm(false)" class="flex-1 inline-flex justify-center rounded-lg border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-base font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-gray-700 focus:outline-none sm:text-sm transition">Cancelar</button>
+                <button onclick="closeConfirm(true)" class="flex-1 inline-flex justify-center rounded-lg border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none sm:text-sm transition">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RECORDATORIO APOYO (Cada 100 trabajos) -->
+    <div id="modal-support" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[120] flex items-center justify-center p-4 transition-opacity">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-3xl shadow-2xl flex flex-col p-8 text-center border border-indigo-200 dark:border-indigo-800 fade-in relative overflow-hidden">
+            
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-blob"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-500 rounded-full mix-blend-multiply filter blur-2xl opacity-50 animate-blob animation-delay-2000"></div>
+
+            <div class="relative z-10">
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900/50 mb-6 shadow-inner">
+                    <span class="text-3xl">🎉</span>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">¡Hito Alcanzado!</h3>
+                <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+                    Has procesado exitosamente <span id="support-jobs-count" class="font-black text-indigo-600 dark:text-indigo-400">100</span> tickets con <span class="font-bold">PapePrinter</span>.
+                    <br><br>
+                    Si esta herramienta le está ahorrando tiempo y dinero a tu negocio, considera apoyar su desarrollo continuo para seguir mejorando las funciones.
+                </p>
+                <div class="flex gap-4 w-full justify-center mb-6">
+                    <a href="https://mpago.la/2Kqt5Zg" target="_blank" class="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 transition w-28 group">
+                        <img src="https://http2.mlstatic.com/storage/mobile-on-demand-resources/image/web-private-nav-mp-logo-restyling_3X?updatedAt=0" alt="Mercado Pago" class="w-8 h-8 object-contain group-hover:scale-110 transition">
+                        <span class="text-[10px] font-bold text-slate-500">Mercado Pago</span>
+                    </a>
+                    <a href="https://www.paypal.com/paypalme/Edwhar1806" target="_blank" class="flex flex-col items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 transition w-28 group">
+                        <svg class="w-8 h-8 object-contain group-hover:scale-110 transition" viewBox="0 0 24 24" fill="#003087" xmlns="http://www.w3.org/2000/svg"><path d="M20.067 8.178c-.552 2.766-2.41 4.542-5.187 4.542h-1.574c-.533 0-.914.382-1.01.895l-.76 4.394c-.047.284-.285.474-.57.474H7.834c-.428 0-.713-.427-.618-.854L9.404 4.524c.095-.569.57-.996 1.141-.996h4.327c1.379 0 2.472.284 3.28.853.76.569 1.142 1.423 1.142 2.466 0 .522-.095.949-.228 1.331z"/></svg>
+                        <span class="text-[10px] font-bold text-slate-500">PayPal</span>
+                    </a>
+                </div>
+                <button onclick="document.getElementById('modal-support').classList.add('hidden')" class="w-full font-bold text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition">Continuar usando gratis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR OCULTO PARA IMPRESIÓN NATIVA -->
     <div id="print-container" class="hidden"></div>
 
     <script>
@@ -489,22 +553,56 @@
         
         // --- 2. ESTADO GLOBAL ---
         const State = {
-            view: 'canvas', isDarkMode: false,
+            view: 'canvas', 
+            isDarkMode: false,
+            globalJobsCount: 0, // Nuevo log de trabajos independiente
             config: { printerPrice: 4500, printerLife: 20000, inkPrice: 850, inkYield: 6500, roundingMode: 'half', minMultiplier: 2 },
             papers: [
-                { id: 'p1', name: 'Carta Bond', w: 215.9, h: 279.4, price: 650, count: 5000, maxSalePrice: 8 },
-                { id: 'p2', name: 'Oficio Bond', w: 215.9, h: 340, price: 750, count: 5000, maxSalePrice: 10 },
-                { id: 'p3', name: 'A4 Bond', w: 210, h: 297, price: 650, count: 5000, maxSalePrice: 8 }
+                { id: 'p1', name: 'Carta Bond', w: 215.9, h: 279.4, price: 650, count: 5000, maxSalePrice: 8 }
             ],
             salesLog: [],
-            globalTotalJobs: 0,
             cvs: { 
-                images: [], pages: [], paperId: 'p1', isPortrait: true, mode: 'preset', preset: 4, cm: 5, 
-                idVertical: false, sticker: false, cropMarks: false, mono: false, duplex: false, fit: 'cover', 
-                copies: 1, density: 0, totalOp: 0, totalSug: 0, workspaceZoom: 30, autoRotate: true 
+                images: [], pages: [], paperId: 'p1', isPortrait: true, mode: 'preset', preset: 4, cm: 5, idVertical: false, 
+                sticker: false, 
+                cropMarks: false, // Default: Sin guias visibles
+                margin: true,     // Default: Con margen de seguridad
+                autoRotate: true, // Nueva Opcion Global Default
+                mono: false, duplex: false, fit: 'cover', copies: 1, density: 0, totalOp: 0, totalSug: 0, workspaceZoom: 30 
             },
             pdf: { queue: [], jobs: [], paperId: 'p1', covManual: 10, globOp: 0, globSug: 0, mono: false, duplex: false }
         };
+
+        // --- FUNCIONES CUSTOM MODAL (Reemplazos para alert y confirm) ---
+        function showAlert(msg) {
+            document.getElementById('alert-msg').innerText = msg;
+            document.getElementById('modal-alert').classList.remove('hidden');
+        }
+        function closeAlert() { document.getElementById('modal-alert').classList.add('hidden'); }
+        
+        function showConfirm(msg, onConfirmCallback) {
+            document.getElementById('confirm-msg').innerText = msg;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+            window.pendingConfirmAction = onConfirmCallback;
+        }
+        function closeConfirm(agreed) {
+            document.getElementById('modal-confirm').classList.add('hidden');
+            if(agreed && window.pendingConfirmAction) window.pendingConfirmAction();
+            window.pendingConfirmAction = null;
+        }
+
+        // --- LÓGICA LOG GLOBAL DE TRABAJOS ---
+        function incrementGlobalJobs() {
+            State.globalJobsCount++;
+            localStorage.setItem('papePrinterTotalJobs', State.globalJobsCount);
+            
+            const counterLabel = document.getElementById('global-jobs-counter');
+            if(counterLabel) counterLabel.innerText = State.globalJobsCount;
+            
+            if (State.globalJobsCount > 0 && State.globalJobsCount % 100 === 0) {
+                document.getElementById('support-jobs-count').innerText = State.globalJobsCount;
+                document.getElementById('modal-support').classList.remove('hidden');
+            }
+        }
 
         // --- 3. INICIALIZACIÓN ---
         function init() {
@@ -517,21 +615,19 @@
                 }
                 const lsSales = JSON.parse(localStorage.getItem('papePrinterSalesLog'));
                 if (lsSales) State.salesLog = lsSales;
-
-                const lsJobs = localStorage.getItem('papePrinterGlobalJobs');
-                if (lsJobs !== null) State.globalTotalJobs = parseInt(lsJobs) || 0;
-            } catch (e) { console.warn("No se pudo cargar la configuración local.", e); }
+                
+                // Cargar Jobs Globales
+                State.globalJobsCount = parseInt(localStorage.getItem('papePrinterTotalJobs')) || 0;
+                document.getElementById('global-jobs-counter').innerText = State.globalJobsCount;
+            } catch (e) { console.warn("No se pudo cargar config local.", e); }
 
             if (State.papers.length > 0) { 
-                State.cvs.paperId = State.papers[0].id; 
-                State.pdf.paperId = State.papers[0].id; 
+                // Asegurar que exista la ID 'p1' o tomar la primera
+                const p = State.papers.find(x => x.id === 'p1') || State.papers[0];
+                State.cvs.paperId = p.id; State.pdf.paperId = p.id; 
             }
 
-            applyTheme(); 
-            populateSelects(); 
-            renderGridControls(); 
-            initDragAndDrop(); 
-            switchView('canvas');
+            applyTheme(); populateSelects(); renderGridControls(); initDragAndDrop(); switchView('canvas');
         }
 
         let sidebarOpen = false;
@@ -567,7 +663,6 @@
             Chart.defaults.color = State.isDarkMode ? '#94a3b8' : '#64748b'; Chart.defaults.font.family = "system-ui";
         }
         function saveConfigLocally() { localStorage.setItem('papePrinterVanilla', JSON.stringify({ costs: State.config, papers: State.papers, isDarkMode: State.isDarkMode })); }
-        
         function populateSelects() {
             const selects = [document.getElementById('cvs-paper'), document.getElementById('pdf-paper')];
             selects.forEach(selectElement => {
@@ -644,7 +739,6 @@
             }
             updateCanvasConfig();
         }
-
         function clearCanvas() { 
             State.cvs.images = []; 
             State.cvs.pages = [];
@@ -654,15 +748,14 @@
             document.getElementById('cvs-cost').innerText = '$0.00'; 
             document.getElementById('cvs-sug').value = '0.00'; 
             
-            // Restablecer valores por defecto (Default)
-            setPortrait(true);
+            // Restablecer controles a estado inicial respetando los nuevos defaults
             document.getElementById('cvs-copies').value = 1;
             document.getElementById('cvs-mono').checked = false;
             if (document.getElementById('cvs-duplex')) document.getElementById('cvs-duplex').checked = false;
             document.getElementById('cvs-sticker').checked = false;
-            document.getElementById('cvs-cropmarks').checked = false; // Sin guías visibles
-            if (document.getElementById('cvs-margin')) document.getElementById('cvs-margin').checked = true; // Margen de seguridad activo
-            if (document.getElementById('cvs-autorotate')) document.getElementById('cvs-autorotate').checked = true;
+            document.getElementById('cvs-autorotate').checked = true; // giro default
+            document.getElementById('cvs-cropmarks').checked = false; // sin guias default
+            if (document.getElementById('cvs-margin')) document.getElementById('cvs-margin').checked = true; // con margen default
             
             updateCanvasConfig(); 
         }
@@ -756,9 +849,10 @@
             State.cvs.paperId = paperSelect.value; 
             State.cvs.sticker = document.getElementById('cvs-sticker').checked;
             State.cvs.cropMarks = document.getElementById('cvs-cropmarks').checked;
+            State.cvs.autoRotate = document.getElementById('cvs-autorotate').checked;
+            State.cvs.margin = document.getElementById('cvs-margin')?.checked || false;
             State.cvs.mono = document.getElementById('cvs-mono').checked; 
             State.cvs.duplex = document.getElementById('cvs-duplex')?.checked || false;
-            State.cvs.autoRotate = document.getElementById('cvs-autorotate')?.checked ?? true;
             State.cvs.copies = parseInt(document.getElementById('cvs-copies').value) || 1;
             const imgRepeat = parseInt(document.getElementById('cvs-img-rep').value) || 1;
             
@@ -788,10 +882,10 @@
                     <div id="canvas-empty-state" class="w-full max-w-2xl mt-4 md:mt-12 px-2 sm:px-4">
                         <div onclick="document.getElementById('cvs-upload').click()" class="border-2 border-dashed border-indigo-300 dark:border-indigo-700 bg-indigo-50/50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-[2rem] p-8 sm:p-16 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group">
                             <div class="bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-full mb-4 sm:mb-6 shadow-sm border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                             </div>
                             <h3 class="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 mb-2 tracking-tight">Arrastra tus imágenes aquí</h3>
-                            <p class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm leading-relaxed px-4">O haz clic para explorar en tu dispositivo.</p>
+                            <p class="text-[11px] sm:text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm leading-relaxed px-4">O haz clic (tap) para explorar en tu dispositivo.</p>
                             <span class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-200 dark:shadow-none text-[11px] sm:text-sm flex items-center gap-2">Explorar Archivos</span>
                         </div>
                     </div>`; 
@@ -802,7 +896,8 @@
             const pW = paper.w || 215.9; const pH = paper.h || 279.4;
             const MM_TO_PX = 3.7795; 
             const pxW = (State.cvs.isPortrait ? pW : pH) * MM_TO_PX; const pxH = (State.cvs.isPortrait ? pH : pW) * MM_TO_PX;
-
+			
+			// --- LAS VARIABLES SE DECLARAN AQUÍ (FUERA DEL FOREACH) ---
             let densities = [];
             let pagesRendered = 0;
 
@@ -835,7 +930,7 @@
                     const cx = cell.x * MM_TO_PX; const cy = cell.y * MM_TO_PX; const cw = cell.w * MM_TO_PX; const ch = cell.h * MM_TO_PX;
                     
                     if (State.cvs.cropMarks) {
-                        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.strokeRect(cx, cy, cw, ch);
+                        ctx.strokeStyle = '#00ffff'; ctx.lineWidth = 3; ctx.strokeRect(cx, cy, cw, ch);
                     }
                     
                     const imgData = pageImgs[i];
@@ -843,7 +938,11 @@
                         ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
                         const img = imgData.img; const iw = imgData.w; const ih = imgData.h;
                         const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
-                        const needsRotation = State.cvs.autoRotate && (cellIsLandscape !== imgIsLandscape);
+                        
+                        let needsRotation = false;
+                        if (State.cvs.autoRotate) {
+                            needsRotation = cellIsLandscape !== imgIsLandscape;
+                        }
                         
                         let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
                         const dw = iw * scale; const dh = ih * scale;
@@ -858,6 +957,7 @@
                     }
                 });
 
+                // --- MEDICIÓN DE CADA HOJA INDIVIDUAL (SIN EL "if (idx === 0)") ---
                 setTimeout(() => {
                     const tmpCanvas = document.createElement('canvas'); const scale = 0.1;
                     tmpCanvas.width = pxW * scale; tmpCanvas.height = pxH * scale;
@@ -899,7 +999,7 @@
             
             let sugFacePrice = paper.maxSalePrice * (State.cvs.density / 100);
             if (sugFacePrice > paper.maxSalePrice) sugFacePrice = paper.maxSalePrice;
-            if (State.cvs.mono) sugFacePrice *= 0.5;
+            if (State.cvs.mono) sugFacePrice *= 0.3;
 
             let totalSugCost = sugFacePrice * totalFaces;
             
@@ -915,19 +1015,20 @@
             updateCostLabels();
         }
 
+        // MOTOR RASTERIZADO (Edge Fix)
         function registerCanvasSaleAndPrint() {
             if (State.cvs.pages.length === 0) return;
             const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
             const ticketId = `CVS${Date.now().toString().slice(-8)}`;
             const totalSheets = (State.cvs.duplex ? Math.ceil(State.cvs.pages.length / 2) : State.cvs.pages.length) * State.cvs.copies;
             
-            State.salesLog.unshift({ 
+            State.salesLog.push({ 
                 id: ticketId, timestamp: new Date().toISOString(), paper: paper.name, details: 'Lienzo Gráfico', 
                 pages: totalSheets, totalOp: State.cvs.totalOp, totalSug: State.cvs.totalSug 
             });
             localStorage.setItem('papePrinterSalesLog', JSON.stringify(State.salesLog));
-            incrementGlobalJobsCounter();
-
+            incrementGlobalJobs(); // Incrementar contador global
+            
             const printContainer = document.getElementById('print-container'); printContainer.innerHTML = '';
             const btnCobrar = document.getElementById('btn-print-cobrar');
             const originalBtnText = btnCobrar.innerHTML;
@@ -961,7 +1062,11 @@
                             ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
                             const img = pageImgs[i].img; const iw = pageImgs[i].w; const ih = pageImgs[i].h;
                             const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
-                            const needsRotation = State.cvs.autoRotate && (cellIsLandscape !== imgIsLandscape);
+                            
+                            let needsRotation = false;
+                            if (State.cvs.autoRotate) {
+                                needsRotation = cellIsLandscape !== imgIsLandscape;
+                            }
                             
                             let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
                             const dw = iw * scale; const dh = ih * scale;
@@ -970,7 +1075,7 @@
                                 ctx.translate(cx + cw / 2, cy + ch / 2); ctx.rotate(Math.PI / 2);
                                 ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
                             } else {
-                                ctx.drawImage(img, cx + (cw - dw) / 2, cy + (ch - dw) / 2, dw, dh);
+                                ctx.drawImage(img, cx + (cw - dw) / 2, cy + (ch - dh) / 2, dw, dh);
                             }
                             ctx.restore();
                         });
@@ -993,11 +1098,11 @@
                     btnCobrar.disabled = false;
                 }, 500);
 
-            }, 50);
+            }, 50); 
         }
         
         async function exportCanvasPNG() {
-            if (State.cvs.pages.length === 0) { alert('No hay imágenes en el lienzo para exportar.'); return; }
+            if (State.cvs.pages.length === 0) { showAlert('No hay imágenes en el lienzo para exportar.'); return; }
             
             const paper = State.papers.find(x => x.id === State.cvs.paperId) || State.papers[0];
             const isPort = State.cvs.isPortrait;
@@ -1028,7 +1133,11 @@
                     ctx.save(); ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.clip(); 
                     const img = pageImgs[i].img; const iw = pageImgs[i].w; const ih = pageImgs[i].h;
                     const cellIsLandscape = cw > ch; const imgIsLandscape = iw > ih;
-                    const needsRotation = State.cvs.autoRotate && (cellIsLandscape !== imgIsLandscape);
+                    
+                    let needsRotation = false;
+                    if (State.cvs.autoRotate) {
+                        needsRotation = cellIsLandscape !== imgIsLandscape;
+                    }
                     
                     let scale = State.cvs.fit === 'cover' ? Math.max(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih)) : Math.min(cw / (needsRotation ? ih : iw), ch / (needsRotation ? iw : ih));
                     const dw = iw * scale; const dh = ih * scale;
@@ -1077,6 +1186,7 @@
             
             btnProcess.disabled = true; progressWrapper.classList.remove('hidden');
             let newJobs = [];
+            let blankFiles = [];
             
             for (let i = 0; i < State.pdf.queue.length; i++) {
                 const qItem = State.pdf.queue[i]; progressTxt.innerText = `Leyendo: ${qItem.name}`;
@@ -1112,11 +1222,16 @@
                             density: Math.min(100, Math.max(0, density)), type: totalPages <= 100 ? 'Auto' : 'Man', 
                             copies: 1, url: URL.createObjectURL(qItem.file) 
                         });
-                    } else { alert(`El archivo ${qItem.name} parece estar en blanco.`); }
+                    } else { blankFiles.push(qItem.name); }
                 } catch (e) { console.error("Error al procesar PDF", e); }
             }
             State.pdf.jobs = [...State.pdf.jobs, ...newJobs]; State.pdf.queue = []; renderPdfQueue();
-            setTimeout(() => { progressWrapper.classList.add('hidden'); calcPdfFinancials(); }, 500);
+            
+            setTimeout(() => { 
+                progressWrapper.classList.add('hidden'); 
+                calcPdfFinancials(); 
+                if(blankFiles.length > 0) showAlert(`Los siguientes archivos parecen estar en blanco o corruptos:\n${blankFiles.join('\n')}`);
+            }, 500);
         }
 
         function calcPdfFinancials() {
@@ -1146,7 +1261,6 @@
                 
                 const totalFaces = job.pages * job.copies;
                 const totalSheets = (State.pdf.duplex ? Math.ceil(job.pages / 2) : job.pages) * job.copies;
-                
                 const jobOpCost = ((inkCostPerFace + wearCostPerFace) * totalFaces) + (paperCostPerSheet * totalSheets);
                 
                 let sugFacePrice = paper.maxSalePrice * (appliedDensity / 100);
@@ -1193,12 +1307,12 @@
                 return acc + ((State.pdf.duplex ? Math.ceil(job.pages / 2) : job.pages) * job.copies);
             }, 0);
             
-            State.salesLog.unshift({ 
+            State.salesLog.push({ 
                 id: ticketId, timestamp: new Date().toISOString(), paper: paper.name, details: 'Lote PDFs', 
                 pages: totalSheets, totalOp: State.pdf.globOp, totalSug: State.pdf.globSug 
             });
             localStorage.setItem('papePrinterSalesLog', JSON.stringify(State.salesLog));
-            incrementGlobalJobsCounter();
+            incrementGlobalJobs(); // Incrementar contador global
             
             if (shouldOpenPdfs) { State.pdf.jobs.forEach(job => { const anchor = document.createElement('a'); anchor.href = job.url; anchor.target = '_blank'; anchor.click(); }); }
             State.pdf.jobs = []; document.getElementById('pdf-tot-op').innerText = '$0.00'; document.getElementById('pdf-tot-sug').value = '0.00'; 
@@ -1211,21 +1325,6 @@
             calcPdfFinancials();
         }
 
-        // --- CONTADOR GLOBAL INDEPENDIENTE ---
-        function incrementGlobalJobsCounter() {
-            State.globalTotalJobs++;
-            localStorage.setItem('papePrinterGlobalJobs', State.globalTotalJobs.toString());
-            
-            if (State.globalTotalJobs > 0 && State.globalTotalJobs % 100 === 0) {
-                document.getElementById('milestone-jobs-count').innerText = State.globalTotalJobs;
-                document.getElementById('modal-support-milestone').classList.remove('hidden');
-            }
-        }
-
-        function closeMilestoneModal() {
-            document.getElementById('modal-support-milestone').classList.add('hidden');
-        }
-
         // --- 8. MÓDULO 3: FINANZAS (DASHBOARD) ---
         let trendChart = null;
         let doughnutChart = null;
@@ -1234,23 +1333,18 @@
             let totalRev = 0;
             let totalCost = 0;
             let totalSheets = 0;
-            const materialSheetsUsage = {};
-            const chartLabels = [];
-            const chartProfits = [];
-            const chartCosts = [];
+            const matCount = {};
+            const materialProfits = {};
 
             const tableBody = document.getElementById('fin-table');
             tableBody.innerHTML = '';
-
-            document.getElementById('fin-global-count').innerText = State.globalTotalJobs;
 
             if (State.salesLog.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-sans text-xs md:text-sm">No hay ventas registradas en este turno.</td></tr>';
             }
 
-            const chronologicalSales = [...State.salesLog].reverse();
-
-            State.salesLog.forEach((sale) => {
+            // Loop para agregar la data analitica (Totalmente cronologico para no romper acumulados de graficas)
+            State.salesLog.forEach((sale, i) => {
                 const op = parseFloat(sale.totalOp) || 0;
                 const sug = parseFloat(sale.totalSug) || 0;
                 const pages = parseInt(sale.pages) || 0;
@@ -1260,7 +1354,17 @@
                 totalSheets += pages;
                 
                 const mat = sale.paper || 'Otro';
-                materialSheetsUsage[mat] = (materialSheetsUsage[mat] || 0) + pages;
+                matCount[mat] = (matCount[mat] || 0) + pages;
+                materialProfits[mat] = (materialProfits[mat] || 0) + (sug - op);
+            });
+            
+            // Loop para renderizar tabla (Mostrando primero los más recientes)
+            const reversedLog = [...State.salesLog].reverse();
+            reversedLog.forEach((sale) => {
+                const op = parseFloat(sale.totalOp) || 0;
+                const sug = parseFloat(sale.totalSug) || 0;
+                const pages = parseInt(sale.pages) || 0;
+                const mat = sale.paper || 'Otro';
 
                 tableBody.innerHTML += `
                     <tr class="hover:bg-slate-50 dark:hover:bg-gray-800/50">
@@ -1273,14 +1377,6 @@
                 `;
             });
 
-            chronologicalSales.forEach((sale, i) => {
-                const op = parseFloat(sale.totalOp) || 0;
-                const sug = parseFloat(sale.totalSug) || 0;
-                chartLabels.push(`T-${i+1}`);
-                chartProfits.push(sug - op);
-                chartCosts.push(op);
-            });
-
             const netProfit = totalRev - totalCost;
             const roiPercent = totalRev > 0 ? (netProfit / totalRev) * 100 : 0;
 
@@ -1291,42 +1387,45 @@
             const roiColorClass = roiPercent > 40 ? 'text-emerald-500' : roiPercent > 20 ? 'text-blue-500' : 'text-rose-500';
             document.getElementById('fin-roi').innerHTML = `${totalSheets} <span class="text-xs ${roiColorClass}">(${roiPercent.toFixed(1)}%)</span>`;
 
-            if (trendChart) trendChart.destroy(); 
-            if (doughnutChart) doughnutChart.destroy();
+            if (trendChart) trendChart.destroy(); if (doughnutChart) doughnutChart.destroy();
             
             if (State.salesLog.length > 0) {
                 const gridColor = State.isDarkMode ? '#334155' : '#e2e8f0';
                 
+                // Nueva Grafica de Rendimiento de Materiales (Hojas consumidas)
+                const matLabels = Object.keys(matCount);
+                const matData = Object.values(matCount);
+
                 trendChart = new Chart(document.getElementById('chart-trend'), {
-                    type: 'line', 
-                    data: { 
-                        labels: chartLabels, 
-                        datasets: [
-                            { label: 'Utilidad', data: chartProfits, borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,0.1)', tension: 0.3 }, 
-                            { label: 'Costo', data: chartCosts, borderColor: '#ef4444', borderDash: [5,5], tension: 0.3 }
-                        ] 
+                    type: 'bar',
+                    data: {
+                        labels: matLabels,
+                        datasets: [{
+                            label: 'Hojas Consumidas',
+                            data: matData,
+                            backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                            borderColor: 'rgba(79, 70, 229, 1)',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: gridColor } } }, plugins: { legend: { position: 'bottom' } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { color: gridColor }, beginAtZero: true }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            title: { display: true, text: 'Rendimiento de Materiales (Hojas)', font: { family: "system-ui", size: 14 } }
+                        }
+                    }
                 });
                 
                 doughnutChart = new Chart(document.getElementById('chart-doughnut'), {
-                    type: 'doughnut', 
-                    data: { 
-                        labels: Object.keys(materialSheetsUsage).map(m => `${m} (Hojas)`), 
-                        datasets: [{ 
-                            data: Object.values(materialSheetsUsage), 
-                            backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#0ea5e9', '#ec4899', '#8b5cf6'] 
-                        }] 
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        cutout: '70%', 
-                        plugins: { 
-                            legend: { position: 'bottom' },
-                            title: { display: true, text: 'Rendimiento de Materiales (Consumo de Hojas)' }
-                        } 
-                    }
+                    type: 'doughnut', data: { labels: Object.keys(materialProfits), datasets: [{ data: Object.values(materialProfits), backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#0ea5e9', '#ec4899'] }] },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
                 });
             }
         }
@@ -1334,7 +1433,9 @@
         function exportCSV() {
             if (State.salesLog.length === 0) return;
             let csv = "Fecha,Ticket,Material,Hojas,Costo,Cobro,Utilidad\n";
-            State.salesLog.forEach(sale => {
+            // Invertir para el CSV también si quieren los recientes primero
+            const reversedLog = [...State.salesLog].reverse();
+            reversedLog.forEach(sale => {
                 const op = parseFloat(sale.totalOp) || 0; const sug = parseFloat(sale.totalSug) || 0;
                 csv += `"${new Date(sale.timestamp).toLocaleString()}","${sale.id}","${sale.paper}",${sale.pages},${op.toFixed(2)},${sug.toFixed(2)},${(sug - op).toFixed(2)}\n`;
             });
@@ -1342,10 +1443,14 @@
             link.download = `Corte_${Date.now()}.csv`; link.click();
         }
 
-        function corteCaja() {
-            if (State.salesLog.length === 0) { alert("No hay ventas registradas."); return; }
-            if (!confirm("¿Generar Corte de Caja? Esto limpiará el turno actual y descargará tu PNG.")) return;
-            
+        function intentCorteCaja() {
+            if (State.salesLog.length === 0) { showAlert("No hay ventas registradas."); return; }
+            showConfirm("¿Generar Corte de Caja? Esto limpiará el turno actual y descargará tu PNG con el resumen.", () => {
+                ejecutarCorteCaja();
+            });
+        }
+
+        function ejecutarCorteCaja() {
             let sheets = 0, cost = 0, rev = 0; const matCount = {};
             State.salesLog.forEach(sale => {
                 const op = parseFloat(sale.totalOp) || 0; const sug = parseFloat(sale.totalSug) || 0;
